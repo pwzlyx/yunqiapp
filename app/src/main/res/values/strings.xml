@@ -23,6 +23,7 @@
     <string name="home_section_safety">安全提醒</string>
     <string name="home_reminder_weight">记录今日体重变化</string>
     <string name="home_reminder_fetal_movement">留意胎动日常模式</string>
+    <string name="home_reminder_symptom">记录症状或不适</string>
     <string name="home_reminder_appointment">查看或安排下次产检</string>
     <string name="home_content_source">来源：%1$s · 更新：%2$s</string>
     <string name="home_exercise_restricted_body">你已标记医生限制运动。请以医生或产科单位的具体建议为准，暂不展示默认运动建议。</string>

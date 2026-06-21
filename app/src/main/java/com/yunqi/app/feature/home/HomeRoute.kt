@@ -160,6 +160,10 @@ private fun ReminderCard(
             label = { Text(stringResource(R.string.home_reminder_fetal_movement)) },
         )
         AssistChip(
+            onClick = { onQuickRecordClick(CalendarRecordType.Symptom) },
+            label = { Text(stringResource(R.string.home_reminder_symptom)) },
+        )
+        AssistChip(
             onClick = { onQuickRecordClick(CalendarRecordType.Appointment) },
             label = { Text(stringResource(R.string.home_reminder_appointment)) },
         )
