@@ -1,9 +1,12 @@
 package com.yunqi.app.feature.settings
 
 import android.Manifest
+import android.content.ActivityNotFoundException
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
@@ -31,6 +34,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,6 +48,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yunqi.app.R
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsRoute(
@@ -54,6 +59,7 @@ fun SettingsRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
+    val coroutineScope = rememberCoroutineScope()
     var notificationsAllowed by remember { mutableStateOf(context.canPostNotifications()) }
     var pendingNotificationRequest by remember { mutableStateOf<NotificationPermissionRequest?>(null) }
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
@@ -115,6 +121,12 @@ fun SettingsRoute(
             }
         },
         onDailyReminderTimeSelected = viewModel::setDailyReminderTime,
+        onExportRecords = {
+            coroutineScope.launch {
+                val uri = viewModel.exportCalendarRecordsCsv()
+                context.shareCsvExport(uri)
+            }
+        },
         onClearAllLocalData = viewModel::clearAllLocalData,
     )
 }
@@ -133,6 +145,7 @@ private fun SettingsScreen(
     onReminderEnabledChange: (Boolean) -> Unit,
     onDailyReminderEnabledChange: (Boolean) -> Unit,
     onDailyReminderTimeSelected: (String) -> Unit,
+    onExportRecords: () -> Unit,
     onClearAllLocalData: () -> Unit,
 ) {
     val remindersChecked = uiState.appointmentRemindersEnabled && notificationsAllowed
@@ -237,6 +250,12 @@ private fun SettingsScreen(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
+        Button(
+            onClick = onExportRecords,
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(stringResource(R.string.settings_export_records_csv))
+        }
         OutlinedButton(
             onClick = { showClearConfirm = true },
             modifier = Modifier.fillMaxWidth(),
@@ -322,4 +341,21 @@ private fun Context.canPostNotifications(): Boolean {
         this,
         Manifest.permission.POST_NOTIFICATIONS,
     ) == PackageManager.PERMISSION_GRANTED
+}
+
+private fun Context.shareCsvExport(uri: android.net.Uri) {
+    val sendIntent = Intent(Intent.ACTION_SEND)
+        .setType("text/csv")
+        .putExtra(Intent.EXTRA_STREAM, uri)
+        .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    try {
+        startActivity(
+            Intent.createChooser(
+                sendIntent,
+                getString(R.string.settings_export_records_csv),
+            ),
+        )
+    } catch (_: ActivityNotFoundException) {
+        Toast.makeText(this, R.string.settings_export_records_unavailable, Toast.LENGTH_SHORT).show()
+    }
 }

@@ -20,6 +20,9 @@ interface CalendarRecordDao {
     @Query("SELECT * FROM calendar_records ORDER BY date DESC, createdAtEpochMillis DESC")
     fun allRecords(): Flow<List<CalendarRecordEntity>>
 
+    @Query("SELECT * FROM calendar_records ORDER BY date ASC, createdAtEpochMillis ASC")
+    suspend fun allRecordsSnapshot(): List<CalendarRecordEntity>
+
     @Query(
         """
         SELECT * FROM calendar_records

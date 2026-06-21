@@ -26,6 +26,9 @@ class CalendarRecordRepository(context: Context) {
             records.map(CalendarRecordEntity::toDomain)
         }
 
+    suspend fun allRecordsSnapshot(): List<CalendarRecord> =
+        dao.allRecordsSnapshot().map(CalendarRecordEntity::toDomain)
+
     /**
      * Emits records within an inclusive local date range.
      */

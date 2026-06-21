@@ -191,6 +191,8 @@
     <string name="trends_range_all">全部</string>
     <string name="settings_privacy">隐私与数据</string>
     <string name="settings_local_data_body">孕期档案、日历记录和提醒设置仅保存在本机。</string>
+    <string name="settings_export_records_csv">导出记录 CSV</string>
+    <string name="settings_export_records_unavailable">没有可用的应用处理导出文件。</string>
     <string name="settings_clear_local_data">清除本机数据</string>
     <string name="settings_clear_data_confirm_title">清除全部本机数据？</string>
     <string name="settings_clear_data_confirm_body">清除后将删除孕期档案、日历记录和提醒设置，且无法在本机恢复。</string>
