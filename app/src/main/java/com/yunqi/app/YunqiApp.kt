@@ -1,10 +1,11 @@
 package com.yunqi.app
 
+import androidx.annotation.StringRes
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.ShowChart
 import androidx.compose.material.icons.rounded.CalendarMonth
 import androidx.compose.material.icons.rounded.Home
 import androidx.compose.material.icons.rounded.Person
-import androidx.compose.material.icons.rounded.ShowChart
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -14,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.annotation.StringRes
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -97,6 +97,6 @@ private sealed class TopLevelDestination(
 ) {
     data object Home : TopLevelDestination("home", R.string.nav_home, Icons.Rounded.Home)
     data object Calendar : TopLevelDestination("calendar", R.string.nav_calendar, Icons.Rounded.CalendarMonth)
-    data object Trends : TopLevelDestination("trends", R.string.nav_trends, Icons.Rounded.ShowChart)
+    data object Trends : TopLevelDestination("trends", R.string.nav_trends, Icons.AutoMirrored.Rounded.ShowChart)
     data object Settings : TopLevelDestination("settings", R.string.nav_settings, Icons.Rounded.Person)
 }

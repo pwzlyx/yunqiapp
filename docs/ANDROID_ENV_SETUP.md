@@ -8,7 +8,12 @@ This project is scaffolded as a native Android app using Kotlin and Jetpack Comp
 - JDK 17 or newer
 - Android SDK Platform 35
 
-The current Codex execution environment only has Java 8 available and does not have Android SDK configured, so full Gradle build verification needs a local Android development environment.
+This workspace now includes local command-line build tools:
+
+- JDK: `C:\Users\zengzeng\Documents\Codex\2026-06-21\w\tools\jdk`
+- Android SDK: `C:\Users\zengzeng\Documents\Codex\2026-06-21\w\tools\android-sdk`
+
+The user environment variables `JAVA_HOME`, `ANDROID_HOME`, and `ANDROID_SDK_ROOT` have been configured for future terminals.
 
 ## Local-Only Data Policy
 
@@ -35,4 +40,8 @@ After JDK 17 and Android SDK are ready:
 .\gradlew.bat :app:assembleDebug
 ```
 
-If the Gradle wrapper JAR is missing, create it from Android Studio or run `gradle wrapper` with a local Gradle installation.
+The first successful debug APK is generated at:
+
+```text
+app\build\outputs\apk\debug\app-debug.apk
+```
