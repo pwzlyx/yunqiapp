@@ -19,9 +19,11 @@
     <string name="home_section_reminders">今日提醒</string>
     <string name="home_section_diet">饮食重点</string>
     <string name="home_section_exercise">运动建议</string>
+    <string name="home_section_safety">安全提醒</string>
     <string name="home_empty_reminders">设置孕期档案后生成今日提醒。</string>
     <string name="home_diet_placeholder">饮食建议会按孕周从本地内容库读取，并显示来源和更新时间。</string>
     <string name="home_exercise_placeholder">运动建议会结合孕期档案与医生限制运动设置展示。</string>
+    <string name="home_content_source">来源：%1$s · 更新：%2$s</string>
     <string name="medical_disclaimer">本 App 用于记录与健康管理提醒，不能替代医生诊断或治疗建议。</string>
 
     <string name="calendar_title">日历</string>
@@ -67,4 +69,31 @@
     <string name="setup_error_invalid_date">请输入有效日期，格式为 YYYY-MM-DD。</string>
     <string name="setup_error_invalid_week">孕周必须是 0 到 42 之间的数字。</string>
     <string name="setup_error_invalid_day">孕天必须是 0 到 6 之间的数字。</string>
+
+    <string name="source_cdc_folic_acid">CDC 叶酸建议</string>
+    <string name="source_cdc_physical_activity">CDC 孕期运动建议</string>
+    <string name="source_fda_fish">FDA/EPA 鱼类摄入建议</string>
+    <string name="source_nhs_baby_movements">NHS 胎动建议</string>
+    <string name="source_who_antenatal_care">WHO 产前保健建议</string>
+
+    <string name="content_diet_first_title">补充叶酸，保持规律饮食</string>
+    <string name="content_diet_first_body">孕早期可重点关注叶酸摄入，并尽量保持规律进餐。若有明显孕吐或无法进食，请及时咨询医生。</string>
+    <string name="content_exercise_first_title">以舒适、温和活动为主</string>
+    <string name="content_exercise_first_body">若医生没有限制运动，可选择散步等中等强度活动；运动中出现不适应停止并咨询医生。</string>
+    <string name="content_safety_first_title">出现明显异常及时就医</string>
+    <string name="content_safety_first_body">如出现阴道出血、剧烈腹痛、持续发热或严重不适，请及时联系医生或当地急救服务。</string>
+
+    <string name="content_diet_second_title">选择低汞鱼类和多样化饮食</string>
+    <string name="content_diet_second_body">鱼类可提供 DHA/EPA、碘和蛋白质等营养，孕期应优先选择低汞鱼类，并避免高汞鱼类。</string>
+    <string name="content_exercise_second_title">建立稳定的活动节奏</string>
+    <string name="content_exercise_second_body">若医生没有限制，可把散步、孕期瑜伽或游泳等温和活动拆分到一周内完成。</string>
+    <string name="content_safety_second_title">开始留意胎动日常模式</string>
+    <string name="content_safety_second_body">胎动没有适合所有人的固定次数，重点是了解宝宝平时的活动模式；若明显减少或改变，应联系产科单位。</string>
+
+    <string name="content_diet_third_title">少量多餐，关注体重和产检建议</string>
+    <string name="content_diet_third_body">孕晚期可根据食欲和医生建议调整餐次，继续记录体重变化，产检时与医生讨论异常变化。</string>
+    <string name="content_exercise_third_title">根据身体舒适度调整活动</string>
+    <string name="content_exercise_third_body">孕晚期活动应以安全和舒适为先，避免勉强完成强度；如有宫缩、头晕或疼痛，应停止活动。</string>
+    <string name="content_safety_third_title">胎动减少或模式改变要立即联系医生</string>
+    <string name="content_safety_third_body">如果感觉宝宝活动减少、变弱或和平时明显不同，不要等待到第二天，请及时联系助产士、医生或产科单位。</string>
 </resources>

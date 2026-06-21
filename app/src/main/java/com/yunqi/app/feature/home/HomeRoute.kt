@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yunqi.app.R
+import com.yunqi.app.data.content.PregnancyContentCard
+import com.yunqi.app.data.content.PregnancyContentCategory
 import com.yunqi.app.domain.pregnancy.PregnancyCalculationMethod
 
 @Composable
@@ -59,7 +61,7 @@ private fun HomeScreen(
                 item { PregnancyProgressHeader(uiState) }
                 item { ProfileSourceCard(uiState.calculationMethod) }
                 item { ReminderCard() }
-                item { PlanningCard() }
+                item { PlanningCard(contentCards = uiState.contentCards) }
             }
         }
 
@@ -142,6 +144,54 @@ private fun PlanningCard() {
         }
         SectionCard(title = stringResource(R.string.home_section_exercise)) {
             Text(stringResource(R.string.home_exercise_placeholder))
+        }
+    }
+}
+
+@Composable
+private fun PlanningCard(contentCards: List<PregnancyContentCard>) {
+    val cardsByCategory = contentCards.groupBy { it.category }
+
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        ContentSection(
+            title = stringResource(R.string.home_section_diet),
+            cards = cardsByCategory[PregnancyContentCategory.Diet].orEmpty(),
+        )
+        ContentSection(
+            title = stringResource(R.string.home_section_exercise),
+            cards = cardsByCategory[PregnancyContentCategory.Exercise].orEmpty(),
+        )
+        ContentSection(
+            title = stringResource(R.string.home_section_safety),
+            cards = cardsByCategory[PregnancyContentCategory.Safety].orEmpty(),
+        )
+    }
+}
+
+@Composable
+private fun ContentSection(
+    title: String,
+    cards: List<PregnancyContentCard>,
+) {
+    SectionCard(title = title) {
+        cards.forEach { card ->
+            Text(
+                text = stringResource(card.titleResId),
+                style = MaterialTheme.typography.titleSmall,
+            )
+            Text(
+                text = stringResource(card.bodyResId),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                text = stringResource(
+                    R.string.home_content_source,
+                    stringResource(card.sourceNameResId),
+                    card.reviewedAt,
+                ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
