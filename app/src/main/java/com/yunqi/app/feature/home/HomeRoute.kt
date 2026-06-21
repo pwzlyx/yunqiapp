@@ -21,12 +21,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yunqi.app.R
 import com.yunqi.app.data.content.PregnancyContentCard
 import com.yunqi.app.data.content.PregnancyContentCategory
+import com.yunqi.app.domain.calendar.CalendarRecordType
 import com.yunqi.app.domain.pregnancy.PregnancyCalculationMethod
 
 @Composable
 fun HomeRoute(
     contentPadding: PaddingValues,
     onSetProfileClick: () -> Unit,
+    onQuickRecordClick: (CalendarRecordType) -> Unit,
     viewModel: HomeViewModel = viewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -35,6 +37,7 @@ fun HomeRoute(
         contentPadding = contentPadding,
         uiState = uiState,
         onSetProfileClick = onSetProfileClick,
+        onQuickRecordClick = onQuickRecordClick,
     )
 }
 
@@ -43,6 +46,7 @@ private fun HomeScreen(
     contentPadding: PaddingValues,
     uiState: HomeUiState,
     onSetProfileClick: () -> Unit,
+    onQuickRecordClick: (CalendarRecordType) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -59,7 +63,12 @@ private fun HomeScreen(
             is HomeUiState.Ready -> {
                 item { PregnancyProgressHeader(uiState) }
                 item { ProfileSourceCard(uiState.calculationMethod) }
-                item { ReminderCard(contentCards = uiState.contentCards) }
+                item {
+                    ReminderCard(
+                        contentCards = uiState.contentCards,
+                        onQuickRecordClick = onQuickRecordClick,
+                    )
+                }
                 item { PlanningCard(contentCards = uiState.contentCards) }
             }
         }
@@ -130,13 +139,25 @@ private fun ProfileSourceCard(calculationMethod: PregnancyCalculationMethod) {
 }
 
 @Composable
-private fun ReminderCard(contentCards: List<PregnancyContentCard>) {
+private fun ReminderCard(
+    contentCards: List<PregnancyContentCard>,
+    onQuickRecordClick: (CalendarRecordType) -> Unit,
+) {
     val safetyCard = contentCards.firstOrNull { it.category == PregnancyContentCategory.Safety }
 
     SectionCard(title = stringResource(R.string.home_section_reminders)) {
-        AssistChip(onClick = {}, label = { Text(stringResource(R.string.home_reminder_weight)) })
-        AssistChip(onClick = {}, label = { Text(stringResource(R.string.home_reminder_fetal_movement)) })
-        AssistChip(onClick = {}, label = { Text(stringResource(R.string.home_reminder_appointment)) })
+        AssistChip(
+            onClick = { onQuickRecordClick(CalendarRecordType.Weight) },
+            label = { Text(stringResource(R.string.home_reminder_weight)) },
+        )
+        AssistChip(
+            onClick = { onQuickRecordClick(CalendarRecordType.FetalMovement) },
+            label = { Text(stringResource(R.string.home_reminder_fetal_movement)) },
+        )
+        AssistChip(
+            onClick = { onQuickRecordClick(CalendarRecordType.Appointment) },
+            label = { Text(stringResource(R.string.home_reminder_appointment)) },
+        )
         safetyCard?.let { card ->
             Text(
                 text = stringResource(card.titleResId),

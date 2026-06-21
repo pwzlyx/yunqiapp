@@ -13,7 +13,7 @@ Current result: passing.
 ## Implemented MVP Evidence
 
 - Pregnancy setup supports last menstrual period, due date, conception date, and current gestational age.
-- Home reads the local pregnancy profile and displays current gestational age, due date countdown, reminders, diet guidance, exercise guidance, safety guidance, source names, source URLs, and review dates.
+- Home reads the local pregnancy profile and displays current gestational age, due date countdown, reminders, quick record entry points, diet guidance, exercise guidance, safety guidance, source names, source URLs, and review dates.
 - Calendar supports month view, date markers, day detail list, create, edit, and delete with confirmation.
 - Calendar record types include appointment, weight, fetal movement, symptom, exercise, diet, and note.
 - Appointment reminders use local WorkManager jobs, Android notifications, a notification channel, notification permission handling, and a settings toggle.

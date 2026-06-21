@@ -57,6 +57,7 @@ import java.time.LocalDate
 @Composable
 fun CalendarRoute(
     contentPadding: PaddingValues,
+    initialRecordType: CalendarRecordType? = null,
     viewModel: CalendarViewModel = viewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -65,6 +66,7 @@ fun CalendarRoute(
         uiState = uiState,
         onSelectDate = viewModel::selectDate,
         onSelectCalendarDate = viewModel::selectDate,
+        initialRecordType = initialRecordType,
         onSaveRecord = viewModel::save,
         onDeleteRecord = viewModel::delete,
     )
@@ -76,11 +78,14 @@ private fun CalendarScreen(
     uiState: CalendarUiState,
     onSelectDate: (String) -> CalendarRecordActionResult,
     onSelectCalendarDate: (LocalDate) -> Unit,
+    initialRecordType: CalendarRecordType?,
     onSaveRecord: suspend (CalendarRecordInput) -> CalendarRecordActionResult,
     onDeleteRecord: suspend (String) -> Unit,
 ) {
     var selectedDateText by remember(uiState.selectedDate) { mutableStateOf(uiState.selectedDate.toString()) }
-    var recordType by remember { mutableStateOf(CalendarRecordType.Appointment) }
+    var recordType by remember(initialRecordType) {
+        mutableStateOf(initialRecordType ?: CalendarRecordType.Appointment)
+    }
     var note by remember { mutableStateOf("") }
     var weightKg by remember { mutableStateOf("") }
     var fetalMovementCount by remember { mutableStateOf("") }
