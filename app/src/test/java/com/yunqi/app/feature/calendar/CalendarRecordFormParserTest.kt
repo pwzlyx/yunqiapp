@@ -121,5 +121,26 @@ class CalendarRecordFormParserTest {
 
         assertEquals(CalendarRecordParseResult.InvalidDate, result)
     }
-}
 
+    @Test
+    fun `preserves id and creation time when editing record`() {
+        val result = parser.parse(
+            CalendarRecordInput(
+                id = "existing-record",
+                date = "2026-06-21",
+                type = CalendarRecordType.Note,
+                note = "Updated note",
+                weightKg = "",
+                fetalMovementCount = "",
+                appointmentTime = "",
+                appointmentLocation = "",
+                createdAtEpochMillis = 42L,
+            ),
+        )
+
+        val record = (result as CalendarRecordParseResult.Success).record
+        assertEquals("existing-record", record.id)
+        assertEquals(42L, record.createdAtEpochMillis)
+        assertEquals("Updated note", record.note)
+    }
+}

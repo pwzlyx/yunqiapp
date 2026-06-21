@@ -27,7 +27,7 @@ class CalendarRecordFormParser(
 
         return CalendarRecordParseResult.Success(
             CalendarRecord(
-                id = idProvider(),
+                id = input.id ?: idProvider(),
                 date = date,
                 type = input.type,
                 note = input.note.trim(),
@@ -39,7 +39,7 @@ class CalendarRecordFormParser(
                 appointmentLocation = input.appointmentLocation.trim().takeIf {
                     input.type == CalendarRecordType.Appointment && it.isNotBlank()
                 },
-                createdAtEpochMillis = nowProvider(),
+                createdAtEpochMillis = input.createdAtEpochMillis ?: nowProvider(),
             ),
         )
     }
@@ -50,6 +50,7 @@ class CalendarRecordFormParser(
 }
 
 data class CalendarRecordInput(
+    val id: String? = null,
     val date: String,
     val type: CalendarRecordType,
     val note: String,
@@ -57,6 +58,7 @@ data class CalendarRecordInput(
     val fetalMovementCount: String,
     val appointmentTime: String,
     val appointmentLocation: String,
+    val createdAtEpochMillis: Long? = null,
 )
 
 sealed interface CalendarRecordParseResult {
@@ -65,4 +67,3 @@ sealed interface CalendarRecordParseResult {
     data object InvalidWeight : CalendarRecordParseResult
     data object InvalidFetalMovement : CalendarRecordParseResult
 }
-

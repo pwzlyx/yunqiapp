@@ -25,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
@@ -85,6 +86,7 @@ private fun CalendarScreen(
     var fetalMovementCount by remember { mutableStateOf("") }
     var appointmentTime by remember { mutableStateOf("") }
     var appointmentLocation by remember { mutableStateOf("") }
+    var editingRecord by remember { mutableStateOf<CalendarRecord?>(null) }
     var errorMessageResId by remember { mutableStateOf<Int?>(null) }
     val coroutineScope = rememberCoroutineScope()
 
@@ -130,10 +132,22 @@ private fun CalendarScreen(
             onAppointmentTimeChange = { appointmentTime = it },
             appointmentLocation = appointmentLocation,
             onAppointmentLocationChange = { appointmentLocation = it },
+            editing = editingRecord != null,
+            onCancelEdit = {
+                editingRecord = null
+                clearRecordForm(
+                    onNoteChange = { note = it },
+                    onWeightKgChange = { weightKg = it },
+                    onFetalMovementCountChange = { fetalMovementCount = it },
+                    onAppointmentTimeChange = { appointmentTime = it },
+                    onAppointmentLocationChange = { appointmentLocation = it },
+                )
+            },
             onSave = {
                 coroutineScope.launch {
                     val result = onSaveRecord(
                         CalendarRecordInput(
+                            id = editingRecord?.id,
                             date = selectedDateText,
                             type = recordType,
                             note = note,
@@ -141,15 +155,19 @@ private fun CalendarScreen(
                             fetalMovementCount = fetalMovementCount,
                             appointmentTime = appointmentTime,
                             appointmentLocation = appointmentLocation,
+                            createdAtEpochMillis = editingRecord?.createdAtEpochMillis,
                         ),
                     )
                     errorMessageResId = result.toErrorMessageResId()
                     if (result == CalendarRecordActionResult.Success) {
-                        note = ""
-                        weightKg = ""
-                        fetalMovementCount = ""
-                        appointmentTime = ""
-                        appointmentLocation = ""
+                        editingRecord = null
+                        clearRecordForm(
+                            onNoteChange = { note = it },
+                            onWeightKgChange = { weightKg = it },
+                            onFetalMovementCountChange = { fetalMovementCount = it },
+                            onAppointmentTimeChange = { appointmentTime = it },
+                            onAppointmentLocationChange = { appointmentLocation = it },
+                        )
                     }
                 }
             },
@@ -164,6 +182,17 @@ private fun CalendarScreen(
 
         RecordList(
             records = uiState.records,
+            onEditRecord = { record ->
+                editingRecord = record
+                selectedDateText = record.date.toString()
+                recordType = record.type
+                note = record.note
+                weightKg = record.weightKg?.toString().orEmpty()
+                fetalMovementCount = record.fetalMovementCount?.toString().orEmpty()
+                appointmentTime = record.appointmentTime.orEmpty()
+                appointmentLocation = record.appointmentLocation.orEmpty()
+                errorMessageResId = null
+            },
             onDeleteRecord = onDeleteRecord,
         )
     }
@@ -351,6 +380,8 @@ private fun RecordForm(
     onAppointmentTimeChange: (String) -> Unit,
     appointmentLocation: String,
     onAppointmentLocationChange: (String) -> Unit,
+    editing: Boolean,
+    onCancelEdit: () -> Unit,
     onSave: () -> Unit,
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
@@ -359,7 +390,9 @@ private fun RecordForm(
             verticalArrangement = Arrangement.spacedBy(10.dp),
         ) {
             Text(
-                text = stringResource(R.string.calendar_add_record),
+                text = stringResource(
+                    if (editing) R.string.calendar_edit_record else R.string.calendar_add_record,
+                ),
                 style = MaterialTheme.typography.titleMedium,
             )
             RecordTypeSelector(
@@ -417,7 +450,19 @@ private fun RecordForm(
                 onClick = onSave,
                 modifier = Modifier.fillMaxWidth(),
             ) {
-                Text(stringResource(R.string.calendar_save_record))
+                Text(
+                    stringResource(
+                        if (editing) R.string.calendar_update_record else R.string.calendar_save_record,
+                    ),
+                )
+            }
+            if (editing) {
+                OutlinedButton(
+                    onClick = onCancelEdit,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    Text(stringResource(R.string.calendar_cancel_edit))
+                }
             }
         }
     }
@@ -447,6 +492,7 @@ private fun RecordTypeSelector(
 @Composable
 private fun RecordList(
     records: List<CalendarRecord>,
+    onEditRecord: (CalendarRecord) -> Unit,
     onDeleteRecord: suspend (String) -> Unit,
 ) {
     val coroutineScope = rememberCoroutineScope()
@@ -464,6 +510,7 @@ private fun RecordList(
         records.forEach { record ->
             RecordCard(
                 record = record,
+                onEdit = { onEditRecord(record) },
                 onDelete = {
                     coroutineScope.launch { onDeleteRecord(record.id) }
                 },
@@ -475,6 +522,7 @@ private fun RecordList(
 @Composable
 private fun RecordCard(
     record: CalendarRecord,
+    onEdit: () -> Unit,
     onDelete: () -> Unit,
 ) {
     var showDeleteConfirm by remember { mutableStateOf(false) }
@@ -515,8 +563,13 @@ private fun RecordCard(
                     text = record.type.toDisplayText(),
                     style = MaterialTheme.typography.titleMedium,
                 )
-                Button(onClick = { showDeleteConfirm = true }) {
-                    Text(stringResource(R.string.calendar_delete_record))
+                Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    OutlinedButton(onClick = onEdit) {
+                        Text(stringResource(R.string.calendar_edit_record))
+                    }
+                    Button(onClick = { showDeleteConfirm = true }) {
+                        Text(stringResource(R.string.calendar_delete_record))
+                    }
                 }
             }
             record.weightKg?.let {
@@ -551,4 +604,18 @@ private fun CalendarRecordActionResult.toErrorMessageResId(): Int? = when (this)
     CalendarRecordActionResult.InvalidDate -> R.string.calendar_error_invalid_date
     CalendarRecordActionResult.InvalidWeight -> R.string.calendar_error_invalid_weight
     CalendarRecordActionResult.InvalidFetalMovement -> R.string.calendar_error_invalid_fetal_movement
+}
+
+private fun clearRecordForm(
+    onNoteChange: (String) -> Unit,
+    onWeightKgChange: (String) -> Unit,
+    onFetalMovementCountChange: (String) -> Unit,
+    onAppointmentTimeChange: (String) -> Unit,
+    onAppointmentLocationChange: (String) -> Unit,
+) {
+    onNoteChange("")
+    onWeightKgChange("")
+    onFetalMovementCountChange("")
+    onAppointmentTimeChange("")
+    onAppointmentLocationChange("")
 }

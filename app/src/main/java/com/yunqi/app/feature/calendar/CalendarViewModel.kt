@@ -5,6 +5,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.yunqi.app.data.local.ReminderSettingsRepository
 import com.yunqi.app.data.local.record.CalendarRecordRepository
+import com.yunqi.app.domain.calendar.CalendarRecordType
 import com.yunqi.app.notification.AppointmentReminderScheduler
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
@@ -71,8 +72,13 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     suspend fun save(input: CalendarRecordInput): CalendarRecordActionResult = when (val result = parser.parse(input)) {
         is CalendarRecordParseResult.Success -> {
             repository.save(result.record)
-            if (reminderSettingsRepository.appointmentRemindersEnabledFlow.first()) {
+            if (
+                result.record.type == CalendarRecordType.Appointment &&
+                reminderSettingsRepository.appointmentRemindersEnabledFlow.first()
+            ) {
                 reminderScheduler.schedule(result.record)
+            } else {
+                reminderScheduler.cancel(result.record.id)
             }
             selectedDate.value = result.record.date
             CalendarRecordActionResult.Success

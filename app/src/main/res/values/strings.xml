@@ -140,4 +140,7 @@
     <string name="calendar_week_sunday">日</string>
     <string name="trends_weight_summary_with_change">已记录 %1$d 次，最近体重 %2$.1f kg，与最早记录相差 %3$.1f kg。</string>
     <string name="trends_fetal_movement_summary_with_average">已记录 %1$d 次，最近胎动 %2$d 次，平均 %3$.1f 次。</string>
+    <string name="calendar_edit_record">编辑</string>
+    <string name="calendar_update_record">更新记录</string>
+    <string name="calendar_cancel_edit">取消编辑</string>
 </resources>
