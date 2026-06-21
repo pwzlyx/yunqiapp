@@ -18,6 +18,7 @@ Current result: passing.
 - Calendar supports month view, date markers, day detail list, create, edit, and delete with confirmation.
 - Calendar record types include appointment, weight, fetal movement, symptom, exercise, diet, and note.
 - Fetal movement records include count, time period, feeling, and note.
+- Symptom, exercise, and diet records include PRD-specific structured fields in addition to notes.
 - Calendar shows a medical-attention notice when recording fetal movement or symptoms.
 - Appointment records include time, hospital or location, doctor, check items, result, and note.
 - Appointment time input is validated as `HH:mm` before reminder scheduling.

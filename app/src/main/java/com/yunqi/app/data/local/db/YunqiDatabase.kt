@@ -11,7 +11,7 @@ import com.yunqi.app.data.local.record.CalendarRecordEntity
 
 @Database(
     entities = [CalendarRecordEntity::class],
-    version = 4,
+    version = 5,
     exportSchema = false,
 )
 abstract class YunqiDatabase : RoomDatabase() {
@@ -31,7 +31,7 @@ abstract class YunqiDatabase : RoomDatabase() {
                     YunqiDatabase::class.java,
                     "yunqi.db",
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4, MIGRATION_4_5)
                     .build()
                     .also { instance = it }
             }
@@ -54,6 +54,17 @@ abstract class YunqiDatabase : RoomDatabase() {
             override fun migrate(db: SupportSQLiteDatabase) {
                 db.execSQL("ALTER TABLE calendar_records ADD COLUMN fetalMovementPeriod TEXT")
                 db.execSQL("ALTER TABLE calendar_records ADD COLUMN fetalMovementFeeling TEXT")
+            }
+        }
+
+        private val MIGRATION_4_5 = object : Migration(4, 5) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE calendar_records ADD COLUMN symptomType TEXT")
+                db.execSQL("ALTER TABLE calendar_records ADD COLUMN symptomSeverity TEXT")
+                db.execSQL("ALTER TABLE calendar_records ADD COLUMN exerciseType TEXT")
+                db.execSQL("ALTER TABLE calendar_records ADD COLUMN exerciseIntensity TEXT")
+                db.execSQL("ALTER TABLE calendar_records ADD COLUMN dietMeal TEXT")
+                db.execSQL("ALTER TABLE calendar_records ADD COLUMN dietContent TEXT")
             }
         }
     }

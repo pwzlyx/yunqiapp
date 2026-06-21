@@ -51,7 +51,25 @@ class CalendarRecordFormParser(
                 fetalMovementFeeling = input.fetalMovementFeeling.trim().takeIf {
                     input.type == CalendarRecordType.FetalMovement && it.isNotBlank()
                 },
+                symptomType = input.symptomType.trim().takeIf {
+                    input.type == CalendarRecordType.Symptom && it.isNotBlank()
+                },
+                symptomSeverity = input.symptomSeverity.trim().takeIf {
+                    input.type == CalendarRecordType.Symptom && it.isNotBlank()
+                },
+                exerciseType = input.exerciseType.trim().takeIf {
+                    input.type == CalendarRecordType.Exercise && it.isNotBlank()
+                },
                 exerciseMinutes = if (input.type == CalendarRecordType.Exercise) exerciseMinutes else null,
+                exerciseIntensity = input.exerciseIntensity.trim().takeIf {
+                    input.type == CalendarRecordType.Exercise && it.isNotBlank()
+                },
+                dietMeal = input.dietMeal.trim().takeIf {
+                    input.type == CalendarRecordType.Diet && it.isNotBlank()
+                },
+                dietContent = input.dietContent.trim().takeIf {
+                    input.type == CalendarRecordType.Diet && it.isNotBlank()
+                },
                 appointmentTime = input.appointmentTime.trim().takeIf {
                     input.type == CalendarRecordType.Appointment && it.isNotBlank()
                 },
@@ -90,12 +108,18 @@ data class CalendarRecordInput(
     val fetalMovementCount: String,
     val fetalMovementPeriod: String = "",
     val fetalMovementFeeling: String = "",
+    val symptomType: String = "",
+    val symptomSeverity: String = "",
+    val exerciseType: String = "",
+    val exerciseMinutes: String = "",
+    val exerciseIntensity: String = "",
+    val dietMeal: String = "",
+    val dietContent: String = "",
     val appointmentTime: String,
     val appointmentLocation: String,
     val appointmentDoctor: String = "",
     val appointmentItems: String = "",
     val appointmentResult: String = "",
-    val exerciseMinutes: String = "",
     val createdAtEpochMillis: Long? = null,
 )
 

@@ -166,12 +166,59 @@ class CalendarRecordFormParserTest {
                 fetalMovementCount = "",
                 appointmentTime = "",
                 appointmentLocation = "",
+                exerciseType = "  Walking  ",
                 exerciseMinutes = "30",
+                exerciseIntensity = "Low",
             ),
         )
 
         val record = (result as CalendarRecordParseResult.Success).record
+        assertEquals("Walking", record.exerciseType)
         assertEquals(30, record.exerciseMinutes)
+        assertEquals("Low", record.exerciseIntensity)
+    }
+
+    @Test
+    fun `parses symptom record`() {
+        val result = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.Symptom,
+                note = "Called doctor",
+                weightKg = "",
+                fetalMovementCount = "",
+                symptomType = "  headache  ",
+                symptomSeverity = "mild",
+                appointmentTime = "",
+                appointmentLocation = "",
+            ),
+        )
+
+        val record = (result as CalendarRecordParseResult.Success).record
+        assertEquals("headache", record.symptomType)
+        assertEquals("mild", record.symptomSeverity)
+        assertEquals("Called doctor", record.note)
+    }
+
+    @Test
+    fun `parses diet record`() {
+        val result = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.Diet,
+                note = "",
+                weightKg = "",
+                fetalMovementCount = "",
+                dietMeal = " lunch ",
+                dietContent = "Rice, fish, vegetables",
+                appointmentTime = "",
+                appointmentLocation = "",
+            ),
+        )
+
+        val record = (result as CalendarRecordParseResult.Success).record
+        assertEquals("lunch", record.dietMeal)
+        assertEquals("Rice, fish, vegetables", record.dietContent)
     }
 
     @Test

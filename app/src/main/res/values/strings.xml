@@ -47,6 +47,12 @@
     <string name="calendar_fetal_movement_label">胎动次数</string>
     <string name="calendar_fetal_movement_period_label">胎动时间段</string>
     <string name="calendar_fetal_movement_feeling_label">胎动感受</string>
+    <string name="calendar_symptom_type_label">症状类型</string>
+    <string name="calendar_symptom_severity_label">严重程度</string>
+    <string name="calendar_exercise_type_label">运动类型</string>
+    <string name="calendar_exercise_intensity_label">运动强度</string>
+    <string name="calendar_diet_meal_label">餐次</string>
+    <string name="calendar_diet_content_label">饮食内容</string>
     <string name="calendar_appointment_time_label">产检时间</string>
     <string name="calendar_appointment_location_label">医院/地点</string>
     <string name="calendar_appointment_doctor_label">医生</string>
@@ -69,6 +75,12 @@
     <string name="calendar_record_fetal_movement_value">胎动：%1$d 次</string>
     <string name="calendar_record_fetal_movement_period">时间段：%1$s</string>
     <string name="calendar_record_fetal_movement_feeling">感受：%1$s</string>
+    <string name="calendar_record_symptom_type">症状：%1$s</string>
+    <string name="calendar_record_symptom_severity">程度：%1$s</string>
+    <string name="calendar_record_exercise_type">运动类型：%1$s</string>
+    <string name="calendar_record_exercise_intensity">强度：%1$s</string>
+    <string name="calendar_record_diet_meal">餐次：%1$s</string>
+    <string name="calendar_record_diet_content">内容：%1$s</string>
     <string name="calendar_record_appointment_time">时间：%1$s</string>
     <string name="calendar_record_appointment_location">地点：%1$s</string>
     <string name="calendar_record_appointment_doctor">医生：%1$s</string>

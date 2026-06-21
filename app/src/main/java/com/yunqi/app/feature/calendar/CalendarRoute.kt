@@ -91,7 +91,13 @@ private fun CalendarScreen(
     var fetalMovementCount by remember { mutableStateOf("") }
     var fetalMovementPeriod by remember { mutableStateOf("") }
     var fetalMovementFeeling by remember { mutableStateOf("") }
+    var symptomType by remember { mutableStateOf("") }
+    var symptomSeverity by remember { mutableStateOf("") }
+    var exerciseType by remember { mutableStateOf("") }
     var exerciseMinutes by remember { mutableStateOf("") }
+    var exerciseIntensity by remember { mutableStateOf("") }
+    var dietMeal by remember { mutableStateOf("") }
+    var dietContent by remember { mutableStateOf("") }
     var appointmentTime by remember { mutableStateOf("") }
     var appointmentLocation by remember { mutableStateOf("") }
     var appointmentDoctor by remember { mutableStateOf("") }
@@ -147,8 +153,20 @@ private fun CalendarScreen(
             onFetalMovementPeriodChange = { fetalMovementPeriod = it },
             fetalMovementFeeling = fetalMovementFeeling,
             onFetalMovementFeelingChange = { fetalMovementFeeling = it },
+            symptomType = symptomType,
+            onSymptomTypeChange = { symptomType = it },
+            symptomSeverity = symptomSeverity,
+            onSymptomSeverityChange = { symptomSeverity = it },
+            exerciseType = exerciseType,
+            onExerciseTypeChange = { exerciseType = it },
             exerciseMinutes = exerciseMinutes,
             onExerciseMinutesChange = { exerciseMinutes = it },
+            exerciseIntensity = exerciseIntensity,
+            onExerciseIntensityChange = { exerciseIntensity = it },
+            dietMeal = dietMeal,
+            onDietMealChange = { dietMeal = it },
+            dietContent = dietContent,
+            onDietContentChange = { dietContent = it },
             appointmentTime = appointmentTime,
             onAppointmentTimeChange = { appointmentTime = it },
             appointmentLocation = appointmentLocation,
@@ -168,7 +186,13 @@ private fun CalendarScreen(
                     onFetalMovementCountChange = { fetalMovementCount = it },
                     onFetalMovementPeriodChange = { fetalMovementPeriod = it },
                     onFetalMovementFeelingChange = { fetalMovementFeeling = it },
+                    onSymptomTypeChange = { symptomType = it },
+                    onSymptomSeverityChange = { symptomSeverity = it },
+                    onExerciseTypeChange = { exerciseType = it },
                     onExerciseMinutesChange = { exerciseMinutes = it },
+                    onExerciseIntensityChange = { exerciseIntensity = it },
+                    onDietMealChange = { dietMeal = it },
+                    onDietContentChange = { dietContent = it },
                     onAppointmentTimeChange = { appointmentTime = it },
                     onAppointmentLocationChange = { appointmentLocation = it },
                     onAppointmentDoctorChange = { appointmentDoctor = it },
@@ -188,6 +212,12 @@ private fun CalendarScreen(
                             fetalMovementCount = fetalMovementCount,
                             fetalMovementPeriod = fetalMovementPeriod,
                             fetalMovementFeeling = fetalMovementFeeling,
+                            symptomType = symptomType,
+                            symptomSeverity = symptomSeverity,
+                            exerciseType = exerciseType,
+                            exerciseIntensity = exerciseIntensity,
+                            dietMeal = dietMeal,
+                            dietContent = dietContent,
                             appointmentTime = appointmentTime,
                             appointmentLocation = appointmentLocation,
                             appointmentDoctor = appointmentDoctor,
@@ -206,7 +236,13 @@ private fun CalendarScreen(
                             onFetalMovementCountChange = { fetalMovementCount = it },
                             onFetalMovementPeriodChange = { fetalMovementPeriod = it },
                             onFetalMovementFeelingChange = { fetalMovementFeeling = it },
+                            onSymptomTypeChange = { symptomType = it },
+                            onSymptomSeverityChange = { symptomSeverity = it },
+                            onExerciseTypeChange = { exerciseType = it },
                             onExerciseMinutesChange = { exerciseMinutes = it },
+                            onExerciseIntensityChange = { exerciseIntensity = it },
+                            onDietMealChange = { dietMeal = it },
+                            onDietContentChange = { dietContent = it },
                             onAppointmentTimeChange = { appointmentTime = it },
                             onAppointmentLocationChange = { appointmentLocation = it },
                             onAppointmentDoctorChange = { appointmentDoctor = it },
@@ -239,7 +275,13 @@ private fun CalendarScreen(
                 fetalMovementCount = record.fetalMovementCount?.toString().orEmpty()
                 fetalMovementPeriod = record.fetalMovementPeriod.orEmpty()
                 fetalMovementFeeling = record.fetalMovementFeeling.orEmpty()
+                symptomType = record.symptomType.orEmpty()
+                symptomSeverity = record.symptomSeverity.orEmpty()
+                exerciseType = record.exerciseType.orEmpty()
                 exerciseMinutes = record.exerciseMinutes?.toString().orEmpty()
+                exerciseIntensity = record.exerciseIntensity.orEmpty()
+                dietMeal = record.dietMeal.orEmpty()
+                dietContent = record.dietContent.orEmpty()
                 appointmentTime = record.appointmentTime.orEmpty()
                 appointmentLocation = record.appointmentLocation.orEmpty()
                 appointmentDoctor = record.appointmentDoctor.orEmpty()
@@ -437,8 +479,20 @@ private fun RecordForm(
     onFetalMovementPeriodChange: (String) -> Unit,
     fetalMovementFeeling: String,
     onFetalMovementFeelingChange: (String) -> Unit,
+    symptomType: String,
+    onSymptomTypeChange: (String) -> Unit,
+    symptomSeverity: String,
+    onSymptomSeverityChange: (String) -> Unit,
+    exerciseType: String,
+    onExerciseTypeChange: (String) -> Unit,
     exerciseMinutes: String,
     onExerciseMinutesChange: (String) -> Unit,
+    exerciseIntensity: String,
+    onExerciseIntensityChange: (String) -> Unit,
+    dietMeal: String,
+    onDietMealChange: (String) -> Unit,
+    dietContent: String,
+    onDietContentChange: (String) -> Unit,
     appointmentTime: String,
     onAppointmentTimeChange: (String) -> Unit,
     appointmentLocation: String,
@@ -542,17 +596,65 @@ private fun RecordForm(
                     )
                 }
 
-                CalendarRecordType.Exercise -> OutlinedTextField(
-                    value = exerciseMinutes,
-                    onValueChange = onExerciseMinutesChange,
-                    label = { Text(stringResource(R.string.calendar_exercise_minutes_label)) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                CalendarRecordType.Symptom -> {
+                    OutlinedTextField(
+                        value = symptomType,
+                        onValueChange = onSymptomTypeChange,
+                        label = { Text(stringResource(R.string.calendar_symptom_type_label)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    OutlinedTextField(
+                        value = symptomSeverity,
+                        onValueChange = onSymptomSeverityChange,
+                        label = { Text(stringResource(R.string.calendar_symptom_severity_label)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
 
-                CalendarRecordType.Symptom,
-                CalendarRecordType.Diet,
+                CalendarRecordType.Exercise -> {
+                    OutlinedTextField(
+                        value = exerciseType,
+                        onValueChange = onExerciseTypeChange,
+                        label = { Text(stringResource(R.string.calendar_exercise_type_label)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    OutlinedTextField(
+                        value = exerciseMinutes,
+                        onValueChange = onExerciseMinutesChange,
+                        label = { Text(stringResource(R.string.calendar_exercise_minutes_label)) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    OutlinedTextField(
+                        value = exerciseIntensity,
+                        onValueChange = onExerciseIntensityChange,
+                        label = { Text(stringResource(R.string.calendar_exercise_intensity_label)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                }
+
+                CalendarRecordType.Diet -> {
+                    OutlinedTextField(
+                        value = dietMeal,
+                        onValueChange = onDietMealChange,
+                        label = { Text(stringResource(R.string.calendar_diet_meal_label)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    OutlinedTextField(
+                        value = dietContent,
+                        onValueChange = onDietContentChange,
+                        label = { Text(stringResource(R.string.calendar_diet_content_label)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        minLines = 2,
+                    )
+                }
+
                 CalendarRecordType.Note -> Unit
             }
 
@@ -748,8 +850,26 @@ private fun RecordCard(
             record.fetalMovementFeeling?.let {
                 Text(stringResource(R.string.calendar_record_fetal_movement_feeling, it))
             }
+            record.symptomType?.let {
+                Text(stringResource(R.string.calendar_record_symptom_type, it))
+            }
+            record.symptomSeverity?.let {
+                Text(stringResource(R.string.calendar_record_symptom_severity, it))
+            }
+            record.exerciseType?.let {
+                Text(stringResource(R.string.calendar_record_exercise_type, it))
+            }
             record.exerciseMinutes?.let {
                 Text(stringResource(R.string.calendar_record_exercise_value, it))
+            }
+            record.exerciseIntensity?.let {
+                Text(stringResource(R.string.calendar_record_exercise_intensity, it))
+            }
+            record.dietMeal?.let {
+                Text(stringResource(R.string.calendar_record_diet_meal, it))
+            }
+            record.dietContent?.let {
+                Text(stringResource(R.string.calendar_record_diet_content, it))
             }
             record.appointmentTime?.let {
                 Text(stringResource(R.string.calendar_record_appointment_time, it))
@@ -810,7 +930,13 @@ private fun clearRecordForm(
     onFetalMovementCountChange: (String) -> Unit,
     onFetalMovementPeriodChange: (String) -> Unit,
     onFetalMovementFeelingChange: (String) -> Unit,
+    onSymptomTypeChange: (String) -> Unit,
+    onSymptomSeverityChange: (String) -> Unit,
+    onExerciseTypeChange: (String) -> Unit,
     onExerciseMinutesChange: (String) -> Unit,
+    onExerciseIntensityChange: (String) -> Unit,
+    onDietMealChange: (String) -> Unit,
+    onDietContentChange: (String) -> Unit,
     onAppointmentTimeChange: (String) -> Unit,
     onAppointmentLocationChange: (String) -> Unit,
     onAppointmentDoctorChange: (String) -> Unit,
@@ -822,7 +948,13 @@ private fun clearRecordForm(
     onFetalMovementCountChange("")
     onFetalMovementPeriodChange("")
     onFetalMovementFeelingChange("")
+    onSymptomTypeChange("")
+    onSymptomSeverityChange("")
+    onExerciseTypeChange("")
     onExerciseMinutesChange("")
+    onExerciseIntensityChange("")
+    onDietMealChange("")
+    onDietContentChange("")
     onAppointmentTimeChange("")
     onAppointmentLocationChange("")
     onAppointmentDoctorChange("")
