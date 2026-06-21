@@ -17,11 +17,20 @@ data class TrendSummary(
     val latestExerciseMinutes: Int?,
     val totalExerciseMinutes: Int,
     val exercisePoints: List<TrendPoint>,
+    val appointmentPlans: List<AppointmentPlan>,
 )
 
 data class TrendPoint(
     val date: LocalDate,
     val value: Double,
+)
+
+data class AppointmentPlan(
+    val date: LocalDate,
+    val time: String?,
+    val location: String?,
+    val doctor: String?,
+    val items: String?,
 )
 
 object TrendSummaryCalculator {
@@ -38,6 +47,18 @@ object TrendSummaryCalculator {
         val exerciseRecords = records
             .filter { it.type == CalendarRecordType.Exercise && it.exerciseMinutes != null }
             .sortedWith(compareBy<CalendarRecord> { it.date }.thenBy { it.createdAtEpochMillis })
+        val appointmentPlans = records
+            .filter { it.type == CalendarRecordType.Appointment }
+            .sortedWith(compareBy<CalendarRecord> { it.date }.thenBy { it.appointmentTime.orEmpty() })
+            .map { record ->
+                AppointmentPlan(
+                    date = record.date,
+                    time = record.appointmentTime,
+                    location = record.appointmentLocation,
+                    doctor = record.appointmentDoctor,
+                    items = record.appointmentItems,
+                )
+            }
         val weightPoints = weightRecords.map { record ->
             TrendPoint(
                 date = record.date,
@@ -73,6 +94,7 @@ object TrendSummaryCalculator {
             latestExerciseMinutes = exerciseRecords.lastOrNull()?.exerciseMinutes,
             totalExerciseMinutes = exerciseRecords.mapNotNull(CalendarRecord::exerciseMinutes).sum(),
             exercisePoints = exercisePoints,
+            appointmentPlans = appointmentPlans,
         )
     }
 

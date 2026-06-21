@@ -28,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yunqi.app.R
 import com.yunqi.app.domain.calendar.CalendarRecordType
+import com.yunqi.app.domain.trends.AppointmentPlan
 import com.yunqi.app.domain.trends.TrendRange
 import com.yunqi.app.domain.trends.TrendChartPolicy
 import com.yunqi.app.domain.trends.TrendPoint
@@ -106,6 +107,10 @@ private fun TrendsScreen(
             recordType = CalendarRecordType.Exercise,
             onRecordClick = onRecordClick,
         )
+        AppointmentPlanCard(
+            plans = summary.appointmentPlans,
+            onRecordClick = { onRecordClick(CalendarRecordType.Appointment) },
+        )
     }
 }
 
@@ -138,6 +143,76 @@ private fun TrendSummary.fetalMovementBody(): String = latestFetalMovementCount?
 } ?: stringResource(R.string.trends_fetal_movement_body)
 
 @Composable
+private fun AppointmentPlanCard(
+    plans: List<AppointmentPlan>,
+    onRecordClick: () -> Unit,
+) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.trends_appointment_plan_title),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            if (plans.isEmpty()) {
+                Text(
+                    text = stringResource(R.string.trends_appointment_plan_empty),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                Button(onClick = onRecordClick) {
+                    Text(text = stringResource(R.string.trends_record_appointment))
+                }
+            } else {
+                Text(
+                    text = stringResource(R.string.trends_appointment_plan_summary, plans.size),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                plans.take(MAX_APPOINTMENT_PLANS).forEach { plan ->
+                    AppointmentPlanRow(plan = plan)
+                }
+                Button(onClick = onRecordClick) {
+                    Text(text = stringResource(R.string.trends_record_appointment))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun AppointmentPlanRow(plan: AppointmentPlan) {
+    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+        Text(
+            text = stringResource(
+                R.string.trends_appointment_plan_date,
+                plan.date.toString(),
+                plan.time.orEmpty().ifBlank { stringResource(R.string.trends_appointment_plan_time_missing) },
+            ),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        val details = listOfNotNull(
+            plan.location?.ifBlank { null }?.let {
+                stringResource(R.string.trends_appointment_plan_location, it)
+            },
+            plan.doctor?.ifBlank { null }?.let {
+                stringResource(R.string.trends_appointment_plan_doctor, it)
+            },
+            plan.items?.ifBlank { null }?.let {
+                stringResource(R.string.trends_appointment_plan_items, it)
+            },
+        )
+        details.forEach { detail ->
+            Text(
+                text = detail,
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+    }
+}
+
+@Composable
 @OptIn(ExperimentalLayoutApi::class)
 private fun TrendRangeSelector(
     selectedRange: TrendRange,
@@ -157,6 +232,8 @@ private fun TrendRangeSelector(
         }
     }
 }
+
+private const val MAX_APPOINTMENT_PLANS = 3
 
 @Composable
 private fun TrendRange.toDisplayText(): String = when (this) {

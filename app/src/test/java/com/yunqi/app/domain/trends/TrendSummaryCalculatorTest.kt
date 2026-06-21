@@ -24,6 +24,7 @@ class TrendSummaryCalculatorTest {
         assertNull(summary.latestExerciseMinutes)
         assertEquals(0, summary.totalExerciseMinutes)
         assertEquals(emptyList<TrendPoint>(), summary.exercisePoints)
+        assertEquals(emptyList<AppointmentPlan>(), summary.appointmentPlans)
     }
 
     @Test
@@ -59,6 +60,24 @@ class TrendSummaryCalculatorTest {
                 type = CalendarRecordType.Exercise,
                 exerciseMinutes = 30,
             ),
+            record(
+                id = "appointment-later",
+                date = LocalDate.of(2026, 6, 10),
+                type = CalendarRecordType.Appointment,
+                appointmentTime = "14:00",
+                appointmentLocation = "Clinic B",
+                appointmentDoctor = "Dr Li",
+                appointmentItems = "Ultrasound",
+            ),
+            record(
+                id = "appointment-earlier",
+                date = LocalDate.of(2026, 6, 8),
+                type = CalendarRecordType.Appointment,
+                appointmentTime = "09:30",
+                appointmentLocation = "Clinic A",
+                appointmentDoctor = "Dr Chen",
+                appointmentItems = "Blood test",
+            ),
         )
 
         val summary = TrendSummaryCalculator.calculate(records)
@@ -90,6 +109,25 @@ class TrendSummaryCalculatorTest {
             listOf(TrendPoint(LocalDate.of(2026, 6, 6), 30.0)),
             summary.exercisePoints,
         )
+        assertEquals(
+            listOf(
+                AppointmentPlan(
+                    date = LocalDate.of(2026, 6, 8),
+                    time = "09:30",
+                    location = "Clinic A",
+                    doctor = "Dr Chen",
+                    items = "Blood test",
+                ),
+                AppointmentPlan(
+                    date = LocalDate.of(2026, 6, 10),
+                    time = "14:00",
+                    location = "Clinic B",
+                    doctor = "Dr Li",
+                    items = "Ultrasound",
+                ),
+            ),
+            summary.appointmentPlans,
+        )
     }
 
     private fun record(
@@ -99,6 +137,10 @@ class TrendSummaryCalculatorTest {
         weightKg: Double? = null,
         fetalMovementCount: Int? = null,
         exerciseMinutes: Int? = null,
+        appointmentTime: String? = null,
+        appointmentLocation: String? = null,
+        appointmentDoctor: String? = null,
+        appointmentItems: String? = null,
     ): CalendarRecord = CalendarRecord(
         id = id,
         date = date,
@@ -107,10 +149,10 @@ class TrendSummaryCalculatorTest {
         weightKg = weightKg,
         fetalMovementCount = fetalMovementCount,
         exerciseMinutes = exerciseMinutes,
-        appointmentTime = null,
-        appointmentLocation = null,
-        appointmentDoctor = null,
-        appointmentItems = null,
+        appointmentTime = appointmentTime,
+        appointmentLocation = appointmentLocation,
+        appointmentDoctor = appointmentDoctor,
+        appointmentItems = appointmentItems,
         appointmentResult = null,
         createdAtEpochMillis = 0L,
     )

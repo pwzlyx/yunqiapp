@@ -101,6 +101,15 @@
     <string name="trends_record_weight">记录体重</string>
     <string name="trends_record_fetal_movement">记录胎动</string>
     <string name="trends_record_exercise">记录运动</string>
+    <string name="trends_appointment_plan_title">产检计划</string>
+    <string name="trends_appointment_plan_empty">记录产检时间后，可以在这里回看产检计划。</string>
+    <string name="trends_appointment_plan_summary">已记录 %1$d 项产检计划。</string>
+    <string name="trends_appointment_plan_date">%1$s · %2$s</string>
+    <string name="trends_appointment_plan_time_missing">未填写时间</string>
+    <string name="trends_appointment_plan_location">地点：%1$s</string>
+    <string name="trends_appointment_plan_doctor">医生：%1$s</string>
+    <string name="trends_appointment_plan_items">项目：%1$s</string>
+    <string name="trends_record_appointment">记录产检</string>
 
     <string name="settings_title">我的</string>
     <string name="settings_pregnancy_profile">孕期档案</string>
