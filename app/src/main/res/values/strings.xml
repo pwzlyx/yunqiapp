@@ -55,6 +55,15 @@
     <string name="setup_week_label">孕周</string>
     <string name="setup_day_label">孕天</string>
     <string name="setup_save">保存档案</string>
+    <string name="setup_preview_title">推算预览</string>
+    <string name="setup_preview_gestational_age">今天约为 %1$d 周 %2$d 天</string>
+    <string name="setup_preview_due_date">预产期：%1$s</string>
+    <string name="setup_preview_trimester">阶段：%1$s</string>
+    <string name="setup_preview_waiting">输入完整信息后显示推算结果。</string>
+    <string name="trimester_first">孕早期</string>
+    <string name="trimester_second">孕中期</string>
+    <string name="trimester_third">孕晚期</string>
+    <string name="trimester_post_due">可能已过预产期</string>
     <string name="setup_error_invalid_date">请输入有效日期，格式为 YYYY-MM-DD。</string>
     <string name="setup_error_invalid_week">孕周必须是 0 到 42 之间的数字。</string>
     <string name="setup_error_invalid_day">孕天必须是 0 到 6 之间的数字。</string>

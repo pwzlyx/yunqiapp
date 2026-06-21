@@ -14,6 +14,9 @@ import java.time.LocalDate
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = PregnancyProfileRepository(application.applicationContext)
 
+    /**
+     * Converts the local pregnancy profile stream into render-ready home screen state.
+     */
     val uiState: StateFlow<HomeUiState> = repository.profileFlow
         .map { profile ->
             if (profile == null) {
@@ -31,4 +34,3 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             initialValue = HomeUiState.ProfileMissing,
         )
 }
-

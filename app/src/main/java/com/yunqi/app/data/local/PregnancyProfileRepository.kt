@@ -18,6 +18,9 @@ private val Context.pregnancyProfileDataStore by preferencesDataStore(
 class PregnancyProfileRepository(
     private val context: Context,
 ) {
+    /**
+     * Emits the locally stored pregnancy profile, or null before the user completes setup.
+     */
     val profileFlow: Flow<PregnancyProfile?> = context.pregnancyProfileDataStore.data.map { preferences ->
         val method = preferences[Keys.method]
             ?.let { runCatching { PregnancyCalculationMethod.valueOf(it) }.getOrNull() }
@@ -35,6 +38,9 @@ class PregnancyProfileRepository(
         )
     }
 
+    /**
+     * Persists the pregnancy profile to app-local DataStore preferences.
+     */
     suspend fun saveProfile(profile: PregnancyProfile) {
         context.pregnancyProfileDataStore.edit { preferences ->
             preferences[Keys.method] = profile.calculationMethod.name

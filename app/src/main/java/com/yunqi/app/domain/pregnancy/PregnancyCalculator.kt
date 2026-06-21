@@ -23,6 +23,9 @@ data class PregnancyProgress(
 )
 
 object PregnancyCalculator {
+    /**
+     * Estimates pregnancy progress from the first day of the last menstrual period.
+     */
     fun fromLastMenstrualPeriod(
         lmpDate: LocalDate,
         today: LocalDate,
@@ -31,6 +34,9 @@ object PregnancyCalculator {
         return buildProgress(lmpDate = lmpDate, dueDate = dueDate, today = today)
     }
 
+    /**
+     * Estimates pregnancy progress by reversing the standard 280-day due-date rule.
+     */
     fun fromDueDate(
         dueDate: LocalDate,
         today: LocalDate,
@@ -39,6 +45,9 @@ object PregnancyCalculator {
         return buildProgress(lmpDate = lmpDate, dueDate = dueDate, today = today)
     }
 
+    /**
+     * Estimates pregnancy progress from a user-entered gestational age captured on setup day.
+     */
     fun fromCurrentGestationalAge(
         week: Int,
         day: Int,
@@ -54,6 +63,9 @@ object PregnancyCalculator {
         return buildProgress(lmpDate = lmpDate, dueDate = dueDate, today = today)
     }
 
+    /**
+     * Builds the normalized progress object shared by all supported calculation methods.
+     */
     private fun buildProgress(
         lmpDate: LocalDate,
         dueDate: LocalDate,
@@ -75,6 +87,9 @@ object PregnancyCalculator {
         )
     }
 
+    /**
+     * Maps gestational week to the app's broad pregnancy stage labels.
+     */
     private fun trimesterFor(week: Long): Trimester = when {
         week <= 13 -> Trimester.First
         week <= 27 -> Trimester.Second

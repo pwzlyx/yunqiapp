@@ -2,8 +2,9 @@ package com.yunqi.app.feature.setup
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,6 +12,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Card
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -27,7 +29,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yunqi.app.R
+import com.yunqi.app.domain.pregnancy.Trimester
+import com.yunqi.app.domain.pregnancy.calculateProgress
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @Composable
 fun PregnancySetupRoute(
@@ -41,7 +46,16 @@ fun PregnancySetupRoute(
     var week by remember { mutableStateOf("") }
     var day by remember { mutableStateOf("") }
     var errorMessageResId by remember { mutableStateOf<Int?>(null) }
+    val parser = remember { PregnancyProfileFormParser() }
     val coroutineScope = rememberCoroutineScope()
+    val input = PregnancySetupInput(
+        method = selectedMethod,
+        lmpDate = lmpDate,
+        dueDate = dueDate,
+        week = week,
+        day = day,
+    )
+    val previewResult = remember(input) { parser.parse(input) }
 
     Column(
         modifier = Modifier
@@ -112,15 +126,13 @@ fun PregnancySetupRoute(
             )
         }
 
+        PreviewCard(parseResult = previewResult)
+
         Button(
             modifier = Modifier.fillMaxWidth(),
             onClick = {
                 coroutineScope.launch {
-                    val result = when (selectedMethod) {
-                        SetupMethod.LastMenstrualPeriod -> viewModel.saveLastMenstrualPeriod(lmpDate)
-                        SetupMethod.DueDate -> viewModel.saveDueDate(dueDate)
-                        SetupMethod.CurrentGestationalAge -> viewModel.saveCurrentGestationalAge(week, day)
-                    }
+                    val result = viewModel.save(input)
 
                     errorMessageResId = result.toErrorMessageResId()
                     if (result == SaveProfileResult.Success) {
@@ -141,11 +153,59 @@ fun PregnancySetupRoute(
 }
 
 @Composable
+private fun PreviewCard(parseResult: PregnancyProfileParseResult) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.setup_preview_title),
+                style = MaterialTheme.typography.titleMedium,
+            )
+
+            if (parseResult is PregnancyProfileParseResult.Success) {
+                val progress = parseResult.profile.calculateProgress(today = LocalDate.now())
+                Text(
+                    text = stringResource(
+                        R.string.setup_preview_gestational_age,
+                        progress.week,
+                        progress.day,
+                    ),
+                )
+                Text(
+                    text = stringResource(
+                        R.string.setup_preview_due_date,
+                        progress.dueDate.toString(),
+                    ),
+                )
+                Text(
+                    text = stringResource(
+                        R.string.setup_preview_trimester,
+                        progress.trimester.toDisplayText(),
+                    ),
+                )
+            } else {
+                Text(
+                    text = stringResource(R.string.setup_preview_waiting),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
 private fun MethodSelector(
     selectedMethod: SetupMethod,
     onMethodSelected: (SetupMethod) -> Unit,
 ) {
-    Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
         FilterChip(
             selected = selectedMethod == SetupMethod.LastMenstrualPeriod,
             onClick = { onMethodSelected(SetupMethod.LastMenstrualPeriod) },
@@ -181,10 +241,17 @@ private fun DateField(
     )
 }
 
+@Composable
+private fun Trimester.toDisplayText(): String = when (this) {
+    Trimester.First -> stringResource(R.string.trimester_first)
+    Trimester.Second -> stringResource(R.string.trimester_second)
+    Trimester.Third -> stringResource(R.string.trimester_third)
+    Trimester.PostDue -> stringResource(R.string.trimester_post_due)
+}
+
 private fun SaveProfileResult.toErrorMessageResId(): Int? = when (this) {
     SaveProfileResult.Success -> null
     SaveProfileResult.InvalidDate -> R.string.setup_error_invalid_date
     SaveProfileResult.InvalidWeek -> R.string.setup_error_invalid_week
     SaveProfileResult.InvalidDay -> R.string.setup_error_invalid_day
 }
-

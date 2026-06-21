@@ -17,6 +17,9 @@ data class PregnancyProfile(
     val setupDate: LocalDate,
 )
 
+/**
+ * Calculates current progress from a persisted local pregnancy profile.
+ */
 fun PregnancyProfile.calculateProgress(today: LocalDate): PregnancyProgress = when (calculationMethod) {
     PregnancyCalculationMethod.LastMenstrualPeriod -> {
         PregnancyCalculator.fromLastMenstrualPeriod(
@@ -41,4 +44,3 @@ fun PregnancyProfile.calculateProgress(today: LocalDate): PregnancyProgress = wh
         )
     }
 }
-
