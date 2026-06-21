@@ -522,6 +522,14 @@ private fun RecordForm(
                 CalendarRecordType.Note -> Unit
             }
 
+            if (recordType.shouldShowMedicalAttentionNotice()) {
+                Text(
+                    text = stringResource(R.string.calendar_medical_attention_notice),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+
             OutlinedTextField(
                 value = note,
                 onValueChange = onNoteChange,
@@ -743,6 +751,17 @@ private fun CalendarRecordActionResult.toErrorMessageResId(): Int? = when (this)
     CalendarRecordActionResult.InvalidFetalMovement -> R.string.calendar_error_invalid_fetal_movement
     CalendarRecordActionResult.InvalidExerciseMinutes -> R.string.calendar_error_invalid_exercise_minutes
     CalendarRecordActionResult.InvalidAppointmentTime -> R.string.calendar_error_invalid_appointment_time
+}
+
+private fun CalendarRecordType.shouldShowMedicalAttentionNotice(): Boolean = when (this) {
+    CalendarRecordType.FetalMovement,
+    CalendarRecordType.Symptom -> true
+
+    CalendarRecordType.Appointment,
+    CalendarRecordType.Weight,
+    CalendarRecordType.Exercise,
+    CalendarRecordType.Diet,
+    CalendarRecordType.Note -> false
 }
 
 private fun clearRecordForm(
