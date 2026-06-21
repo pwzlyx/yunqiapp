@@ -47,6 +47,8 @@ class TrendRecordFilterTest {
         note = "",
         weightKg = 55.0,
         fetalMovementCount = null,
+        fetalMovementPeriod = null,
+        fetalMovementFeeling = null,
         exerciseMinutes = null,
         appointmentTime = null,
         appointmentLocation = null,

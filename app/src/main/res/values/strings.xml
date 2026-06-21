@@ -45,6 +45,8 @@
     <string name="calendar_note_label">备注</string>
     <string name="calendar_weight_label">体重 kg</string>
     <string name="calendar_fetal_movement_label">胎动次数</string>
+    <string name="calendar_fetal_movement_period_label">胎动时间段</string>
+    <string name="calendar_fetal_movement_feeling_label">胎动感受</string>
     <string name="calendar_appointment_time_label">产检时间</string>
     <string name="calendar_appointment_location_label">医院/地点</string>
     <string name="calendar_appointment_doctor_label">医生</string>
@@ -65,6 +67,8 @@
     <string name="calendar_medical_attention_notice">如胎动明显减少、模式改变、出血、剧烈腹痛或严重不适，请及时联系医生、助产士或产科单位。</string>
     <string name="calendar_record_weight_value">体重：%1$.1f kg</string>
     <string name="calendar_record_fetal_movement_value">胎动：%1$d 次</string>
+    <string name="calendar_record_fetal_movement_period">时间段：%1$s</string>
+    <string name="calendar_record_fetal_movement_feeling">感受：%1$s</string>
     <string name="calendar_record_appointment_time">时间：%1$s</string>
     <string name="calendar_record_appointment_location">地点：%1$s</string>
     <string name="calendar_record_appointment_doctor">医生：%1$s</string>

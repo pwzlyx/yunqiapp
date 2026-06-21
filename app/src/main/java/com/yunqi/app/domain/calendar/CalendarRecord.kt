@@ -19,6 +19,8 @@ data class CalendarRecord(
     val note: String,
     val weightKg: Double?,
     val fetalMovementCount: Int?,
+    val fetalMovementPeriod: String?,
+    val fetalMovementFeeling: String?,
     val exerciseMinutes: Int?,
     val appointmentTime: String?,
     val appointmentLocation: String?,

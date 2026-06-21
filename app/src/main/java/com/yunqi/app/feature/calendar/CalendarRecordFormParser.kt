@@ -45,6 +45,12 @@ class CalendarRecordFormParser(
                 note = input.note.trim(),
                 weightKg = if (input.type == CalendarRecordType.Weight) weightKg else null,
                 fetalMovementCount = if (input.type == CalendarRecordType.FetalMovement) fetalMovementCount else null,
+                fetalMovementPeriod = input.fetalMovementPeriod.trim().takeIf {
+                    input.type == CalendarRecordType.FetalMovement && it.isNotBlank()
+                },
+                fetalMovementFeeling = input.fetalMovementFeeling.trim().takeIf {
+                    input.type == CalendarRecordType.FetalMovement && it.isNotBlank()
+                },
                 exerciseMinutes = if (input.type == CalendarRecordType.Exercise) exerciseMinutes else null,
                 appointmentTime = input.appointmentTime.trim().takeIf {
                     input.type == CalendarRecordType.Appointment && it.isNotBlank()
@@ -82,6 +88,8 @@ data class CalendarRecordInput(
     val note: String,
     val weightKg: String,
     val fetalMovementCount: String,
+    val fetalMovementPeriod: String = "",
+    val fetalMovementFeeling: String = "",
     val appointmentTime: String,
     val appointmentLocation: String,
     val appointmentDoctor: String = "",

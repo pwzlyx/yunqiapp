@@ -125,6 +125,8 @@ class CalendarRecordFormParserTest {
                 note = "",
                 weightKg = "",
                 fetalMovementCount = "12",
+                fetalMovementPeriod = "  evening  ",
+                fetalMovementFeeling = "Active after dinner",
                 appointmentTime = "",
                 appointmentLocation = "",
             ),
@@ -132,6 +134,8 @@ class CalendarRecordFormParserTest {
 
         val record = (result as CalendarRecordParseResult.Success).record
         assertEquals(12, record.fetalMovementCount)
+        assertEquals("evening", record.fetalMovementPeriod)
+        assertEquals("Active after dinner", record.fetalMovementFeeling)
     }
 
     @Test

@@ -11,7 +11,7 @@ import com.yunqi.app.data.local.record.CalendarRecordEntity
 
 @Database(
     entities = [CalendarRecordEntity::class],
-    version = 3,
+    version = 4,
     exportSchema = false,
 )
 abstract class YunqiDatabase : RoomDatabase() {
@@ -31,7 +31,7 @@ abstract class YunqiDatabase : RoomDatabase() {
                     YunqiDatabase::class.java,
                     "yunqi.db",
                 )
-                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3, MIGRATION_3_4)
                     .build()
                     .also { instance = it }
             }
@@ -47,6 +47,13 @@ abstract class YunqiDatabase : RoomDatabase() {
                 db.execSQL("ALTER TABLE calendar_records ADD COLUMN appointmentDoctor TEXT")
                 db.execSQL("ALTER TABLE calendar_records ADD COLUMN appointmentItems TEXT")
                 db.execSQL("ALTER TABLE calendar_records ADD COLUMN appointmentResult TEXT")
+            }
+        }
+
+        private val MIGRATION_3_4 = object : Migration(3, 4) {
+            override fun migrate(db: SupportSQLiteDatabase) {
+                db.execSQL("ALTER TABLE calendar_records ADD COLUMN fetalMovementPeriod TEXT")
+                db.execSQL("ALTER TABLE calendar_records ADD COLUMN fetalMovementFeeling TEXT")
             }
         }
     }

@@ -89,6 +89,8 @@ private fun CalendarScreen(
     var note by remember { mutableStateOf("") }
     var weightKg by remember { mutableStateOf("") }
     var fetalMovementCount by remember { mutableStateOf("") }
+    var fetalMovementPeriod by remember { mutableStateOf("") }
+    var fetalMovementFeeling by remember { mutableStateOf("") }
     var exerciseMinutes by remember { mutableStateOf("") }
     var appointmentTime by remember { mutableStateOf("") }
     var appointmentLocation by remember { mutableStateOf("") }
@@ -141,6 +143,10 @@ private fun CalendarScreen(
             onWeightKgChange = { weightKg = it },
             fetalMovementCount = fetalMovementCount,
             onFetalMovementCountChange = { fetalMovementCount = it },
+            fetalMovementPeriod = fetalMovementPeriod,
+            onFetalMovementPeriodChange = { fetalMovementPeriod = it },
+            fetalMovementFeeling = fetalMovementFeeling,
+            onFetalMovementFeelingChange = { fetalMovementFeeling = it },
             exerciseMinutes = exerciseMinutes,
             onExerciseMinutesChange = { exerciseMinutes = it },
             appointmentTime = appointmentTime,
@@ -160,6 +166,8 @@ private fun CalendarScreen(
                     onNoteChange = { note = it },
                     onWeightKgChange = { weightKg = it },
                     onFetalMovementCountChange = { fetalMovementCount = it },
+                    onFetalMovementPeriodChange = { fetalMovementPeriod = it },
+                    onFetalMovementFeelingChange = { fetalMovementFeeling = it },
                     onExerciseMinutesChange = { exerciseMinutes = it },
                     onAppointmentTimeChange = { appointmentTime = it },
                     onAppointmentLocationChange = { appointmentLocation = it },
@@ -178,6 +186,8 @@ private fun CalendarScreen(
                             note = note,
                             weightKg = weightKg,
                             fetalMovementCount = fetalMovementCount,
+                            fetalMovementPeriod = fetalMovementPeriod,
+                            fetalMovementFeeling = fetalMovementFeeling,
                             appointmentTime = appointmentTime,
                             appointmentLocation = appointmentLocation,
                             appointmentDoctor = appointmentDoctor,
@@ -194,6 +204,8 @@ private fun CalendarScreen(
                             onNoteChange = { note = it },
                             onWeightKgChange = { weightKg = it },
                             onFetalMovementCountChange = { fetalMovementCount = it },
+                            onFetalMovementPeriodChange = { fetalMovementPeriod = it },
+                            onFetalMovementFeelingChange = { fetalMovementFeeling = it },
                             onExerciseMinutesChange = { exerciseMinutes = it },
                             onAppointmentTimeChange = { appointmentTime = it },
                             onAppointmentLocationChange = { appointmentLocation = it },
@@ -225,6 +237,8 @@ private fun CalendarScreen(
                 note = record.note
                 weightKg = record.weightKg?.toString().orEmpty()
                 fetalMovementCount = record.fetalMovementCount?.toString().orEmpty()
+                fetalMovementPeriod = record.fetalMovementPeriod.orEmpty()
+                fetalMovementFeeling = record.fetalMovementFeeling.orEmpty()
                 exerciseMinutes = record.exerciseMinutes?.toString().orEmpty()
                 appointmentTime = record.appointmentTime.orEmpty()
                 appointmentLocation = record.appointmentLocation.orEmpty()
@@ -419,6 +433,10 @@ private fun RecordForm(
     onWeightKgChange: (String) -> Unit,
     fetalMovementCount: String,
     onFetalMovementCountChange: (String) -> Unit,
+    fetalMovementPeriod: String,
+    onFetalMovementPeriodChange: (String) -> Unit,
+    fetalMovementFeeling: String,
+    onFetalMovementFeelingChange: (String) -> Unit,
     exerciseMinutes: String,
     onExerciseMinutesChange: (String) -> Unit,
     appointmentTime: String,
@@ -499,14 +517,30 @@ private fun RecordForm(
                     modifier = Modifier.fillMaxWidth(),
                 )
 
-                CalendarRecordType.FetalMovement -> OutlinedTextField(
-                    value = fetalMovementCount,
-                    onValueChange = onFetalMovementCountChange,
-                    label = { Text(stringResource(R.string.calendar_fetal_movement_label)) },
-                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-                    singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
-                )
+                CalendarRecordType.FetalMovement -> {
+                    OutlinedTextField(
+                        value = fetalMovementCount,
+                        onValueChange = onFetalMovementCountChange,
+                        label = { Text(stringResource(R.string.calendar_fetal_movement_label)) },
+                        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    OutlinedTextField(
+                        value = fetalMovementPeriod,
+                        onValueChange = onFetalMovementPeriodChange,
+                        label = { Text(stringResource(R.string.calendar_fetal_movement_period_label)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    OutlinedTextField(
+                        value = fetalMovementFeeling,
+                        onValueChange = onFetalMovementFeelingChange,
+                        label = { Text(stringResource(R.string.calendar_fetal_movement_feeling_label)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        minLines = 2,
+                    )
+                }
 
                 CalendarRecordType.Exercise -> OutlinedTextField(
                     value = exerciseMinutes,
@@ -708,6 +742,12 @@ private fun RecordCard(
             record.fetalMovementCount?.let {
                 Text(stringResource(R.string.calendar_record_fetal_movement_value, it))
             }
+            record.fetalMovementPeriod?.let {
+                Text(stringResource(R.string.calendar_record_fetal_movement_period, it))
+            }
+            record.fetalMovementFeeling?.let {
+                Text(stringResource(R.string.calendar_record_fetal_movement_feeling, it))
+            }
             record.exerciseMinutes?.let {
                 Text(stringResource(R.string.calendar_record_exercise_value, it))
             }
@@ -768,6 +808,8 @@ private fun clearRecordForm(
     onNoteChange: (String) -> Unit,
     onWeightKgChange: (String) -> Unit,
     onFetalMovementCountChange: (String) -> Unit,
+    onFetalMovementPeriodChange: (String) -> Unit,
+    onFetalMovementFeelingChange: (String) -> Unit,
     onExerciseMinutesChange: (String) -> Unit,
     onAppointmentTimeChange: (String) -> Unit,
     onAppointmentLocationChange: (String) -> Unit,
@@ -778,6 +820,8 @@ private fun clearRecordForm(
     onNoteChange("")
     onWeightKgChange("")
     onFetalMovementCountChange("")
+    onFetalMovementPeriodChange("")
+    onFetalMovementFeelingChange("")
     onExerciseMinutesChange("")
     onAppointmentTimeChange("")
     onAppointmentLocationChange("")

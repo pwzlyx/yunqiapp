@@ -78,6 +78,8 @@ class AppointmentReminderSchedulerTest {
         note = "",
         weightKg = null,
         fetalMovementCount = null,
+        fetalMovementPeriod = null,
+        fetalMovementFeeling = null,
         exerciseMinutes = null,
         appointmentTime = time,
         appointmentLocation = location,

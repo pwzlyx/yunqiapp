@@ -148,6 +148,8 @@ class TrendSummaryCalculatorTest {
         note = "",
         weightKg = weightKg,
         fetalMovementCount = fetalMovementCount,
+        fetalMovementPeriod = null,
+        fetalMovementFeeling = null,
         exerciseMinutes = exerciseMinutes,
         appointmentTime = appointmentTime,
         appointmentLocation = appointmentLocation,
