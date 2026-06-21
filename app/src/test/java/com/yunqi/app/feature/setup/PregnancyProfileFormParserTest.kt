@@ -90,6 +90,24 @@ class PregnancyProfileFormParserTest {
     }
 
     @Test
+    fun `preserves exercise restriction setting`() {
+        val result = parser.parse(
+            PregnancySetupInput(
+                method = SetupMethod.LastMenstrualPeriod,
+                lmpDate = "2026-01-01",
+                dueDate = "",
+                conceptionDate = "",
+                week = "",
+                day = "",
+                exerciseRestricted = true,
+            ),
+        )
+
+        val profile = (result as PregnancyProfileParseResult.Success).profile
+        assertEquals(true, profile.exerciseRestricted)
+    }
+
+    @Test
     fun `rejects invalid date input`() {
         val result = parser.parse(
             PregnancySetupInput(

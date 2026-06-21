@@ -28,6 +28,7 @@ class PregnancyProfileFormParser(
                         conceptionDate = null,
                         gestationalWeekAtSetup = null,
                         gestationalDayAtSetup = null,
+                        exerciseRestricted = input.exerciseRestricted,
                         setupDate = setupDate,
                     ),
                 )
@@ -44,6 +45,7 @@ class PregnancyProfileFormParser(
                         conceptionDate = null,
                         gestationalWeekAtSetup = null,
                         gestationalDayAtSetup = null,
+                        exerciseRestricted = input.exerciseRestricted,
                         setupDate = setupDate,
                     ),
                 )
@@ -60,6 +62,7 @@ class PregnancyProfileFormParser(
                         conceptionDate = conceptionDate,
                         gestationalWeekAtSetup = null,
                         gestationalDayAtSetup = null,
+                        exerciseRestricted = input.exerciseRestricted,
                         setupDate = setupDate,
                     ),
                 )
@@ -82,6 +85,7 @@ class PregnancyProfileFormParser(
                         conceptionDate = null,
                         gestationalWeekAtSetup = week,
                         gestationalDayAtSetup = day,
+                        exerciseRestricted = input.exerciseRestricted,
                         setupDate = setupDate,
                     ),
                 )
@@ -101,6 +105,7 @@ data class PregnancySetupInput(
     val conceptionDate: String,
     val week: String,
     val day: String,
+    val exerciseRestricted: Boolean = false,
 )
 
 sealed interface PregnancyProfileParseResult {

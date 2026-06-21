@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -16,6 +17,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,6 +48,7 @@ fun PregnancySetupRoute(
     var conceptionDate by remember { mutableStateOf("") }
     var week by remember { mutableStateOf("") }
     var day by remember { mutableStateOf("") }
+    var exerciseRestricted by remember { mutableStateOf(false) }
     var errorMessageResId by remember { mutableStateOf<Int?>(null) }
     val parser = remember { PregnancyProfileFormParser() }
     val coroutineScope = rememberCoroutineScope()
@@ -56,6 +59,7 @@ fun PregnancySetupRoute(
         conceptionDate = conceptionDate,
         week = week,
         day = day,
+        exerciseRestricted = exerciseRestricted,
     )
     val previewResult = remember(input) { parser.parse(input) }
 
@@ -129,6 +133,11 @@ fun PregnancySetupRoute(
             }
         }
 
+        ExerciseRestrictionToggle(
+            checked = exerciseRestricted,
+            onCheckedChange = { exerciseRestricted = it },
+        )
+
         errorMessageResId?.let { messageResId ->
             Text(
                 text = stringResource(messageResId),
@@ -158,6 +167,36 @@ fun PregnancySetupRoute(
             text = stringResource(R.string.medical_disclaimer),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun ExerciseRestrictionToggle(
+    checked: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.setup_exercise_restricted),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+            Text(
+                text = stringResource(R.string.setup_exercise_restricted_body),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Switch(
+            checked = checked,
+            onCheckedChange = onCheckedChange,
         )
     }
 }

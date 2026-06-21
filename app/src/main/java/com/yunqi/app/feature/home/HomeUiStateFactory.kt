@@ -19,6 +19,7 @@ class HomeUiStateFactory(
         return HomeUiState.Ready(
             progress = progress,
             calculationMethod = profile.calculationMethod,
+            exerciseRestricted = profile.exerciseRestricted,
             contentCards = contentRepository.cardsForWeek(progress.week),
         )
     }

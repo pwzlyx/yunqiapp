@@ -16,6 +16,7 @@ data class PregnancyProfile(
     val conceptionDate: LocalDate?,
     val gestationalWeekAtSetup: Int?,
     val gestationalDayAtSetup: Int?,
+    val exerciseRestricted: Boolean = false,
     val setupDate: LocalDate,
 )
 

@@ -1,6 +1,7 @@
 package com.yunqi.app.data.local
 
 import android.content.Context
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -35,6 +36,7 @@ class PregnancyProfileRepository(
             conceptionDate = preferences[Keys.conceptionDate]?.let(LocalDate::parse),
             gestationalWeekAtSetup = preferences[Keys.gestationalWeekAtSetup],
             gestationalDayAtSetup = preferences[Keys.gestationalDayAtSetup],
+            exerciseRestricted = preferences[Keys.exerciseRestricted] ?: false,
             setupDate = setupDate,
         )
     }
@@ -51,6 +53,7 @@ class PregnancyProfileRepository(
             putOrRemove(preferences, Keys.conceptionDate, profile.conceptionDate?.toString())
             putOrRemove(preferences, Keys.gestationalWeekAtSetup, profile.gestationalWeekAtSetup)
             putOrRemove(preferences, Keys.gestationalDayAtSetup, profile.gestationalDayAtSetup)
+            preferences[Keys.exerciseRestricted] = profile.exerciseRestricted
         }
     }
 
@@ -79,6 +82,7 @@ class PregnancyProfileRepository(
         val conceptionDate = stringPreferencesKey("conception_date")
         val gestationalWeekAtSetup = intPreferencesKey("gestational_week_at_setup")
         val gestationalDayAtSetup = intPreferencesKey("gestational_day_at_setup")
+        val exerciseRestricted = booleanPreferencesKey("exercise_restricted")
         val setupDate = stringPreferencesKey("setup_date")
     }
 }

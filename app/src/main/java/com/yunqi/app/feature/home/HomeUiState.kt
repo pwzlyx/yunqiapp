@@ -10,6 +10,7 @@ sealed interface HomeUiState {
     data class Ready(
         val progress: PregnancyProgress,
         val calculationMethod: PregnancyCalculationMethod,
+        val exerciseRestricted: Boolean,
         val contentCards: List<PregnancyContentCard>,
     ) : HomeUiState
 }

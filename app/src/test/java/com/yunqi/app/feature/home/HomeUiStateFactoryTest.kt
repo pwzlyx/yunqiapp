@@ -38,8 +38,30 @@ class HomeUiStateFactoryTest {
         assertEquals(16, state.progress.week)
         assertEquals(0, state.progress.day)
         assertEquals(PregnancyCalculationMethod.LastMenstrualPeriod, state.calculationMethod)
+        assertEquals(false, state.exerciseRestricted)
         assertTrue(state.contentCards.any { it.category == PregnancyContentCategory.Diet })
         assertTrue(state.contentCards.any { it.category == PregnancyContentCategory.Exercise })
         assertTrue(state.contentCards.any { it.category == PregnancyContentCategory.Safety })
+    }
+
+    @Test
+    fun `ready state exposes exercise restriction`() {
+        val factory = HomeUiStateFactory(
+            todayProvider = { LocalDate.of(2026, 6, 21) },
+        )
+        val profile = PregnancyProfile(
+            calculationMethod = PregnancyCalculationMethod.LastMenstrualPeriod,
+            lmpDate = LocalDate.of(2026, 3, 1),
+            dueDate = null,
+            conceptionDate = null,
+            gestationalWeekAtSetup = null,
+            gestationalDayAtSetup = null,
+            exerciseRestricted = true,
+            setupDate = LocalDate.of(2026, 6, 1),
+        )
+
+        val state = factory.create(profile) as HomeUiState.Ready
+
+        assertEquals(true, state.exerciseRestricted)
     }
 }

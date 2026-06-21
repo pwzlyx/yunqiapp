@@ -13,6 +13,7 @@ Current result: passing.
 ## Implemented MVP Evidence
 
 - Pregnancy setup supports last menstrual period, due date, conception date, and current gestational age.
+- Pregnancy setup supports marking doctor-restricted exercise; Home suppresses default exercise suggestions when enabled.
 - Home reads the local pregnancy profile and displays current gestational age, due date countdown, reminders, quick record entry points, diet guidance, exercise guidance, safety guidance, source names, source URLs, and review dates.
 - Calendar supports month view, date markers, day detail list, create, edit, and delete with confirmation.
 - Calendar record types include appointment, weight, fetal movement, symptom, exercise, diet, and note.

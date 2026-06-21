@@ -69,7 +69,12 @@ private fun HomeScreen(
                         onQuickRecordClick = onQuickRecordClick,
                     )
                 }
-                item { PlanningCard(contentCards = uiState.contentCards) }
+                item {
+                    PlanningCard(
+                        contentCards = uiState.contentCards,
+                        exerciseRestricted = uiState.exerciseRestricted,
+                    )
+                }
             }
         }
 
@@ -172,7 +177,10 @@ private fun ReminderCard(
 }
 
 @Composable
-private fun PlanningCard(contentCards: List<PregnancyContentCard>) {
+private fun PlanningCard(
+    contentCards: List<PregnancyContentCard>,
+    exerciseRestricted: Boolean,
+) {
     val cardsByCategory = contentCards.groupBy { it.category }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
@@ -180,10 +188,19 @@ private fun PlanningCard(contentCards: List<PregnancyContentCard>) {
             title = stringResource(R.string.home_section_diet),
             cards = cardsByCategory[PregnancyContentCategory.Diet].orEmpty(),
         )
-        ContentSection(
-            title = stringResource(R.string.home_section_exercise),
-            cards = cardsByCategory[PregnancyContentCategory.Exercise].orEmpty(),
-        )
+        if (exerciseRestricted) {
+            SectionCard(title = stringResource(R.string.home_section_exercise)) {
+                Text(
+                    text = stringResource(R.string.home_exercise_restricted_body),
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        } else {
+            ContentSection(
+                title = stringResource(R.string.home_section_exercise),
+                cards = cardsByCategory[PregnancyContentCategory.Exercise].orEmpty(),
+            )
+        }
         ContentSection(
             title = stringResource(R.string.home_section_safety),
             cards = cardsByCategory[PregnancyContentCategory.Safety].orEmpty(),
