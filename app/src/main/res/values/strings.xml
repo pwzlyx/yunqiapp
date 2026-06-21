@@ -20,9 +20,9 @@
     <string name="home_section_diet">饮食重点</string>
     <string name="home_section_exercise">运动建议</string>
     <string name="home_section_safety">安全提醒</string>
-    <string name="home_empty_reminders">设置孕期档案后生成今日提醒。</string>
-    <string name="home_diet_placeholder">饮食建议会按孕周从本地内容库读取，并显示来源和更新时间。</string>
-    <string name="home_exercise_placeholder">运动建议会结合孕期档案与医生限制运动设置展示。</string>
+    <string name="home_reminder_weight">记录今日体重变化</string>
+    <string name="home_reminder_fetal_movement">留意胎动日常模式</string>
+    <string name="home_reminder_appointment">查看或安排下次产检</string>
     <string name="home_content_source">来源：%1$s · 更新：%2$s</string>
     <string name="medical_disclaimer">本 App 用于记录与健康管理提醒，不能替代医生诊断或治疗建议。</string>
 

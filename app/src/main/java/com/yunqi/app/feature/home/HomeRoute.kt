@@ -54,13 +54,12 @@ private fun HomeScreen(
         when (uiState) {
             HomeUiState.ProfileMissing -> {
                 item { MissingProfileCard(onSetProfileClick = onSetProfileClick) }
-                item { PlanningCard() }
             }
 
             is HomeUiState.Ready -> {
                 item { PregnancyProgressHeader(uiState) }
                 item { ProfileSourceCard(uiState.calculationMethod) }
-                item { ReminderCard() }
+                item { ReminderCard(contentCards = uiState.contentCards) }
                 item { PlanningCard(contentCards = uiState.contentCards) }
             }
         }
@@ -130,20 +129,22 @@ private fun ProfileSourceCard(calculationMethod: PregnancyCalculationMethod) {
 }
 
 @Composable
-private fun ReminderCard() {
-    SectionCard(title = stringResource(R.string.home_section_reminders)) {
-        AssistChip(onClick = {}, label = { Text(stringResource(R.string.home_empty_reminders)) })
-    }
-}
+private fun ReminderCard(contentCards: List<PregnancyContentCard>) {
+    val safetyCard = contentCards.firstOrNull { it.category == PregnancyContentCategory.Safety }
 
-@Composable
-private fun PlanningCard() {
-    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        SectionCard(title = stringResource(R.string.home_section_diet)) {
-            Text(stringResource(R.string.home_diet_placeholder))
-        }
-        SectionCard(title = stringResource(R.string.home_section_exercise)) {
-            Text(stringResource(R.string.home_exercise_placeholder))
+    SectionCard(title = stringResource(R.string.home_section_reminders)) {
+        AssistChip(onClick = {}, label = { Text(stringResource(R.string.home_reminder_weight)) })
+        AssistChip(onClick = {}, label = { Text(stringResource(R.string.home_reminder_fetal_movement)) })
+        AssistChip(onClick = {}, label = { Text(stringResource(R.string.home_reminder_appointment)) })
+        safetyCard?.let { card ->
+            Text(
+                text = stringResource(card.titleResId),
+                style = MaterialTheme.typography.titleSmall,
+            )
+            Text(
+                text = stringResource(card.bodyResId),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }
