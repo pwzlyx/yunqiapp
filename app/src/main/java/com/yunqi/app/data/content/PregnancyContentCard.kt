@@ -5,6 +5,7 @@ import androidx.annotation.StringRes
 enum class PregnancyContentCategory {
     Diet,
     Exercise,
+    AntenatalCare,
     Safety,
 }
 
@@ -19,4 +20,3 @@ data class PregnancyContentCard(
     val sourceUrl: String,
     val reviewedAt: String,
 )
-

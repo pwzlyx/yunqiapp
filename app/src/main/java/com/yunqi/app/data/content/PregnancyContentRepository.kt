@@ -35,6 +35,17 @@ class PregnancyContentRepository {
             reviewedAt = "2026-06-21",
         ),
         PregnancyContentCard(
+            id = "antenatal_first_trimester_first_visit",
+            category = PregnancyContentCategory.AntenatalCare,
+            weekStart = 0,
+            weekEnd = 13,
+            titleResId = R.string.content_antenatal_first_title,
+            bodyResId = R.string.content_antenatal_first_body,
+            sourceNameResId = R.string.source_who_antenatal_care,
+            sourceUrl = "https://www.who.int/publications/i/item/9789241549912",
+            reviewedAt = "2026-06-21",
+        ),
+        PregnancyContentCard(
             id = "safety_first_trimester_warning_signs",
             category = PregnancyContentCategory.Safety,
             weekStart = 0,
@@ -65,6 +76,17 @@ class PregnancyContentRepository {
             bodyResId = R.string.content_exercise_second_body,
             sourceNameResId = R.string.source_cdc_physical_activity,
             sourceUrl = "https://www.cdc.gov/physical-activity-basics/guidelines/healthy-pregnant-or-postpartum-women.html",
+            reviewedAt = "2026-06-21",
+        ),
+        PregnancyContentCard(
+            id = "antenatal_second_trimester_regular_visits",
+            category = PregnancyContentCategory.AntenatalCare,
+            weekStart = 14,
+            weekEnd = 27,
+            titleResId = R.string.content_antenatal_second_title,
+            bodyResId = R.string.content_antenatal_second_body,
+            sourceNameResId = R.string.source_who_antenatal_care,
+            sourceUrl = "https://www.who.int/publications/i/item/9789241549912",
             reviewedAt = "2026-06-21",
         ),
         PregnancyContentCard(
@@ -101,6 +123,17 @@ class PregnancyContentRepository {
             reviewedAt = "2026-06-21",
         ),
         PregnancyContentCard(
+            id = "antenatal_third_trimester_birth_plan",
+            category = PregnancyContentCategory.AntenatalCare,
+            weekStart = 28,
+            weekEnd = 42,
+            titleResId = R.string.content_antenatal_third_title,
+            bodyResId = R.string.content_antenatal_third_body,
+            sourceNameResId = R.string.source_who_antenatal_care,
+            sourceUrl = "https://www.who.int/publications/i/item/9789241549912",
+            reviewedAt = "2026-06-21",
+        ),
+        PregnancyContentCard(
             id = "safety_third_trimester_reduced_movement",
             category = PregnancyContentCategory.Safety,
             weekStart = 28,
@@ -113,4 +146,3 @@ class PregnancyContentRepository {
         ),
     )
 }
-

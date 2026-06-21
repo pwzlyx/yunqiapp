@@ -192,6 +192,10 @@ private fun PlanningCard(
             title = stringResource(R.string.home_section_diet),
             cards = cardsByCategory[PregnancyContentCategory.Diet].orEmpty(),
         )
+        ContentSection(
+            title = stringResource(R.string.home_section_antenatal_care),
+            cards = cardsByCategory[PregnancyContentCategory.AntenatalCare].orEmpty(),
+        )
         if (exerciseRestricted) {
             SectionCard(title = stringResource(R.string.home_section_exercise)) {
                 Text(
@@ -233,6 +237,11 @@ private fun ContentSection(
                     stringResource(card.sourceNameResId),
                     card.reviewedAt,
                 ),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                text = stringResource(R.string.home_content_source_url, card.sourceUrl),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )

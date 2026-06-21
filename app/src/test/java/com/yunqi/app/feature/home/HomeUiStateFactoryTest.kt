@@ -41,6 +41,7 @@ class HomeUiStateFactoryTest {
         assertEquals(false, state.exerciseRestricted)
         assertTrue(state.contentCards.any { it.category == PregnancyContentCategory.Diet })
         assertTrue(state.contentCards.any { it.category == PregnancyContentCategory.Exercise })
+        assertTrue(state.contentCards.any { it.category == PregnancyContentCategory.AntenatalCare })
         assertTrue(state.contentCards.any { it.category == PregnancyContentCategory.Safety })
     }
 
