@@ -13,6 +13,7 @@ import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 
 private const val REMINDER_LEAD_MINUTES = 60L
+private const val APPOINTMENT_REMINDER_TAG = "appointment_reminder"
 
 class AppointmentReminderScheduler(
     context: Context,
@@ -28,6 +29,7 @@ class AppointmentReminderScheduler(
 
         val request = OneTimeWorkRequestBuilder<AppointmentReminderWorker>()
             .setInitialDelay(plan.delayMillis, TimeUnit.MILLISECONDS)
+            .addTag(APPOINTMENT_REMINDER_TAG)
             .setInputData(
                 Data.Builder()
                     .putString(AppointmentReminderWorker.KEY_RECORD_ID, record.id)
@@ -45,6 +47,10 @@ class AppointmentReminderScheduler(
 
     fun cancel(recordId: String) {
         workManager.cancelUniqueWork(workNameFor(recordId))
+    }
+
+    fun cancelAll() {
+        workManager.cancelAllWorkByTag(APPOINTMENT_REMINDER_TAG)
     }
 
     private fun workNameFor(recordId: String): String = "appointment-reminder-$recordId"

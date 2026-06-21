@@ -1,8 +1,15 @@
 package com.yunqi.app.feature.settings
 
+import android.Manifest
+import android.content.Context
+import android.content.pm.PackageManager
+import android.os.Build
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -12,16 +19,85 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yunqi.app.R
 
 @Composable
 fun SettingsRoute(
     contentPadding: PaddingValues,
     onPregnancyProfileClick: () -> Unit,
+    viewModel: SettingsViewModel = viewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    var notificationsAllowed by remember { mutableStateOf(context.canPostNotifications()) }
+    val notificationPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestPermission(),
+    ) { granted ->
+        notificationsAllowed = granted
+        viewModel.setAppointmentRemindersEnabled(granted)
+    }
+    DisposableEffect(context, lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_RESUME) {
+                notificationsAllowed = context.canPostNotifications()
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
+        }
+    }
+    LaunchedEffect(notificationsAllowed, uiState.appointmentRemindersEnabled) {
+        if (!notificationsAllowed && uiState.appointmentRemindersEnabled) {
+            viewModel.setAppointmentRemindersEnabled(false)
+        }
+    }
+
+    SettingsScreen(
+        contentPadding = contentPadding,
+        uiState = uiState,
+        notificationsAllowed = notificationsAllowed,
+        onPregnancyProfileClick = onPregnancyProfileClick,
+        onReminderEnabledChange = { enabled ->
+            if (!enabled) {
+                viewModel.setAppointmentRemindersEnabled(false)
+            } else if (context.mustRequestNotificationPermission() && !notificationsAllowed) {
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                viewModel.setAppointmentRemindersEnabled(true)
+            }
+        },
+    )
+}
+
+@Composable
+private fun SettingsScreen(
+    contentPadding: PaddingValues,
+    uiState: SettingsUiState,
+    notificationsAllowed: Boolean,
+    onPregnancyProfileClick: () -> Unit,
+    onReminderEnabledChange: (Boolean) -> Unit,
+) {
+    val remindersChecked = uiState.appointmentRemindersEnabled && notificationsAllowed
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -49,7 +125,37 @@ fun SettingsRoute(
             text = stringResource(R.string.settings_reminders),
             style = MaterialTheme.typography.titleMedium,
         )
-        Switch(checked = true, onCheckedChange = {})
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.settings_appointment_reminders),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                Text(
+                    text = stringResource(R.string.settings_appointment_reminders_body),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+                if (uiState.appointmentRemindersEnabled && !notificationsAllowed) {
+                    Text(
+                        text = stringResource(R.string.settings_notifications_permission_missing),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+                }
+            }
+            Switch(
+                checked = remindersChecked,
+                onCheckedChange = onReminderEnabledChange,
+            )
+        }
         Text(
             text = stringResource(R.string.medical_disclaimer),
             style = MaterialTheme.typography.bodySmall,
@@ -58,3 +164,13 @@ fun SettingsRoute(
     }
 }
 
+private fun Context.mustRequestNotificationPermission(): Boolean =
+    Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+
+private fun Context.canPostNotifications(): Boolean {
+    if (!mustRequestNotificationPermission()) return true
+    return ContextCompat.checkSelfPermission(
+        this,
+        Manifest.permission.POST_NOTIFICATIONS,
+    ) == PackageManager.PERMISSION_GRANTED
+}

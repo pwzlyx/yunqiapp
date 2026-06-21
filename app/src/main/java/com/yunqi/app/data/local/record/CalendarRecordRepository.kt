@@ -27,6 +27,12 @@ class CalendarRecordRepository(context: Context) {
         }
 
     /**
+     * Returns future appointment records so reminder settings can rebuild scheduled work.
+     */
+    suspend fun futureAppointmentRecords(fromDate: LocalDate): List<CalendarRecord> =
+        dao.futureAppointmentRecords(fromDate.toString()).map(CalendarRecordEntity::toDomain)
+
+    /**
      * Saves a calendar record to the private local Room database.
      */
     suspend fun save(record: CalendarRecord) {

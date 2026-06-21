@@ -20,6 +20,15 @@ interface CalendarRecordDao {
     @Query("SELECT * FROM calendar_records ORDER BY date DESC, createdAtEpochMillis DESC")
     fun allRecords(): Flow<List<CalendarRecordEntity>>
 
+    @Query(
+        """
+        SELECT * FROM calendar_records
+        WHERE type = 'Appointment' AND date >= :fromDate
+        ORDER BY date ASC, appointmentTime ASC
+        """,
+    )
+    suspend fun futureAppointmentRecords(fromDate: String): List<CalendarRecordEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(record: CalendarRecordEntity)
 
