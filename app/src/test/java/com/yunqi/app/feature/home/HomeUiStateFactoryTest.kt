@@ -27,6 +27,7 @@ class HomeUiStateFactoryTest {
             calculationMethod = PregnancyCalculationMethod.LastMenstrualPeriod,
             lmpDate = LocalDate.of(2026, 3, 1),
             dueDate = null,
+            conceptionDate = null,
             gestationalWeekAtSetup = null,
             gestationalDayAtSetup = null,
             setupDate = LocalDate.of(2026, 6, 1),

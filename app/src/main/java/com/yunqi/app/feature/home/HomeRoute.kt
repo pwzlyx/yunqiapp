@@ -117,6 +117,7 @@ private fun ProfileSourceCard(calculationMethod: PregnancyCalculationMethod) {
     val sourceText = when (calculationMethod) {
         PregnancyCalculationMethod.LastMenstrualPeriod -> stringResource(R.string.home_profile_source_lmp)
         PregnancyCalculationMethod.DueDate -> stringResource(R.string.home_profile_source_due_date)
+        PregnancyCalculationMethod.ConceptionDate -> stringResource(R.string.home_profile_source_conception_date)
         PregnancyCalculationMethod.CurrentGestationalAge -> stringResource(R.string.home_profile_source_current_age)
     }
 

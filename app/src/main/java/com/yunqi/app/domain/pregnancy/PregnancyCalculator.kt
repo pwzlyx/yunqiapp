@@ -4,6 +4,8 @@ import java.time.LocalDate
 import java.time.temporal.ChronoUnit
 
 private const val FULL_TERM_DAYS = 280L
+private const val CONCEPTION_TO_DUE_DATE_DAYS = 266L
+private const val LMP_TO_CONCEPTION_DAYS = 14L
 
 enum class Trimester {
     First,
@@ -42,6 +44,18 @@ object PregnancyCalculator {
         today: LocalDate,
     ): PregnancyProgress {
         val lmpDate = dueDate.minusDays(FULL_TERM_DAYS)
+        return buildProgress(lmpDate = lmpDate, dueDate = dueDate, today = today)
+    }
+
+    /**
+     * Estimates pregnancy progress from an entered conception date.
+     */
+    fun fromConceptionDate(
+        conceptionDate: LocalDate,
+        today: LocalDate,
+    ): PregnancyProgress {
+        val lmpDate = conceptionDate.minusDays(LMP_TO_CONCEPTION_DAYS)
+        val dueDate = conceptionDate.plusDays(CONCEPTION_TO_DUE_DATE_DAYS)
         return buildProgress(lmpDate = lmpDate, dueDate = dueDate, today = today)
     }
 

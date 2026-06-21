@@ -11,6 +11,7 @@ class PregnancyProfileTest {
             calculationMethod = PregnancyCalculationMethod.LastMenstrualPeriod,
             lmpDate = LocalDate.of(2026, 1, 1),
             dueDate = null,
+            conceptionDate = null,
             gestationalWeekAtSetup = null,
             gestationalDayAtSetup = null,
             setupDate = LocalDate.of(2026, 1, 10),
@@ -29,6 +30,7 @@ class PregnancyProfileTest {
             calculationMethod = PregnancyCalculationMethod.DueDate,
             lmpDate = null,
             dueDate = LocalDate.of(2026, 10, 8),
+            conceptionDate = null,
             gestationalWeekAtSetup = null,
             gestationalDayAtSetup = null,
             setupDate = LocalDate.of(2026, 1, 10),
@@ -42,11 +44,30 @@ class PregnancyProfileTest {
     }
 
     @Test
+    fun `conception date profile calculates progress`() {
+        val profile = PregnancyProfile(
+            calculationMethod = PregnancyCalculationMethod.ConceptionDate,
+            lmpDate = null,
+            dueDate = null,
+            conceptionDate = LocalDate.of(2026, 1, 15),
+            gestationalWeekAtSetup = null,
+            gestationalDayAtSetup = null,
+            setupDate = LocalDate.of(2026, 1, 20),
+        )
+
+        val progress = profile.calculateProgress(today = LocalDate.of(2026, 2, 1))
+
+        assertEquals(LocalDate.of(2026, 1, 1), progress.lmpDate)
+        assertEquals(LocalDate.of(2026, 10, 8), progress.dueDate)
+    }
+
+    @Test
     fun `current gestational age profile calculates progress`() {
         val profile = PregnancyProfile(
             calculationMethod = PregnancyCalculationMethod.CurrentGestationalAge,
             lmpDate = null,
             dueDate = null,
+            conceptionDate = null,
             gestationalWeekAtSetup = 10,
             gestationalDayAtSetup = 2,
             setupDate = LocalDate.of(2026, 6, 21),
@@ -58,4 +79,3 @@ class PregnancyProfileTest {
         assertEquals(2, progress.day)
     }
 }
-

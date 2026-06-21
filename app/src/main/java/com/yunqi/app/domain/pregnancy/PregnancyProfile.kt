@@ -5,6 +5,7 @@ import java.time.LocalDate
 enum class PregnancyCalculationMethod {
     LastMenstrualPeriod,
     DueDate,
+    ConceptionDate,
     CurrentGestationalAge,
 }
 
@@ -12,6 +13,7 @@ data class PregnancyProfile(
     val calculationMethod: PregnancyCalculationMethod,
     val lmpDate: LocalDate?,
     val dueDate: LocalDate?,
+    val conceptionDate: LocalDate?,
     val gestationalWeekAtSetup: Int?,
     val gestationalDayAtSetup: Int?,
     val setupDate: LocalDate,
@@ -31,6 +33,13 @@ fun PregnancyProfile.calculateProgress(today: LocalDate): PregnancyProgress = wh
     PregnancyCalculationMethod.DueDate -> {
         PregnancyCalculator.fromDueDate(
             dueDate = requireNotNull(dueDate) { "dueDate is required" },
+            today = today,
+        )
+    }
+
+    PregnancyCalculationMethod.ConceptionDate -> {
+        PregnancyCalculator.fromConceptionDate(
+            conceptionDate = requireNotNull(conceptionDate) { "conceptionDate is required" },
             today = today,
         )
     }

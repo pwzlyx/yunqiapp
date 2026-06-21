@@ -32,6 +32,7 @@ class PregnancyProfileRepository(
             calculationMethod = method,
             lmpDate = preferences[Keys.lmpDate]?.let(LocalDate::parse),
             dueDate = preferences[Keys.dueDate]?.let(LocalDate::parse),
+            conceptionDate = preferences[Keys.conceptionDate]?.let(LocalDate::parse),
             gestationalWeekAtSetup = preferences[Keys.gestationalWeekAtSetup],
             gestationalDayAtSetup = preferences[Keys.gestationalDayAtSetup],
             setupDate = setupDate,
@@ -47,6 +48,7 @@ class PregnancyProfileRepository(
             preferences[Keys.setupDate] = profile.setupDate.toString()
             putOrRemove(preferences, Keys.lmpDate, profile.lmpDate?.toString())
             putOrRemove(preferences, Keys.dueDate, profile.dueDate?.toString())
+            putOrRemove(preferences, Keys.conceptionDate, profile.conceptionDate?.toString())
             putOrRemove(preferences, Keys.gestationalWeekAtSetup, profile.gestationalWeekAtSetup)
             putOrRemove(preferences, Keys.gestationalDayAtSetup, profile.gestationalDayAtSetup)
         }
@@ -74,6 +76,7 @@ class PregnancyProfileRepository(
         val method = stringPreferencesKey("method")
         val lmpDate = stringPreferencesKey("lmp_date")
         val dueDate = stringPreferencesKey("due_date")
+        val conceptionDate = stringPreferencesKey("conception_date")
         val gestationalWeekAtSetup = intPreferencesKey("gestational_week_at_setup")
         val gestationalDayAtSetup = intPreferencesKey("gestational_day_at_setup")
         val setupDate = stringPreferencesKey("setup_date")

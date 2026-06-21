@@ -18,6 +18,7 @@ class PregnancyProfileFormParserTest {
                 method = SetupMethod.LastMenstrualPeriod,
                 lmpDate = "2026-01-01",
                 dueDate = "",
+                conceptionDate = "",
                 week = "",
                 day = "",
             ),
@@ -37,6 +38,7 @@ class PregnancyProfileFormParserTest {
                 method = SetupMethod.DueDate,
                 lmpDate = "",
                 dueDate = "2026-10-08",
+                conceptionDate = "",
                 week = "",
                 day = "",
             ),
@@ -49,12 +51,32 @@ class PregnancyProfileFormParserTest {
     }
 
     @Test
+    fun `parses conception date input`() {
+        val result = parser.parse(
+            PregnancySetupInput(
+                method = SetupMethod.ConceptionDate,
+                lmpDate = "",
+                dueDate = "",
+                conceptionDate = "2026-01-15",
+                week = "",
+                day = "",
+            ),
+        )
+
+        assertTrue(result is PregnancyProfileParseResult.Success)
+        val profile = (result as PregnancyProfileParseResult.Success).profile
+        assertEquals(PregnancyCalculationMethod.ConceptionDate, profile.calculationMethod)
+        assertEquals(LocalDate.of(2026, 1, 15), profile.conceptionDate)
+    }
+
+    @Test
     fun `parses current gestational age input`() {
         val result = parser.parse(
             PregnancySetupInput(
                 method = SetupMethod.CurrentGestationalAge,
                 lmpDate = "",
                 dueDate = "",
+                conceptionDate = "",
                 week = "10",
                 day = "2",
             ),
@@ -74,6 +96,7 @@ class PregnancyProfileFormParserTest {
                 method = SetupMethod.LastMenstrualPeriod,
                 lmpDate = "2026/01/01",
                 dueDate = "",
+                conceptionDate = "",
                 week = "",
                 day = "",
             ),
@@ -89,6 +112,7 @@ class PregnancyProfileFormParserTest {
                 method = SetupMethod.CurrentGestationalAge,
                 lmpDate = "",
                 dueDate = "",
+                conceptionDate = "",
                 week = "43",
                 day = "0",
             ),
@@ -104,6 +128,7 @@ class PregnancyProfileFormParserTest {
                 method = SetupMethod.CurrentGestationalAge,
                 lmpDate = "",
                 dueDate = "",
+                conceptionDate = "",
                 week = "12",
                 day = "7",
             ),
@@ -112,4 +137,3 @@ class PregnancyProfileFormParserTest {
         assertEquals(PregnancyProfileParseResult.InvalidDay, result)
     }
 }
-

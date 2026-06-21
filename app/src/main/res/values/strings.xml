@@ -14,6 +14,7 @@
     <string name="home_profile_missing_action">去设置</string>
     <string name="home_profile_source_lmp">按末次月经估算</string>
     <string name="home_profile_source_due_date">按预产期估算</string>
+    <string name="home_profile_source_conception_date">按受孕日期估算</string>
     <string name="home_profile_source_current_age">按当前孕周估算</string>
     <string name="home_profile_saved_body">孕期档案已保存在本机，首页会按今天日期自动更新孕周。</string>
     <string name="home_section_reminders">今日提醒</string>
@@ -80,9 +81,11 @@
     <string name="setup_subtitle">选择一种你最确定的信息，App 会在本地推算孕周和预产期。</string>
     <string name="setup_method_lmp">末次月经</string>
     <string name="setup_method_due_date">预产期</string>
+    <string name="setup_method_conception_date">受孕日期</string>
     <string name="setup_method_current_age">当前孕周</string>
     <string name="setup_lmp_label">末次月经日期</string>
     <string name="setup_due_date_label">预产期</string>
+    <string name="setup_conception_date_label">受孕日期</string>
     <string name="setup_date_hint">YYYY-MM-DD</string>
     <string name="setup_week_label">孕周</string>
     <string name="setup_day_label">孕天</string>

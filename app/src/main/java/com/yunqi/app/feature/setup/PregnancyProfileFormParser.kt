@@ -25,6 +25,7 @@ class PregnancyProfileFormParser(
                         calculationMethod = PregnancyCalculationMethod.LastMenstrualPeriod,
                         lmpDate = lmpDate,
                         dueDate = null,
+                        conceptionDate = null,
                         gestationalWeekAtSetup = null,
                         gestationalDayAtSetup = null,
                         setupDate = setupDate,
@@ -40,6 +41,23 @@ class PregnancyProfileFormParser(
                         calculationMethod = PregnancyCalculationMethod.DueDate,
                         lmpDate = null,
                         dueDate = dueDate,
+                        conceptionDate = null,
+                        gestationalWeekAtSetup = null,
+                        gestationalDayAtSetup = null,
+                        setupDate = setupDate,
+                    ),
+                )
+            }
+
+            SetupMethod.ConceptionDate -> {
+                val conceptionDate = input.conceptionDate.parseIsoDate()
+                    ?: return PregnancyProfileParseResult.InvalidDate
+                PregnancyProfileParseResult.Success(
+                    PregnancyProfile(
+                        calculationMethod = PregnancyCalculationMethod.ConceptionDate,
+                        lmpDate = null,
+                        dueDate = null,
+                        conceptionDate = conceptionDate,
                         gestationalWeekAtSetup = null,
                         gestationalDayAtSetup = null,
                         setupDate = setupDate,
@@ -61,6 +79,7 @@ class PregnancyProfileFormParser(
                         calculationMethod = PregnancyCalculationMethod.CurrentGestationalAge,
                         lmpDate = null,
                         dueDate = null,
+                        conceptionDate = null,
                         gestationalWeekAtSetup = week,
                         gestationalDayAtSetup = day,
                         setupDate = setupDate,
@@ -79,6 +98,7 @@ data class PregnancySetupInput(
     val method: SetupMethod,
     val lmpDate: String,
     val dueDate: String,
+    val conceptionDate: String,
     val week: String,
     val day: String,
 )
@@ -89,4 +109,3 @@ sealed interface PregnancyProfileParseResult {
     data object InvalidWeek : PregnancyProfileParseResult
     data object InvalidDay : PregnancyProfileParseResult
 }
-

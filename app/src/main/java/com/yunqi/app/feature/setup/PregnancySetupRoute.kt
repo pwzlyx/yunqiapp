@@ -43,6 +43,7 @@ fun PregnancySetupRoute(
     var selectedMethod by remember { mutableStateOf(SetupMethod.LastMenstrualPeriod) }
     var lmpDate by remember { mutableStateOf("") }
     var dueDate by remember { mutableStateOf("") }
+    var conceptionDate by remember { mutableStateOf("") }
     var week by remember { mutableStateOf("") }
     var day by remember { mutableStateOf("") }
     var errorMessageResId by remember { mutableStateOf<Int?>(null) }
@@ -52,6 +53,7 @@ fun PregnancySetupRoute(
         method = selectedMethod,
         lmpDate = lmpDate,
         dueDate = dueDate,
+        conceptionDate = conceptionDate,
         week = week,
         day = day,
     )
@@ -96,6 +98,14 @@ fun PregnancySetupRoute(
                     value = dueDate,
                     onValueChange = { dueDate = it },
                     label = stringResource(R.string.setup_due_date_label),
+                )
+            }
+
+            SetupMethod.ConceptionDate -> {
+                DateField(
+                    value = conceptionDate,
+                    onValueChange = { conceptionDate = it },
+                    label = stringResource(R.string.setup_conception_date_label),
                 )
             }
 
@@ -215,6 +225,11 @@ private fun MethodSelector(
             selected = selectedMethod == SetupMethod.DueDate,
             onClick = { onMethodSelected(SetupMethod.DueDate) },
             label = { Text(stringResource(R.string.setup_method_due_date)) },
+        )
+        FilterChip(
+            selected = selectedMethod == SetupMethod.ConceptionDate,
+            onClick = { onMethodSelected(SetupMethod.ConceptionDate) },
+            label = { Text(stringResource(R.string.setup_method_conception_date)) },
         )
         FilterChip(
             selected = selectedMethod == SetupMethod.CurrentGestationalAge,

@@ -29,6 +29,19 @@ class PregnancyCalculatorTest {
     }
 
     @Test
+    fun `calculates progress from conception date`() {
+        val result = PregnancyCalculator.fromConceptionDate(
+            conceptionDate = LocalDate.of(2026, 1, 15),
+            today = LocalDate.of(2026, 2, 1),
+        )
+
+        assertEquals(LocalDate.of(2026, 1, 1), result.lmpDate)
+        assertEquals(LocalDate.of(2026, 10, 8), result.dueDate)
+        assertEquals(4, result.week)
+        assertEquals(3, result.day)
+    }
+
+    @Test
     fun `calculates lmp from current gestational age`() {
         val result = PregnancyCalculator.fromCurrentGestationalAge(
             week = 10,
@@ -42,4 +55,3 @@ class PregnancyCalculatorTest {
         assertEquals(2, result.day)
     }
 }
-

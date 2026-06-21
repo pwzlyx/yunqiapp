@@ -26,6 +26,7 @@ class PregnancySetupViewModel(application: Application) : AndroidViewModel(appli
 enum class SetupMethod {
     LastMenstrualPeriod,
     DueDate,
+    ConceptionDate,
     CurrentGestationalAge,
 }
 
