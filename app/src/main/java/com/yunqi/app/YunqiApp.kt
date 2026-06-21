@@ -109,7 +109,14 @@ fun YunqiApp() {
                 )
             }
             composable(TopLevelDestination.Trends.route) {
-                TrendsRoute(contentPadding = innerPadding)
+                TrendsRoute(
+                    contentPadding = innerPadding,
+                    onRecordClick = { recordType ->
+                        navController.navigate(TopLevelDestination.Calendar.routeFor(recordType)) {
+                            launchSingleTop = true
+                        }
+                    },
+                )
             }
             composable(TopLevelDestination.Settings.route) {
                 SettingsRoute(

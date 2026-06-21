@@ -75,6 +75,9 @@
     <string name="trends_fetal_movement_summary">已记录 %1$d 次，最近胎动 %2$d 次。</string>
     <string name="trends_exercise_title">运动统计</string>
     <string name="trends_exercise_body">记录运动时长后展示每周活动量。</string>
+    <string name="trends_record_weight">记录体重</string>
+    <string name="trends_record_fetal_movement">记录胎动</string>
+    <string name="trends_record_exercise">记录运动</string>
 
     <string name="settings_title">我的</string>
     <string name="settings_pregnancy_profile">孕期档案</string>

@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
@@ -26,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yunqi.app.R
+import com.yunqi.app.domain.calendar.CalendarRecordType
 import com.yunqi.app.domain.trends.TrendRange
 import com.yunqi.app.domain.trends.TrendPoint
 import com.yunqi.app.domain.trends.TrendSummary
@@ -34,6 +36,7 @@ import kotlin.math.max
 @Composable
 fun TrendsRoute(
     contentPadding: PaddingValues,
+    onRecordClick: (CalendarRecordType) -> Unit,
     viewModel: TrendsViewModel = viewModel(),
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -43,6 +46,7 @@ fun TrendsRoute(
         selectedRange = uiState.selectedRange,
         summary = uiState.summary,
         onRangeSelected = viewModel::selectRange,
+        onRecordClick = onRecordClick,
     )
 }
 
@@ -52,6 +56,7 @@ private fun TrendsScreen(
     selectedRange: TrendRange,
     summary: TrendSummary,
     onRangeSelected: (TrendRange) -> Unit,
+    onRecordClick: (CalendarRecordType) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -80,6 +85,9 @@ private fun TrendsScreen(
                 )
             } ?: stringResource(R.string.trends_weight_body),
             points = summary.weightPoints,
+            emptyActionResId = R.string.trends_record_weight,
+            recordType = CalendarRecordType.Weight,
+            onRecordClick = onRecordClick,
         )
         TrendCard(
             titleResId = R.string.trends_fetal_movement_title,
@@ -92,6 +100,9 @@ private fun TrendsScreen(
                 )
             } ?: stringResource(R.string.trends_fetal_movement_body),
             points = summary.fetalMovementPoints,
+            emptyActionResId = R.string.trends_record_fetal_movement,
+            recordType = CalendarRecordType.FetalMovement,
+            onRecordClick = onRecordClick,
         )
         TrendCard(
             titleResId = R.string.trends_exercise_title,
@@ -104,6 +115,9 @@ private fun TrendsScreen(
                 )
             } ?: stringResource(R.string.trends_exercise_body),
             points = summary.exercisePoints,
+            emptyActionResId = R.string.trends_record_exercise,
+            recordType = CalendarRecordType.Exercise,
+            onRecordClick = onRecordClick,
         )
     }
 }
@@ -141,6 +155,9 @@ private fun TrendCard(
     @StringRes titleResId: Int,
     body: String,
     points: List<TrendPoint>,
+    @StringRes emptyActionResId: Int,
+    recordType: CalendarRecordType,
+    onRecordClick: (CalendarRecordType) -> Unit,
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
@@ -157,6 +174,10 @@ private fun TrendCard(
             )
             if (points.isNotEmpty()) {
                 TrendLineChart(points = points)
+            } else {
+                Button(onClick = { onRecordClick(recordType) }) {
+                    Text(text = stringResource(emptyActionResId))
+                }
             }
         }
     }

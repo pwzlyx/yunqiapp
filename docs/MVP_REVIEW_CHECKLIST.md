@@ -21,6 +21,7 @@ Current result: passing.
 - Daily record reminders use local WorkManager jobs, Android notifications, notification permission handling, and configurable preset times.
 - Trends show weight, fetal movement, and exercise charts from local Room records.
 - Trends support 7-day, 30-day, and all-time ranges.
+- Trends empty states provide direct entry points for recording weight, fetal movement, and exercise.
 - Settings can edit pregnancy profile, manage appointment reminders, and clear all local pregnancy data.
 - Sensitive data stays local: cloud backup and device transfer extraction are disabled.
 
