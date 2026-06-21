@@ -7,22 +7,33 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.AssistChip
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.yunqi.app.domain.pregnancy.PregnancyCalculator
-import java.time.LocalDate
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.yunqi.app.R
 
 @Composable
-fun HomeRoute(contentPadding: PaddingValues) {
-    val progress = PregnancyCalculator.fromLastMenstrualPeriod(
-        lmpDate = LocalDate.now().minusWeeks(18).minusDays(3),
+fun HomeRoute(
+    contentPadding: PaddingValues,
+    viewModel: HomeViewModel = viewModel(),
+) {
+    HomeScreen(
+        contentPadding = contentPadding,
+        uiState = viewModel.uiState,
     )
-    val reminders = listOf("记录今日体重", "留意胎动规律", "晚饭后散步 20 分钟")
+}
 
+@Composable
+private fun HomeScreen(
+    contentPadding: PaddingValues,
+    uiState: HomeUiState,
+) {
     LazyColumn(
         modifier = Modifier
             .fillMaxSize()
@@ -30,49 +41,91 @@ fun HomeRoute(contentPadding: PaddingValues) {
             .padding(horizontal = 20.dp, vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
-        item {
-            Text(
-                text = "今天",
-                style = MaterialTheme.typography.titleMedium,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-            Text(
-                text = "${progress.week} 周 ${progress.day} 天",
-                style = MaterialTheme.typography.displaySmall,
-                color = MaterialTheme.colorScheme.primary,
-            )
-            Text(
-                text = "距离预产期还有 ${progress.daysUntilDueDate} 天",
-                style = MaterialTheme.typography.bodyLarge,
-            )
-        }
-
-        item {
-            SectionCard(title = "今日提醒") {
-                reminders.forEach { reminder ->
-                    AssistChip(onClick = {}, label = { Text(reminder) })
-                }
+        when (uiState) {
+            HomeUiState.ProfileMissing -> {
+                item { MissingProfileCard() }
+                item { PlanningCard() }
             }
-        }
 
-        item {
-            SectionCard(title = "饮食重点") {
-                Text("保持规律进餐，优先选择优质蛋白、蔬菜、水果和全谷物。孕期饮食建议仅供参考，特殊情况请遵医嘱。")
-            }
-        }
-
-        item {
-            SectionCard(title = "运动建议") {
-                Text("若医生没有限制运动，可选择散步、孕期瑜伽等温和活动。运动中如有不适，应停止并咨询医生。")
+            is HomeUiState.Ready -> {
+                item { PregnancyProgressHeader(uiState) }
+                item { ReminderCard(uiState.reminders) }
+                item { PlanningCard() }
             }
         }
 
         item {
             Text(
-                text = "本 App 用于记录与健康管理提醒，不能替代医生诊断或治疗建议。",
+                text = stringResource(R.string.medical_disclaimer),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+        }
+    }
+}
+
+@Composable
+private fun PregnancyProgressHeader(uiState: HomeUiState.Ready) {
+    Text(
+        text = stringResource(R.string.home_today),
+        style = MaterialTheme.typography.titleMedium,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    Text(
+        text = stringResource(
+            R.string.home_gestational_age,
+            uiState.progress.week,
+            uiState.progress.day,
+        ),
+        style = MaterialTheme.typography.displaySmall,
+        color = MaterialTheme.colorScheme.primary,
+    )
+    Text(
+        text = stringResource(
+            R.string.home_days_until_due_date,
+            uiState.progress.daysUntilDueDate,
+        ),
+        style = MaterialTheme.typography.bodyLarge,
+    )
+}
+
+@Composable
+private fun MissingProfileCard() {
+    SectionCard(title = stringResource(R.string.home_profile_missing_title)) {
+        Text(
+            text = stringResource(R.string.home_profile_missing_body),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        Button(onClick = {}) {
+            Text(stringResource(R.string.home_profile_missing_action))
+        }
+    }
+}
+
+@Composable
+private fun ReminderCard(reminders: List<String>) {
+    SectionCard(title = stringResource(R.string.home_section_reminders)) {
+        if (reminders.isEmpty()) {
+            Text(
+                text = stringResource(R.string.home_empty_reminders),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            reminders.forEach { reminder ->
+                AssistChip(onClick = {}, label = { Text(reminder) })
+            }
+        }
+    }
+}
+
+@Composable
+private fun PlanningCard() {
+    Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        SectionCard(title = stringResource(R.string.home_section_diet)) {
+            Text(stringResource(R.string.home_diet_placeholder))
+        }
+        SectionCard(title = stringResource(R.string.home_section_exercise)) {
+            Text(stringResource(R.string.home_exercise_placeholder))
         }
     }
 }

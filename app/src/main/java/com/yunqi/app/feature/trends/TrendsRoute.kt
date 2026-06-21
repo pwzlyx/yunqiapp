@@ -1,5 +1,6 @@
 package com.yunqi.app.feature.trends
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -11,7 +12,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.yunqi.app.R
 
 @Composable
 fun TrendsRoute(contentPadding: PaddingValues) {
@@ -23,27 +26,42 @@ fun TrendsRoute(contentPadding: PaddingValues) {
         verticalArrangement = Arrangement.spacedBy(12.dp),
     ) {
         Text(
-            text = "趋势",
+            text = stringResource(R.string.trends_title),
             style = MaterialTheme.typography.headlineMedium,
         )
-        TrendCard(title = "体重趋势", body = "记录两次以上体重后展示变化曲线。")
-        TrendCard(title = "胎动趋势", body = "记录胎动后帮助回看日常模式。")
-        TrendCard(title = "运动统计", body = "记录运动时长后展示每周活动量。")
+        TrendCard(
+            titleResId = R.string.trends_weight_title,
+            bodyResId = R.string.trends_weight_body,
+        )
+        TrendCard(
+            titleResId = R.string.trends_fetal_movement_title,
+            bodyResId = R.string.trends_fetal_movement_body,
+        )
+        TrendCard(
+            titleResId = R.string.trends_exercise_title,
+            bodyResId = R.string.trends_exercise_body,
+        )
     }
 }
 
 @Composable
 private fun TrendCard(
-    title: String,
-    body: String,
+    @StringRes titleResId: Int,
+    @StringRes bodyResId: Int,
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
             modifier = Modifier.padding(16.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
-            Text(text = title, style = MaterialTheme.typography.titleMedium)
-            Text(text = body, color = MaterialTheme.colorScheme.onSurfaceVariant)
+            Text(
+                text = stringResource(titleResId),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Text(
+                text = stringResource(bodyResId),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
         }
     }
 }

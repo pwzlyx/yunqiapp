@@ -25,7 +25,7 @@ data class PregnancyProgress(
 object PregnancyCalculator {
     fun fromLastMenstrualPeriod(
         lmpDate: LocalDate,
-        today: LocalDate = LocalDate.now(),
+        today: LocalDate,
     ): PregnancyProgress {
         val dueDate = lmpDate.plusDays(FULL_TERM_DAYS)
         return buildProgress(lmpDate = lmpDate, dueDate = dueDate, today = today)
@@ -33,7 +33,7 @@ object PregnancyCalculator {
 
     fun fromDueDate(
         dueDate: LocalDate,
-        today: LocalDate = LocalDate.now(),
+        today: LocalDate,
     ): PregnancyProgress {
         val lmpDate = dueDate.minusDays(FULL_TERM_DAYS)
         return buildProgress(lmpDate = lmpDate, dueDate = dueDate, today = today)
@@ -42,8 +42,8 @@ object PregnancyCalculator {
     fun fromCurrentGestationalAge(
         week: Int,
         day: Int,
-        setupDate: LocalDate = LocalDate.now(),
-        today: LocalDate = LocalDate.now(),
+        setupDate: LocalDate,
+        today: LocalDate,
     ): PregnancyProgress {
         require(week >= 0) { "week must be greater than or equal to 0" }
         require(day in 0..6) { "day must be in 0..6" }
@@ -82,4 +82,3 @@ object PregnancyCalculator {
         else -> Trimester.PostDue
     }
 }
-

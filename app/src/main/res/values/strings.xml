@@ -1,5 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">云期</string>
-</resources>
+    <string name="nav_home">首页</string>
+    <string name="nav_calendar">日历</string>
+    <string name="nav_trends">趋势</string>
+    <string name="nav_settings">我的</string>
 
+    <string name="home_today">今天</string>
+    <string name="home_gestational_age">%1$d 周 %2$d 天</string>
+    <string name="home_days_until_due_date">距离预产期还有 %1$d 天</string>
+    <string name="home_profile_missing_title">先设置孕期档案</string>
+    <string name="home_profile_missing_body">设置末次月经、预产期或当前孕周后，首页会展示你的孕周、每日提醒、饮食重点和运动建议。</string>
+    <string name="home_profile_missing_action">去设置</string>
+    <string name="home_section_reminders">今日提醒</string>
+    <string name="home_section_diet">饮食重点</string>
+    <string name="home_section_exercise">运动建议</string>
+    <string name="home_empty_reminders">设置孕期档案后生成今日提醒。</string>
+    <string name="home_diet_placeholder">饮食建议会按孕周从本地内容库读取，并显示来源和更新时间。</string>
+    <string name="home_exercise_placeholder">运动建议会结合孕期档案与医生限制运动设置展示。</string>
+    <string name="medical_disclaimer">本 App 用于记录与健康管理提醒，不能替代医生诊断或治疗建议。</string>
+
+    <string name="calendar_title">日历</string>
+    <string name="calendar_month_placeholder">月历视图将在下一阶段接入</string>
+    <string name="calendar_today_records">今日记录</string>
+    <string name="calendar_records_placeholder">产检、体重、胎动、症状记录会在这里汇总。</string>
+    <string name="calendar_add_record">新增记录</string>
+
+    <string name="trends_title">趋势</string>
+    <string name="trends_weight_title">体重趋势</string>
+    <string name="trends_weight_body">记录两次以上体重后展示变化曲线。</string>
+    <string name="trends_fetal_movement_title">胎动趋势</string>
+    <string name="trends_fetal_movement_body">记录胎动后帮助回看日常模式。</string>
+    <string name="trends_exercise_title">运动统计</string>
+    <string name="trends_exercise_body">记录运动时长后展示每周活动量。</string>
+
+    <string name="settings_title">我的</string>
+    <string name="settings_pregnancy_profile">孕期档案</string>
+    <string name="settings_pregnancy_profile_body">设置末次月经、预产期或当前孕周。</string>
+    <string name="settings_reminders">提醒设置</string>
+</resources>

@@ -11,7 +11,9 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.yunqi.app.R
 
 @Composable
 fun SettingsRoute(contentPadding: PaddingValues) {
@@ -23,22 +25,22 @@ fun SettingsRoute(contentPadding: PaddingValues) {
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
-            text = "我的",
+            text = stringResource(R.string.settings_title),
             style = MaterialTheme.typography.headlineMedium,
         )
         Text(
-            text = "孕期档案",
+            text = stringResource(R.string.settings_pregnancy_profile),
             style = MaterialTheme.typography.titleMedium,
         )
-        Text("设置末次月经、预产期或当前孕周。")
+        Text(stringResource(R.string.settings_pregnancy_profile_body))
         HorizontalDivider()
         Text(
-            text = "提醒设置",
+            text = stringResource(R.string.settings_reminders),
             style = MaterialTheme.typography.titleMedium,
         )
         Switch(checked = true, onCheckedChange = {})
         Text(
-            text = "医学建议仅供记录和健康管理参考，不能替代医生建议。",
+            text = stringResource(R.string.medical_disclaimer),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )

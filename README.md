@@ -11,6 +11,7 @@ This workspace is reserved for the Android app project.
 - Product requirements: `docs/PRD_PREGNANCY_APP.md`
 - Development plan: `docs/DEVELOPMENT_PLAN.md`
 - Android project scaffold: Compose app skeleton on `feature/android-scaffold`
+- Data policy: local-only MVP storage, Android backup disabled
 
 ## Documents
 
@@ -46,6 +47,7 @@ The current scaffold includes:
 - Initial Yunqi theme
 - Pregnancy date calculation domain class
 - Unit test skeleton for pregnancy calculation
+- Local-only privacy defaults for pregnancy records
 
 Open this folder in Android Studio:
 

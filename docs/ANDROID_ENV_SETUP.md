@@ -10,6 +10,10 @@ This project is scaffolded as a native Android app using Kotlin and Jetpack Comp
 
 The current Codex execution environment only has Java 8 available and does not have Android SDK configured, so full Gradle build verification needs a local Android development environment.
 
+## Local-Only Data Policy
+
+The MVP stores pregnancy information on the device only. Android cloud backup and device-transfer extraction are disabled by default because pregnancy profiles, weight, fetal movement, appointments, and notes are sensitive health data.
+
 ## Open The Project
 
 1. Open Android Studio.
@@ -32,4 +36,3 @@ After JDK 17 and Android SDK are ready:
 ```
 
 If the Gradle wrapper JAR is missing, create it from Android Studio or run `gradle wrapper` with a local Gradle installation.
-

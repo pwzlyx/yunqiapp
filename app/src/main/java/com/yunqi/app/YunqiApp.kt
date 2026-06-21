@@ -13,6 +13,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.annotation.StringRes
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.compose.NavHost
@@ -58,10 +60,10 @@ fun YunqiApp() {
                         icon = {
                             Icon(
                                 imageVector = destination.icon,
-                                contentDescription = destination.label,
+                                contentDescription = stringResource(destination.labelResId),
                             )
                         },
-                        label = { Text(destination.label) },
+                        label = { Text(stringResource(destination.labelResId)) },
                     )
                 }
             }
@@ -90,12 +92,11 @@ fun YunqiApp() {
 
 private sealed class TopLevelDestination(
     val route: String,
-    val label: String,
+    @StringRes val labelResId: Int,
     val icon: androidx.compose.ui.graphics.vector.ImageVector,
 ) {
-    data object Home : TopLevelDestination("home", "首页", Icons.Rounded.Home)
-    data object Calendar : TopLevelDestination("calendar", "日历", Icons.Rounded.CalendarMonth)
-    data object Trends : TopLevelDestination("trends", "趋势", Icons.Rounded.ShowChart)
-    data object Settings : TopLevelDestination("settings", "我的", Icons.Rounded.Person)
+    data object Home : TopLevelDestination("home", R.string.nav_home, Icons.Rounded.Home)
+    data object Calendar : TopLevelDestination("calendar", R.string.nav_calendar, Icons.Rounded.CalendarMonth)
+    data object Trends : TopLevelDestination("trends", R.string.nav_trends, Icons.Rounded.ShowChart)
+    data object Settings : TopLevelDestination("settings", R.string.nav_settings, Icons.Rounded.Person)
 }
-

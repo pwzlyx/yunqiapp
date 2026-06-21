@@ -17,7 +17,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.yunqi.app.R
 
 @Composable
 fun CalendarRoute(contentPadding: PaddingValues) {
@@ -29,7 +31,7 @@ fun CalendarRoute(contentPadding: PaddingValues) {
         verticalArrangement = Arrangement.spacedBy(16.dp),
     ) {
         Text(
-            text = "日历",
+            text = stringResource(R.string.calendar_title),
             style = MaterialTheme.typography.headlineMedium,
         )
 
@@ -40,21 +42,21 @@ fun CalendarRoute(contentPadding: PaddingValues) {
                     .padding(24.dp),
                 contentAlignment = Alignment.Center,
             ) {
-                Text("月历视图将在下一阶段接入")
+                Text(stringResource(R.string.calendar_month_placeholder))
             }
         }
 
         Text(
-            text = "今日记录",
+            text = stringResource(R.string.calendar_today_records),
             style = MaterialTheme.typography.titleMedium,
         )
         Text(
-            text = "产检、体重、胎动、症状记录会在这里汇总。",
+            text = stringResource(R.string.calendar_records_placeholder),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Button(onClick = {}) {
             Icon(Icons.Rounded.Add, contentDescription = null)
-            Text("新增记录")
+            Text(stringResource(R.string.calendar_add_record))
         }
     }
 }
