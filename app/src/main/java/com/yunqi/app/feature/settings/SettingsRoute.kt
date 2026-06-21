@@ -13,9 +13,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -85,6 +87,7 @@ fun SettingsRoute(
                 viewModel.setAppointmentRemindersEnabled(true)
             }
         },
+        onClearAllLocalData = viewModel::clearAllLocalData,
     )
 }
 
@@ -95,8 +98,33 @@ private fun SettingsScreen(
     notificationsAllowed: Boolean,
     onPregnancyProfileClick: () -> Unit,
     onReminderEnabledChange: (Boolean) -> Unit,
+    onClearAllLocalData: () -> Unit,
 ) {
     val remindersChecked = uiState.appointmentRemindersEnabled && notificationsAllowed
+    var showClearConfirm by remember { mutableStateOf(false) }
+
+    if (showClearConfirm) {
+        AlertDialog(
+            onDismissRequest = { showClearConfirm = false },
+            title = { Text(stringResource(R.string.settings_clear_data_confirm_title)) },
+            text = { Text(stringResource(R.string.settings_clear_data_confirm_body)) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showClearConfirm = false
+                        onClearAllLocalData()
+                    },
+                ) {
+                    Text(stringResource(R.string.settings_clear_data_confirm_action))
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { showClearConfirm = false }) {
+                    Text(stringResource(R.string.calendar_delete_cancel_action))
+                }
+            },
+        )
+    }
 
     Column(
         modifier = Modifier
@@ -155,6 +183,22 @@ private fun SettingsScreen(
                 checked = remindersChecked,
                 onCheckedChange = onReminderEnabledChange,
             )
+        }
+        HorizontalDivider()
+        Text(
+            text = stringResource(R.string.settings_privacy),
+            style = MaterialTheme.typography.titleMedium,
+        )
+        Text(
+            text = stringResource(R.string.settings_local_data_body),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        OutlinedButton(
+            onClick = { showClearConfirm = true },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(stringResource(R.string.settings_clear_local_data))
         }
         Text(
             text = stringResource(R.string.medical_disclaimer),

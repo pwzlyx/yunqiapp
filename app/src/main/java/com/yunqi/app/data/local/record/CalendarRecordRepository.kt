@@ -50,4 +50,8 @@ class CalendarRecordRepository(context: Context) {
     suspend fun delete(id: String) {
         dao.deleteById(id)
     }
+
+    suspend fun deleteAll() {
+        dao.deleteAll()
+    }
 }

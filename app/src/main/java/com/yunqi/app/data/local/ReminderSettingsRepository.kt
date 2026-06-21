@@ -31,6 +31,12 @@ class ReminderSettingsRepository(
         }
     }
 
+    suspend fun clearSettings() {
+        context.reminderSettingsDataStore.edit { preferences ->
+            preferences.clear()
+        }
+    }
+
     private object Keys {
         val appointmentRemindersEnabled = booleanPreferencesKey("appointment_reminders_enabled")
     }

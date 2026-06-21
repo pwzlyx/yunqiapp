@@ -52,6 +52,12 @@ class PregnancyProfileRepository(
         }
     }
 
+    suspend fun clearProfile() {
+        context.pregnancyProfileDataStore.edit { preferences ->
+            preferences.clear()
+        }
+    }
+
     private fun <T> putOrRemove(
         preferences: androidx.datastore.preferences.core.MutablePreferences,
         key: androidx.datastore.preferences.core.Preferences.Key<T>,

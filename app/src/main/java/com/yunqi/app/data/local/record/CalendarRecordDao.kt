@@ -43,4 +43,7 @@ interface CalendarRecordDao {
 
     @Query("DELETE FROM calendar_records WHERE id = :id")
     suspend fun deleteById(id: String)
+
+    @Query("DELETE FROM calendar_records")
+    suspend fun deleteAll()
 }

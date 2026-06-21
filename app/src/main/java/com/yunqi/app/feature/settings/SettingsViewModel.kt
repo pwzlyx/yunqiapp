@@ -3,6 +3,7 @@ package com.yunqi.app.feature.settings
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.yunqi.app.data.local.PregnancyProfileRepository
 import com.yunqi.app.data.local.ReminderSettingsRepository
 import com.yunqi.app.data.local.record.CalendarRecordRepository
 import com.yunqi.app.notification.AppointmentReminderScheduler
@@ -14,6 +15,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalDate
 
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
+    private val pregnancyProfileRepository = PregnancyProfileRepository(application.applicationContext)
     private val reminderSettingsRepository = ReminderSettingsRepository(application.applicationContext)
     private val calendarRecordRepository = CalendarRecordRepository(application.applicationContext)
     private val reminderScheduler = AppointmentReminderScheduler(application.applicationContext)
@@ -41,6 +43,15 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                     .forEach { record -> reminderScheduler.cancel(record.id) }
                 reminderScheduler.cancelAll()
             }
+        }
+    }
+
+    fun clearAllLocalData() {
+        viewModelScope.launch {
+            reminderScheduler.cancelAll()
+            calendarRecordRepository.deleteAll()
+            pregnancyProfileRepository.clearProfile()
+            reminderSettingsRepository.clearSettings()
         }
     }
 }
