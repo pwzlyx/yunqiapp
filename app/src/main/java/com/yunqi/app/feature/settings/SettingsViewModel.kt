@@ -3,10 +3,12 @@ package com.yunqi.app.feature.settings
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.yunqi.app.data.local.DEFAULT_DAILY_REMINDER_TIME
 import com.yunqi.app.data.local.PregnancyProfileRepository
 import com.yunqi.app.data.local.ReminderSettingsRepository
 import com.yunqi.app.data.local.record.CalendarRecordRepository
 import com.yunqi.app.notification.AppointmentReminderScheduler
+import com.yunqi.app.notification.DailyReminderScheduler
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -19,10 +21,17 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     private val reminderSettingsRepository = ReminderSettingsRepository(application.applicationContext)
     private val calendarRecordRepository = CalendarRecordRepository(application.applicationContext)
     private val reminderScheduler = AppointmentReminderScheduler(application.applicationContext)
+    private val dailyReminderScheduler = DailyReminderScheduler(application.applicationContext)
 
     val uiState: StateFlow<SettingsUiState> = reminderSettingsRepository
-        .appointmentRemindersEnabledFlow
-        .map { enabled -> SettingsUiState(appointmentRemindersEnabled = enabled) }
+        .reminderSettingsFlow
+        .map { settings ->
+            SettingsUiState(
+                appointmentRemindersEnabled = settings.appointmentRemindersEnabled,
+                dailyReminderEnabled = settings.dailyReminderEnabled,
+                dailyReminderTime = settings.dailyReminderTime,
+            )
+        }
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
@@ -46,9 +55,28 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun setDailyReminderEnabled(enabled: Boolean, time: String) {
+        viewModelScope.launch {
+            reminderSettingsRepository.setDailyReminder(enabled, time)
+            if (enabled) {
+                dailyReminderScheduler.schedule(time)
+            } else {
+                dailyReminderScheduler.cancel()
+            }
+        }
+    }
+
+    fun setDailyReminderTime(time: String) {
+        viewModelScope.launch {
+            reminderSettingsRepository.setDailyReminder(enabled = true, time = time)
+            dailyReminderScheduler.schedule(time)
+        }
+    }
+
     fun clearAllLocalData() {
         viewModelScope.launch {
             reminderScheduler.cancelAll()
+            dailyReminderScheduler.cancel()
             calendarRecordRepository.deleteAll()
             pregnancyProfileRepository.clearProfile()
             reminderSettingsRepository.clearSettings()
@@ -58,4 +86,6 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
 data class SettingsUiState(
     val appointmentRemindersEnabled: Boolean = false,
+    val dailyReminderEnabled: Boolean = false,
+    val dailyReminderTime: String = DEFAULT_DAILY_REMINDER_TIME,
 )

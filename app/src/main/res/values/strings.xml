@@ -59,8 +59,11 @@
     <string name="calendar_record_appointment_time">时间：%1$s</string>
     <string name="calendar_record_appointment_location">地点：%1$s</string>
     <string name="notification_channel_appointments">产检提醒</string>
+    <string name="notification_channel_daily_reminders">每日记录提醒</string>
     <string name="notification_appointment_title">产检提醒</string>
     <string name="notification_appointment_body">你有一项产检安排：%1$s。</string>
+    <string name="notification_daily_reminder_title">今日记录提醒</string>
+    <string name="notification_daily_reminder_body">记得记录体重、胎动或运动情况。</string>
 
     <string name="trends_title">趋势</string>
     <string name="trends_weight_title">体重趋势</string>
@@ -132,6 +135,11 @@
     <string name="content_safety_third_body">如果感觉宝宝活动减少、变弱或和平时明显不同，不要等待到第二天，请及时联系助产士、医生或产科单位。</string>
     <string name="settings_appointment_reminders">产检提醒</string>
     <string name="settings_appointment_reminders_body">提前 1 小时提醒已记录时间的产检。</string>
+    <string name="settings_daily_reminders">每日记录提醒</string>
+    <string name="settings_daily_reminders_body">每天提醒记录体重、胎动和运动情况。</string>
+    <string name="settings_daily_reminder_morning">09:00 上午</string>
+    <string name="settings_daily_reminder_noon">13:00 中午</string>
+    <string name="settings_daily_reminder_evening">20:00 晚上</string>
     <string name="settings_notifications_permission_missing">通知权限未开启</string>
     <string name="calendar_previous_month">上个月</string>
     <string name="calendar_next_month">下个月</string>

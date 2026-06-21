@@ -8,6 +8,7 @@ import com.yunqi.app.R
 
 object YunqiNotificationChannels {
     const val APPOINTMENTS_CHANNEL_ID = "appointments"
+    const val DAILY_REMINDERS_CHANNEL_ID = "daily_reminders"
 
     /**
      * Creates notification channels required by scheduled local reminders.
@@ -16,12 +17,18 @@ object YunqiNotificationChannels {
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) return
 
         val notificationManager = context.getSystemService(NotificationManager::class.java)
-        val channel = NotificationChannel(
-            APPOINTMENTS_CHANNEL_ID,
-            context.getString(R.string.notification_channel_appointments),
-            NotificationManager.IMPORTANCE_DEFAULT,
+        val channels = listOf(
+            NotificationChannel(
+                APPOINTMENTS_CHANNEL_ID,
+                context.getString(R.string.notification_channel_appointments),
+                NotificationManager.IMPORTANCE_DEFAULT,
+            ),
+            NotificationChannel(
+                DAILY_REMINDERS_CHANNEL_ID,
+                context.getString(R.string.notification_channel_daily_reminders),
+                NotificationManager.IMPORTANCE_DEFAULT,
+            ),
         )
-        notificationManager.createNotificationChannel(channel)
+        channels.forEach(notificationManager::createNotificationChannel)
     }
 }
-

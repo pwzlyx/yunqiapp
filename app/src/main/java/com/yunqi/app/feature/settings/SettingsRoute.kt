@@ -8,6 +8,8 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
@@ -50,11 +53,17 @@ fun SettingsRoute(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     var notificationsAllowed by remember { mutableStateOf(context.canPostNotifications()) }
+    var pendingNotificationRequest by remember { mutableStateOf<NotificationPermissionRequest?>(null) }
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
     ) { granted ->
         notificationsAllowed = granted
-        viewModel.setAppointmentRemindersEnabled(granted)
+        when (pendingNotificationRequest) {
+            NotificationPermissionRequest.Appointment -> viewModel.setAppointmentRemindersEnabled(granted)
+            NotificationPermissionRequest.Daily -> viewModel.setDailyReminderEnabled(granted, uiState.dailyReminderTime)
+            null -> Unit
+        }
+        pendingNotificationRequest = null
     }
     DisposableEffect(context, lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
@@ -72,6 +81,11 @@ fun SettingsRoute(
             viewModel.setAppointmentRemindersEnabled(false)
         }
     }
+    LaunchedEffect(notificationsAllowed, uiState.dailyReminderEnabled, uiState.dailyReminderTime) {
+        if (!notificationsAllowed && uiState.dailyReminderEnabled) {
+            viewModel.setDailyReminderEnabled(false, uiState.dailyReminderTime)
+        }
+    }
 
     SettingsScreen(
         contentPadding = contentPadding,
@@ -82,13 +96,30 @@ fun SettingsRoute(
             if (!enabled) {
                 viewModel.setAppointmentRemindersEnabled(false)
             } else if (context.mustRequestNotificationPermission() && !notificationsAllowed) {
+                pendingNotificationRequest = NotificationPermissionRequest.Appointment
                 notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             } else {
                 viewModel.setAppointmentRemindersEnabled(true)
             }
         },
+        onDailyReminderEnabledChange = { enabled ->
+            if (!enabled) {
+                viewModel.setDailyReminderEnabled(false, uiState.dailyReminderTime)
+            } else if (context.mustRequestNotificationPermission() && !notificationsAllowed) {
+                pendingNotificationRequest = NotificationPermissionRequest.Daily
+                notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else {
+                viewModel.setDailyReminderEnabled(true, uiState.dailyReminderTime)
+            }
+        },
+        onDailyReminderTimeSelected = viewModel::setDailyReminderTime,
         onClearAllLocalData = viewModel::clearAllLocalData,
     )
+}
+
+private enum class NotificationPermissionRequest {
+    Appointment,
+    Daily,
 }
 
 @Composable
@@ -98,9 +129,12 @@ private fun SettingsScreen(
     notificationsAllowed: Boolean,
     onPregnancyProfileClick: () -> Unit,
     onReminderEnabledChange: (Boolean) -> Unit,
+    onDailyReminderEnabledChange: (Boolean) -> Unit,
+    onDailyReminderTimeSelected: (String) -> Unit,
     onClearAllLocalData: () -> Unit,
 ) {
     val remindersChecked = uiState.appointmentRemindersEnabled && notificationsAllowed
+    val dailyReminderChecked = uiState.dailyReminderEnabled && notificationsAllowed
     var showClearConfirm by remember { mutableStateOf(false) }
 
     if (showClearConfirm) {
@@ -184,6 +218,12 @@ private fun SettingsScreen(
                 onCheckedChange = onReminderEnabledChange,
             )
         }
+        DailyReminderSetting(
+            enabled = dailyReminderChecked,
+            selectedTime = uiState.dailyReminderTime,
+            onEnabledChange = onDailyReminderEnabledChange,
+            onTimeSelected = onDailyReminderTimeSelected,
+        )
         HorizontalDivider()
         Text(
             text = stringResource(R.string.settings_privacy),
@@ -207,6 +247,68 @@ private fun SettingsScreen(
         )
     }
 }
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+private fun DailyReminderSetting(
+    enabled: Boolean,
+    selectedTime: String,
+    onEnabledChange: (Boolean) -> Unit,
+    onTimeSelected: (String) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = stringResource(R.string.settings_daily_reminders),
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                Text(
+                    text = stringResource(R.string.settings_daily_reminders_body),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Switch(
+                checked = enabled,
+                onCheckedChange = onEnabledChange,
+            )
+        }
+        if (enabled) {
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp),
+            ) {
+                dailyReminderTimeOptions().forEach { option ->
+                    FilterChip(
+                        selected = selectedTime == option.time,
+                        onClick = { onTimeSelected(option.time) },
+                        label = { Text(stringResource(option.labelResId)) },
+                    )
+                }
+            }
+        }
+    }
+}
+
+private data class DailyReminderTimeOption(
+    val time: String,
+    val labelResId: Int,
+)
+
+private fun dailyReminderTimeOptions(): List<DailyReminderTimeOption> = listOf(
+    DailyReminderTimeOption("09:00", R.string.settings_daily_reminder_morning),
+    DailyReminderTimeOption("13:00", R.string.settings_daily_reminder_noon),
+    DailyReminderTimeOption("20:00", R.string.settings_daily_reminder_evening),
+)
 
 private fun Context.mustRequestNotificationPermission(): Boolean =
     Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU

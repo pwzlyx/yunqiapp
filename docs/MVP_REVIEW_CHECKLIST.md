@@ -17,6 +17,7 @@ Current result: passing.
 - Calendar supports month view, date markers, day detail list, create, edit, and delete with confirmation.
 - Calendar record types include appointment, weight, fetal movement, symptom, exercise, diet, and note.
 - Appointment reminders use local WorkManager jobs, Android notifications, a notification channel, notification permission handling, and a settings toggle.
+- Daily record reminders use local WorkManager jobs, Android notifications, notification permission handling, and configurable preset times.
 - Trends show weight, fetal movement, and exercise charts from local Room records.
 - Trends support 7-day, 30-day, and all-time ranges.
 - Settings can edit pregnancy profile, manage appointment reminders, and clear all local pregnancy data.
