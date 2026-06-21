@@ -12,20 +12,27 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yunqi.app.R
+import com.yunqi.app.domain.pregnancy.PregnancyCalculationMethod
 
 @Composable
 fun HomeRoute(
     contentPadding: PaddingValues,
+    onSetProfileClick: () -> Unit,
     viewModel: HomeViewModel = viewModel(),
 ) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
     HomeScreen(
         contentPadding = contentPadding,
-        uiState = viewModel.uiState,
+        uiState = uiState,
+        onSetProfileClick = onSetProfileClick,
     )
 }
 
@@ -33,6 +40,7 @@ fun HomeRoute(
 private fun HomeScreen(
     contentPadding: PaddingValues,
     uiState: HomeUiState,
+    onSetProfileClick: () -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -43,13 +51,14 @@ private fun HomeScreen(
     ) {
         when (uiState) {
             HomeUiState.ProfileMissing -> {
-                item { MissingProfileCard() }
+                item { MissingProfileCard(onSetProfileClick = onSetProfileClick) }
                 item { PlanningCard() }
             }
 
             is HomeUiState.Ready -> {
                 item { PregnancyProgressHeader(uiState) }
-                item { ReminderCard(uiState.reminders) }
+                item { ProfileSourceCard(uiState.calculationMethod) }
+                item { ReminderCard() }
                 item { PlanningCard() }
             }
         }
@@ -90,31 +99,38 @@ private fun PregnancyProgressHeader(uiState: HomeUiState.Ready) {
 }
 
 @Composable
-private fun MissingProfileCard() {
+private fun MissingProfileCard(onSetProfileClick: () -> Unit) {
     SectionCard(title = stringResource(R.string.home_profile_missing_title)) {
         Text(
             text = stringResource(R.string.home_profile_missing_body),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
-        Button(onClick = {}) {
+        Button(onClick = onSetProfileClick) {
             Text(stringResource(R.string.home_profile_missing_action))
         }
     }
 }
 
 @Composable
-private fun ReminderCard(reminders: List<String>) {
+private fun ProfileSourceCard(calculationMethod: PregnancyCalculationMethod) {
+    val sourceText = when (calculationMethod) {
+        PregnancyCalculationMethod.LastMenstrualPeriod -> stringResource(R.string.home_profile_source_lmp)
+        PregnancyCalculationMethod.DueDate -> stringResource(R.string.home_profile_source_due_date)
+        PregnancyCalculationMethod.CurrentGestationalAge -> stringResource(R.string.home_profile_source_current_age)
+    }
+
+    SectionCard(title = sourceText) {
+        Text(
+            text = stringResource(R.string.home_profile_saved_body),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun ReminderCard() {
     SectionCard(title = stringResource(R.string.home_section_reminders)) {
-        if (reminders.isEmpty()) {
-            Text(
-                text = stringResource(R.string.home_empty_reminders),
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
-            )
-        } else {
-            reminders.forEach { reminder ->
-                AssistChip(onClick = {}, label = { Text(reminder) })
-            }
-        }
+        AssistChip(onClick = {}, label = { Text(stringResource(R.string.home_empty_reminders)) })
     }
 }
 

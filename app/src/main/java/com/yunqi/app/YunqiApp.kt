@@ -23,6 +23,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.yunqi.app.feature.calendar.CalendarRoute
 import com.yunqi.app.feature.home.HomeRoute
+import com.yunqi.app.feature.setup.PregnancySetupRoute
 import com.yunqi.app.feature.settings.SettingsRoute
 import com.yunqi.app.feature.trends.TrendsRoute
 
@@ -75,7 +76,12 @@ fun YunqiApp() {
             modifier = Modifier,
         ) {
             composable(TopLevelDestination.Home.route) {
-                HomeRoute(contentPadding = innerPadding)
+                HomeRoute(
+                    contentPadding = innerPadding,
+                    onSetProfileClick = {
+                        navController.navigate(InternalDestination.PregnancySetup.route)
+                    },
+                )
             }
             composable(TopLevelDestination.Calendar.route) {
                 CalendarRoute(contentPadding = innerPadding)
@@ -84,10 +90,32 @@ fun YunqiApp() {
                 TrendsRoute(contentPadding = innerPadding)
             }
             composable(TopLevelDestination.Settings.route) {
-                SettingsRoute(contentPadding = innerPadding)
+                SettingsRoute(
+                    contentPadding = innerPadding,
+                    onPregnancyProfileClick = {
+                        navController.navigate(InternalDestination.PregnancySetup.route)
+                    },
+                )
+            }
+            composable(InternalDestination.PregnancySetup.route) {
+                PregnancySetupRoute(
+                    contentPadding = innerPadding,
+                    onProfileSaved = {
+                        navController.navigate(TopLevelDestination.Home.route) {
+                            popUpTo(TopLevelDestination.Home.route) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
+                    },
+                )
             }
         }
     }
+}
+
+private sealed class InternalDestination(val route: String) {
+    data object PregnancySetup : InternalDestination("pregnancy_setup")
 }
 
 private sealed class TopLevelDestination(

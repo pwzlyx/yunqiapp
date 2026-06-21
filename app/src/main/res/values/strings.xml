@@ -12,6 +12,10 @@
     <string name="home_profile_missing_title">先设置孕期档案</string>
     <string name="home_profile_missing_body">设置末次月经、预产期或当前孕周后，首页会展示你的孕周、每日提醒、饮食重点和运动建议。</string>
     <string name="home_profile_missing_action">去设置</string>
+    <string name="home_profile_source_lmp">按末次月经估算</string>
+    <string name="home_profile_source_due_date">按预产期估算</string>
+    <string name="home_profile_source_current_age">按当前孕周估算</string>
+    <string name="home_profile_saved_body">孕期档案已保存在本机，首页会按今天日期自动更新孕周。</string>
     <string name="home_section_reminders">今日提醒</string>
     <string name="home_section_diet">饮食重点</string>
     <string name="home_section_exercise">运动建议</string>
@@ -37,5 +41,21 @@
     <string name="settings_title">我的</string>
     <string name="settings_pregnancy_profile">孕期档案</string>
     <string name="settings_pregnancy_profile_body">设置末次月经、预产期或当前孕周。</string>
+    <string name="settings_edit_pregnancy_profile">编辑孕期档案</string>
     <string name="settings_reminders">提醒设置</string>
+
+    <string name="setup_title">孕期档案设置</string>
+    <string name="setup_subtitle">选择一种你最确定的信息，App 会在本地推算孕周和预产期。</string>
+    <string name="setup_method_lmp">末次月经</string>
+    <string name="setup_method_due_date">预产期</string>
+    <string name="setup_method_current_age">当前孕周</string>
+    <string name="setup_lmp_label">末次月经日期</string>
+    <string name="setup_due_date_label">预产期</string>
+    <string name="setup_date_hint">YYYY-MM-DD</string>
+    <string name="setup_week_label">孕周</string>
+    <string name="setup_day_label">孕天</string>
+    <string name="setup_save">保存档案</string>
+    <string name="setup_error_invalid_date">请输入有效日期，格式为 YYYY-MM-DD。</string>
+    <string name="setup_error_invalid_week">孕周必须是 0 到 42 之间的数字。</string>
+    <string name="setup_error_invalid_day">孕天必须是 0 到 6 之间的数字。</string>
 </resources>
