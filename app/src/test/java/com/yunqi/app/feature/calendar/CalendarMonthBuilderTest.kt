@@ -64,6 +64,9 @@ class CalendarMonthBuilderTest {
         exerciseMinutes = null,
         appointmentTime = null,
         appointmentLocation = null,
+        appointmentDoctor = null,
+        appointmentItems = null,
+        appointmentResult = null,
         createdAtEpochMillis = 0L,
     )
 }

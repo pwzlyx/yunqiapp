@@ -2,6 +2,7 @@ package com.yunqi.app.feature.calendar
 
 import com.yunqi.app.domain.calendar.CalendarRecordType
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import java.time.LocalDate
@@ -23,6 +24,9 @@ class CalendarRecordFormParserTest {
                 fetalMovementCount = "",
                 appointmentTime = "09:30",
                 appointmentLocation = "Clinic",
+                appointmentDoctor = "  Dr Chen  ",
+                appointmentItems = "Blood test",
+                appointmentResult = "Normal",
             ),
         )
 
@@ -33,6 +37,9 @@ class CalendarRecordFormParserTest {
         assertEquals(CalendarRecordType.Appointment, record.type)
         assertEquals("09:30", record.appointmentTime)
         assertEquals("Clinic", record.appointmentLocation)
+        assertEquals("Dr Chen", record.appointmentDoctor)
+        assertEquals("Blood test", record.appointmentItems)
+        assertEquals("Normal", record.appointmentResult)
     }
 
     @Test
@@ -51,6 +58,9 @@ class CalendarRecordFormParserTest {
 
         val record = (result as CalendarRecordParseResult.Success).record
         assertEquals(56.5, record.weightKg ?: 0.0, 0.001)
+        assertNull(record.appointmentDoctor)
+        assertNull(record.appointmentItems)
+        assertNull(record.appointmentResult)
     }
 
     @Test

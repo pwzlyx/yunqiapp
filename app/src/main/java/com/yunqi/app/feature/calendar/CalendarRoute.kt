@@ -92,6 +92,9 @@ private fun CalendarScreen(
     var exerciseMinutes by remember { mutableStateOf("") }
     var appointmentTime by remember { mutableStateOf("") }
     var appointmentLocation by remember { mutableStateOf("") }
+    var appointmentDoctor by remember { mutableStateOf("") }
+    var appointmentItems by remember { mutableStateOf("") }
+    var appointmentResult by remember { mutableStateOf("") }
     var editingRecord by remember { mutableStateOf<CalendarRecord?>(null) }
     var recordFilter by remember { mutableStateOf<CalendarRecordType?>(null) }
     var errorMessageResId by remember { mutableStateOf<Int?>(null) }
@@ -144,6 +147,12 @@ private fun CalendarScreen(
             onAppointmentTimeChange = { appointmentTime = it },
             appointmentLocation = appointmentLocation,
             onAppointmentLocationChange = { appointmentLocation = it },
+            appointmentDoctor = appointmentDoctor,
+            onAppointmentDoctorChange = { appointmentDoctor = it },
+            appointmentItems = appointmentItems,
+            onAppointmentItemsChange = { appointmentItems = it },
+            appointmentResult = appointmentResult,
+            onAppointmentResultChange = { appointmentResult = it },
             editing = editingRecord != null,
             onCancelEdit = {
                 editingRecord = null
@@ -154,6 +163,9 @@ private fun CalendarScreen(
                     onExerciseMinutesChange = { exerciseMinutes = it },
                     onAppointmentTimeChange = { appointmentTime = it },
                     onAppointmentLocationChange = { appointmentLocation = it },
+                    onAppointmentDoctorChange = { appointmentDoctor = it },
+                    onAppointmentItemsChange = { appointmentItems = it },
+                    onAppointmentResultChange = { appointmentResult = it },
                 )
             },
             onSave = {
@@ -168,6 +180,9 @@ private fun CalendarScreen(
                             fetalMovementCount = fetalMovementCount,
                             appointmentTime = appointmentTime,
                             appointmentLocation = appointmentLocation,
+                            appointmentDoctor = appointmentDoctor,
+                            appointmentItems = appointmentItems,
+                            appointmentResult = appointmentResult,
                             exerciseMinutes = exerciseMinutes,
                             createdAtEpochMillis = editingRecord?.createdAtEpochMillis,
                         ),
@@ -182,6 +197,9 @@ private fun CalendarScreen(
                             onExerciseMinutesChange = { exerciseMinutes = it },
                             onAppointmentTimeChange = { appointmentTime = it },
                             onAppointmentLocationChange = { appointmentLocation = it },
+                            onAppointmentDoctorChange = { appointmentDoctor = it },
+                            onAppointmentItemsChange = { appointmentItems = it },
+                            onAppointmentResultChange = { appointmentResult = it },
                         )
                     }
                 }
@@ -210,6 +228,9 @@ private fun CalendarScreen(
                 exerciseMinutes = record.exerciseMinutes?.toString().orEmpty()
                 appointmentTime = record.appointmentTime.orEmpty()
                 appointmentLocation = record.appointmentLocation.orEmpty()
+                appointmentDoctor = record.appointmentDoctor.orEmpty()
+                appointmentItems = record.appointmentItems.orEmpty()
+                appointmentResult = record.appointmentResult.orEmpty()
                 errorMessageResId = null
             },
             onDeleteRecord = onDeleteRecord,
@@ -404,6 +425,12 @@ private fun RecordForm(
     onAppointmentTimeChange: (String) -> Unit,
     appointmentLocation: String,
     onAppointmentLocationChange: (String) -> Unit,
+    appointmentDoctor: String,
+    onAppointmentDoctorChange: (String) -> Unit,
+    appointmentItems: String,
+    onAppointmentItemsChange: (String) -> Unit,
+    appointmentResult: String,
+    onAppointmentResultChange: (String) -> Unit,
     editing: Boolean,
     onCancelEdit: () -> Unit,
     onSave: () -> Unit,
@@ -439,6 +466,27 @@ private fun RecordForm(
                         label = { Text(stringResource(R.string.calendar_appointment_location_label)) },
                         singleLine = true,
                         modifier = Modifier.fillMaxWidth(),
+                    )
+                    OutlinedTextField(
+                        value = appointmentDoctor,
+                        onValueChange = onAppointmentDoctorChange,
+                        label = { Text(stringResource(R.string.calendar_appointment_doctor_label)) },
+                        singleLine = true,
+                        modifier = Modifier.fillMaxWidth(),
+                    )
+                    OutlinedTextField(
+                        value = appointmentItems,
+                        onValueChange = onAppointmentItemsChange,
+                        label = { Text(stringResource(R.string.calendar_appointment_items_label)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        minLines = 2,
+                    )
+                    OutlinedTextField(
+                        value = appointmentResult,
+                        onValueChange = onAppointmentResultChange,
+                        label = { Text(stringResource(R.string.calendar_appointment_result_label)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        minLines = 2,
                     )
                 }
 
@@ -661,6 +709,15 @@ private fun RecordCard(
             record.appointmentLocation?.let {
                 Text(stringResource(R.string.calendar_record_appointment_location, it))
             }
+            record.appointmentDoctor?.let {
+                Text(stringResource(R.string.calendar_record_appointment_doctor, it))
+            }
+            record.appointmentItems?.let {
+                Text(stringResource(R.string.calendar_record_appointment_items, it))
+            }
+            record.appointmentResult?.let {
+                Text(stringResource(R.string.calendar_record_appointment_result, it))
+            }
             if (record.note.isNotBlank()) {
                 Text(record.note)
             }
@@ -694,6 +751,9 @@ private fun clearRecordForm(
     onExerciseMinutesChange: (String) -> Unit,
     onAppointmentTimeChange: (String) -> Unit,
     onAppointmentLocationChange: (String) -> Unit,
+    onAppointmentDoctorChange: (String) -> Unit,
+    onAppointmentItemsChange: (String) -> Unit,
+    onAppointmentResultChange: (String) -> Unit,
 ) {
     onNoteChange("")
     onWeightKgChange("")
@@ -701,4 +761,7 @@ private fun clearRecordForm(
     onExerciseMinutesChange("")
     onAppointmentTimeChange("")
     onAppointmentLocationChange("")
+    onAppointmentDoctorChange("")
+    onAppointmentItemsChange("")
+    onAppointmentResultChange("")
 }

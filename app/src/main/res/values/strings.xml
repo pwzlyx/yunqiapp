@@ -44,6 +44,9 @@
     <string name="calendar_fetal_movement_label">胎动次数</string>
     <string name="calendar_appointment_time_label">产检时间</string>
     <string name="calendar_appointment_location_label">医院/地点</string>
+    <string name="calendar_appointment_doctor_label">医生</string>
+    <string name="calendar_appointment_items_label">检查项目</string>
+    <string name="calendar_appointment_result_label">检查结果</string>
     <string name="calendar_save_record">保存记录</string>
     <string name="calendar_empty_records">这一天还没有记录。</string>
     <string name="calendar_empty_filtered_records">当前类型没有记录。</string>
@@ -59,6 +62,9 @@
     <string name="calendar_record_fetal_movement_value">胎动：%1$d 次</string>
     <string name="calendar_record_appointment_time">时间：%1$s</string>
     <string name="calendar_record_appointment_location">地点：%1$s</string>
+    <string name="calendar_record_appointment_doctor">医生：%1$s</string>
+    <string name="calendar_record_appointment_items">项目：%1$s</string>
+    <string name="calendar_record_appointment_result">结果：%1$s</string>
     <string name="notification_channel_appointments">产检提醒</string>
     <string name="notification_channel_daily_reminders">每日记录提醒</string>
     <string name="notification_appointment_title">产检提醒</string>

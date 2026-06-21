@@ -17,6 +17,7 @@ Current result: passing.
 - Home reads the local pregnancy profile and displays current gestational age, due date countdown, reminders, quick record entry points, diet guidance, exercise guidance, safety guidance, source names, source URLs, and review dates.
 - Calendar supports month view, date markers, day detail list, create, edit, and delete with confirmation.
 - Calendar record types include appointment, weight, fetal movement, symptom, exercise, diet, and note.
+- Appointment records include time, hospital or location, doctor, check items, result, and note.
 - Appointment reminders use local WorkManager jobs, Android notifications, a notification channel, notification permission handling, and a settings toggle.
 - Daily record reminders use local WorkManager jobs, Android notifications, notification permission handling, and configurable preset times.
 - Trends show weight, fetal movement, and exercise charts from local Room records.

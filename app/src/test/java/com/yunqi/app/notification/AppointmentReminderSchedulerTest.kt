@@ -81,6 +81,9 @@ class AppointmentReminderSchedulerTest {
         exerciseMinutes = null,
         appointmentTime = time,
         appointmentLocation = location,
+        appointmentDoctor = null,
+        appointmentItems = null,
+        appointmentResult = null,
         createdAtEpochMillis = 0L,
     )
 }

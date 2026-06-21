@@ -44,6 +44,15 @@ class CalendarRecordFormParser(
                 appointmentLocation = input.appointmentLocation.trim().takeIf {
                     input.type == CalendarRecordType.Appointment && it.isNotBlank()
                 },
+                appointmentDoctor = input.appointmentDoctor.trim().takeIf {
+                    input.type == CalendarRecordType.Appointment && it.isNotBlank()
+                },
+                appointmentItems = input.appointmentItems.trim().takeIf {
+                    input.type == CalendarRecordType.Appointment && it.isNotBlank()
+                },
+                appointmentResult = input.appointmentResult.trim().takeIf {
+                    input.type == CalendarRecordType.Appointment && it.isNotBlank()
+                },
                 createdAtEpochMillis = input.createdAtEpochMillis ?: nowProvider(),
             ),
         )
@@ -63,6 +72,9 @@ data class CalendarRecordInput(
     val fetalMovementCount: String,
     val appointmentTime: String,
     val appointmentLocation: String,
+    val appointmentDoctor: String = "",
+    val appointmentItems: String = "",
+    val appointmentResult: String = "",
     val exerciseMinutes: String = "",
     val createdAtEpochMillis: Long? = null,
 )

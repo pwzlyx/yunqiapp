@@ -22,5 +22,8 @@ data class CalendarRecord(
     val exerciseMinutes: Int?,
     val appointmentTime: String?,
     val appointmentLocation: String?,
+    val appointmentDoctor: String?,
+    val appointmentItems: String?,
+    val appointmentResult: String?,
     val createdAtEpochMillis: Long,
 )
