@@ -83,8 +83,15 @@ private fun TrendsScreen(
         )
         TrendCard(
             titleResId = R.string.trends_exercise_title,
-            body = stringResource(R.string.trends_exercise_body),
-            points = emptyList(),
+            body = summary.latestExerciseMinutes?.let {
+                stringResource(
+                    R.string.trends_exercise_summary,
+                    summary.exerciseRecordCount,
+                    it,
+                    summary.totalExerciseMinutes,
+                )
+            } ?: stringResource(R.string.trends_exercise_body),
+            points = summary.exercisePoints,
         )
     }
 }

@@ -61,6 +61,7 @@ class CalendarMonthBuilderTest {
         note = "",
         weightKg = null,
         fetalMovementCount = null,
+        exerciseMinutes = null,
         appointmentTime = null,
         appointmentLocation = null,
         createdAtEpochMillis = 0L,

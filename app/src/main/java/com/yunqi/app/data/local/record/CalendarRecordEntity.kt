@@ -14,6 +14,7 @@ data class CalendarRecordEntity(
     val note: String,
     val weightKg: Double?,
     val fetalMovementCount: Int?,
+    val exerciseMinutes: Int?,
     val appointmentTime: String?,
     val appointmentLocation: String?,
     val createdAtEpochMillis: Long,
@@ -26,6 +27,7 @@ fun CalendarRecordEntity.toDomain(): CalendarRecord = CalendarRecord(
     note = note,
     weightKg = weightKg,
     fetalMovementCount = fetalMovementCount,
+    exerciseMinutes = exerciseMinutes,
     appointmentTime = appointmentTime,
     appointmentLocation = appointmentLocation,
     createdAtEpochMillis = createdAtEpochMillis,
@@ -38,8 +40,8 @@ fun CalendarRecord.toEntity(): CalendarRecordEntity = CalendarRecordEntity(
     note = note,
     weightKg = weightKg,
     fetalMovementCount = fetalMovementCount,
+    exerciseMinutes = exerciseMinutes,
     appointmentTime = appointmentTime,
     appointmentLocation = appointmentLocation,
     createdAtEpochMillis = createdAtEpochMillis,
 )
-

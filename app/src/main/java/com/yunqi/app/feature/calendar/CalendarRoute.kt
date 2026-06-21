@@ -84,6 +84,7 @@ private fun CalendarScreen(
     var note by remember { mutableStateOf("") }
     var weightKg by remember { mutableStateOf("") }
     var fetalMovementCount by remember { mutableStateOf("") }
+    var exerciseMinutes by remember { mutableStateOf("") }
     var appointmentTime by remember { mutableStateOf("") }
     var appointmentLocation by remember { mutableStateOf("") }
     var editingRecord by remember { mutableStateOf<CalendarRecord?>(null) }
@@ -128,6 +129,8 @@ private fun CalendarScreen(
             onWeightKgChange = { weightKg = it },
             fetalMovementCount = fetalMovementCount,
             onFetalMovementCountChange = { fetalMovementCount = it },
+            exerciseMinutes = exerciseMinutes,
+            onExerciseMinutesChange = { exerciseMinutes = it },
             appointmentTime = appointmentTime,
             onAppointmentTimeChange = { appointmentTime = it },
             appointmentLocation = appointmentLocation,
@@ -139,6 +142,7 @@ private fun CalendarScreen(
                     onNoteChange = { note = it },
                     onWeightKgChange = { weightKg = it },
                     onFetalMovementCountChange = { fetalMovementCount = it },
+                    onExerciseMinutesChange = { exerciseMinutes = it },
                     onAppointmentTimeChange = { appointmentTime = it },
                     onAppointmentLocationChange = { appointmentLocation = it },
                 )
@@ -155,6 +159,7 @@ private fun CalendarScreen(
                             fetalMovementCount = fetalMovementCount,
                             appointmentTime = appointmentTime,
                             appointmentLocation = appointmentLocation,
+                            exerciseMinutes = exerciseMinutes,
                             createdAtEpochMillis = editingRecord?.createdAtEpochMillis,
                         ),
                     )
@@ -165,6 +170,7 @@ private fun CalendarScreen(
                             onNoteChange = { note = it },
                             onWeightKgChange = { weightKg = it },
                             onFetalMovementCountChange = { fetalMovementCount = it },
+                            onExerciseMinutesChange = { exerciseMinutes = it },
                             onAppointmentTimeChange = { appointmentTime = it },
                             onAppointmentLocationChange = { appointmentLocation = it },
                         )
@@ -189,6 +195,7 @@ private fun CalendarScreen(
                 note = record.note
                 weightKg = record.weightKg?.toString().orEmpty()
                 fetalMovementCount = record.fetalMovementCount?.toString().orEmpty()
+                exerciseMinutes = record.exerciseMinutes?.toString().orEmpty()
                 appointmentTime = record.appointmentTime.orEmpty()
                 appointmentLocation = record.appointmentLocation.orEmpty()
                 errorMessageResId = null
@@ -333,6 +340,9 @@ private fun CalendarRecordType.toMarkerColor(): Color = when (this) {
     CalendarRecordType.Appointment -> MaterialTheme.colorScheme.primary
     CalendarRecordType.Weight -> MaterialTheme.colorScheme.tertiary
     CalendarRecordType.FetalMovement -> MaterialTheme.colorScheme.secondary
+    CalendarRecordType.Symptom -> MaterialTheme.colorScheme.error
+    CalendarRecordType.Exercise -> MaterialTheme.colorScheme.inversePrimary
+    CalendarRecordType.Diet -> MaterialTheme.colorScheme.primaryContainer
     CalendarRecordType.Note -> MaterialTheme.colorScheme.outline
 }
 
@@ -376,6 +386,8 @@ private fun RecordForm(
     onWeightKgChange: (String) -> Unit,
     fetalMovementCount: String,
     onFetalMovementCountChange: (String) -> Unit,
+    exerciseMinutes: String,
+    onExerciseMinutesChange: (String) -> Unit,
     appointmentTime: String,
     onAppointmentTimeChange: (String) -> Unit,
     appointmentLocation: String,
@@ -436,6 +448,17 @@ private fun RecordForm(
                     modifier = Modifier.fillMaxWidth(),
                 )
 
+                CalendarRecordType.Exercise -> OutlinedTextField(
+                    value = exerciseMinutes,
+                    onValueChange = onExerciseMinutesChange,
+                    label = { Text(stringResource(R.string.calendar_exercise_minutes_label)) },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                )
+
+                CalendarRecordType.Symptom,
+                CalendarRecordType.Diet,
                 CalendarRecordType.Note -> Unit
             }
 
@@ -578,6 +601,9 @@ private fun RecordCard(
             record.fetalMovementCount?.let {
                 Text(stringResource(R.string.calendar_record_fetal_movement_value, it))
             }
+            record.exerciseMinutes?.let {
+                Text(stringResource(R.string.calendar_record_exercise_value, it))
+            }
             record.appointmentTime?.let {
                 Text(stringResource(R.string.calendar_record_appointment_time, it))
             }
@@ -596,6 +622,9 @@ private fun CalendarRecordType.toDisplayText(): String = when (this) {
     CalendarRecordType.Appointment -> stringResource(R.string.calendar_record_type_appointment)
     CalendarRecordType.Weight -> stringResource(R.string.calendar_record_type_weight)
     CalendarRecordType.FetalMovement -> stringResource(R.string.calendar_record_type_fetal_movement)
+    CalendarRecordType.Symptom -> stringResource(R.string.calendar_record_type_symptom)
+    CalendarRecordType.Exercise -> stringResource(R.string.calendar_record_type_exercise)
+    CalendarRecordType.Diet -> stringResource(R.string.calendar_record_type_diet)
     CalendarRecordType.Note -> stringResource(R.string.calendar_record_type_note)
 }
 
@@ -604,18 +633,21 @@ private fun CalendarRecordActionResult.toErrorMessageResId(): Int? = when (this)
     CalendarRecordActionResult.InvalidDate -> R.string.calendar_error_invalid_date
     CalendarRecordActionResult.InvalidWeight -> R.string.calendar_error_invalid_weight
     CalendarRecordActionResult.InvalidFetalMovement -> R.string.calendar_error_invalid_fetal_movement
+    CalendarRecordActionResult.InvalidExerciseMinutes -> R.string.calendar_error_invalid_exercise_minutes
 }
 
 private fun clearRecordForm(
     onNoteChange: (String) -> Unit,
     onWeightKgChange: (String) -> Unit,
     onFetalMovementCountChange: (String) -> Unit,
+    onExerciseMinutesChange: (String) -> Unit,
     onAppointmentTimeChange: (String) -> Unit,
     onAppointmentLocationChange: (String) -> Unit,
 ) {
     onNoteChange("")
     onWeightKgChange("")
     onFetalMovementCountChange("")
+    onExerciseMinutesChange("")
     onAppointmentTimeChange("")
     onAppointmentLocationChange("")
 }

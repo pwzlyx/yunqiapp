@@ -13,6 +13,10 @@ data class TrendSummary(
     val latestFetalMovementCount: Int?,
     val averageFetalMovementCount: Double?,
     val fetalMovementPoints: List<TrendPoint>,
+    val exerciseRecordCount: Int,
+    val latestExerciseMinutes: Int?,
+    val totalExerciseMinutes: Int,
+    val exercisePoints: List<TrendPoint>,
 )
 
 data class TrendPoint(
@@ -31,6 +35,9 @@ object TrendSummaryCalculator {
         val fetalMovementRecords = records
             .filter { it.type == CalendarRecordType.FetalMovement && it.fetalMovementCount != null }
             .sortedWith(compareBy<CalendarRecord> { it.date }.thenBy { it.createdAtEpochMillis })
+        val exerciseRecords = records
+            .filter { it.type == CalendarRecordType.Exercise && it.exerciseMinutes != null }
+            .sortedWith(compareBy<CalendarRecord> { it.date }.thenBy { it.createdAtEpochMillis })
         val weightPoints = weightRecords.map { record ->
             TrendPoint(
                 date = record.date,
@@ -41,6 +48,12 @@ object TrendSummaryCalculator {
             TrendPoint(
                 date = record.date,
                 value = (record.fetalMovementCount ?: 0).toDouble(),
+            )
+        }
+        val exercisePoints = exerciseRecords.map { record ->
+            TrendPoint(
+                date = record.date,
+                value = (record.exerciseMinutes ?: 0).toDouble(),
             )
         }
 
@@ -56,6 +69,10 @@ object TrendSummaryCalculator {
                 ?.mapNotNull(CalendarRecord::fetalMovementCount)
                 ?.average(),
             fetalMovementPoints = fetalMovementPoints,
+            exerciseRecordCount = exerciseRecords.size,
+            latestExerciseMinutes = exerciseRecords.lastOrNull()?.exerciseMinutes,
+            totalExerciseMinutes = exerciseRecords.mapNotNull(CalendarRecord::exerciseMinutes).sum(),
+            exercisePoints = exercisePoints,
         )
     }
 

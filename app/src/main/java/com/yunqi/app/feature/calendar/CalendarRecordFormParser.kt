@@ -17,12 +17,16 @@ class CalendarRecordFormParser(
             ?: return CalendarRecordParseResult.InvalidDate
         val weightKg = input.weightKg.takeIf { it.isNotBlank() }?.toDoubleOrNull()
         val fetalMovementCount = input.fetalMovementCount.takeIf { it.isNotBlank() }?.toIntOrNull()
+        val exerciseMinutes = input.exerciseMinutes.takeIf { it.isNotBlank() }?.toIntOrNull()
 
         if (input.type == CalendarRecordType.Weight && (weightKg == null || weightKg <= 0.0)) {
             return CalendarRecordParseResult.InvalidWeight
         }
         if (input.type == CalendarRecordType.FetalMovement && (fetalMovementCount == null || fetalMovementCount < 0)) {
             return CalendarRecordParseResult.InvalidFetalMovement
+        }
+        if (input.type == CalendarRecordType.Exercise && (exerciseMinutes == null || exerciseMinutes <= 0)) {
+            return CalendarRecordParseResult.InvalidExerciseMinutes
         }
 
         return CalendarRecordParseResult.Success(
@@ -33,6 +37,7 @@ class CalendarRecordFormParser(
                 note = input.note.trim(),
                 weightKg = if (input.type == CalendarRecordType.Weight) weightKg else null,
                 fetalMovementCount = if (input.type == CalendarRecordType.FetalMovement) fetalMovementCount else null,
+                exerciseMinutes = if (input.type == CalendarRecordType.Exercise) exerciseMinutes else null,
                 appointmentTime = input.appointmentTime.trim().takeIf {
                     input.type == CalendarRecordType.Appointment && it.isNotBlank()
                 },
@@ -58,6 +63,7 @@ data class CalendarRecordInput(
     val fetalMovementCount: String,
     val appointmentTime: String,
     val appointmentLocation: String,
+    val exerciseMinutes: String = "",
     val createdAtEpochMillis: Long? = null,
 )
 
@@ -66,4 +72,5 @@ sealed interface CalendarRecordParseResult {
     data object InvalidDate : CalendarRecordParseResult
     data object InvalidWeight : CalendarRecordParseResult
     data object InvalidFetalMovement : CalendarRecordParseResult
+    data object InvalidExerciseMinutes : CalendarRecordParseResult
 }

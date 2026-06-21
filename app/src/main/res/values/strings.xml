@@ -143,4 +143,11 @@
     <string name="calendar_edit_record">编辑</string>
     <string name="calendar_update_record">更新记录</string>
     <string name="calendar_cancel_edit">取消编辑</string>
+    <string name="calendar_record_type_symptom">症状</string>
+    <string name="calendar_record_type_exercise">运动</string>
+    <string name="calendar_record_type_diet">饮食</string>
+    <string name="calendar_exercise_minutes_label">运动时长 分钟</string>
+    <string name="calendar_record_exercise_value">运动：%1$d 分钟</string>
+    <string name="calendar_error_invalid_exercise_minutes">请输入有效运动时长。</string>
+    <string name="trends_exercise_summary">已记录 %1$d 次，最近运动 %2$d 分钟，累计 %3$d 分钟。</string>
 </resources>

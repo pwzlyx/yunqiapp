@@ -6,6 +6,9 @@ enum class CalendarRecordType {
     Appointment,
     Weight,
     FetalMovement,
+    Symptom,
+    Exercise,
+    Diet,
     Note,
 }
 
@@ -16,8 +19,8 @@ data class CalendarRecord(
     val note: String,
     val weightKg: Double?,
     val fetalMovementCount: Int?,
+    val exerciseMinutes: Int?,
     val appointmentTime: String?,
     val appointmentLocation: String?,
     val createdAtEpochMillis: Long,
 )
-

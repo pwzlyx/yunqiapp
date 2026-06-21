@@ -20,6 +20,10 @@ class TrendSummaryCalculatorTest {
         assertNull(summary.latestFetalMovementCount)
         assertNull(summary.averageFetalMovementCount)
         assertEquals(emptyList<TrendPoint>(), summary.fetalMovementPoints)
+        assertEquals(0, summary.exerciseRecordCount)
+        assertNull(summary.latestExerciseMinutes)
+        assertEquals(0, summary.totalExerciseMinutes)
+        assertEquals(emptyList<TrendPoint>(), summary.exercisePoints)
     }
 
     @Test
@@ -49,6 +53,12 @@ class TrendSummaryCalculatorTest {
                 type = CalendarRecordType.FetalMovement,
                 fetalMovementCount = 16,
             ),
+            record(
+                id = "exercise",
+                date = LocalDate.of(2026, 6, 6),
+                type = CalendarRecordType.Exercise,
+                exerciseMinutes = 30,
+            ),
         )
 
         val summary = TrendSummaryCalculator.calculate(records)
@@ -73,6 +83,13 @@ class TrendSummaryCalculatorTest {
             ),
             summary.fetalMovementPoints,
         )
+        assertEquals(1, summary.exerciseRecordCount)
+        assertEquals(30, summary.latestExerciseMinutes)
+        assertEquals(30, summary.totalExerciseMinutes)
+        assertEquals(
+            listOf(TrendPoint(LocalDate.of(2026, 6, 6), 30.0)),
+            summary.exercisePoints,
+        )
     }
 
     private fun record(
@@ -81,6 +98,7 @@ class TrendSummaryCalculatorTest {
         type: CalendarRecordType,
         weightKg: Double? = null,
         fetalMovementCount: Int? = null,
+        exerciseMinutes: Int? = null,
     ): CalendarRecord = CalendarRecord(
         id = id,
         date = date,
@@ -88,6 +106,7 @@ class TrendSummaryCalculatorTest {
         note = "",
         weightKg = weightKg,
         fetalMovementCount = fetalMovementCount,
+        exerciseMinutes = exerciseMinutes,
         appointmentTime = null,
         appointmentLocation = null,
         createdAtEpochMillis = 0L,

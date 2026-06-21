@@ -106,6 +106,43 @@ class CalendarRecordFormParserTest {
     }
 
     @Test
+    fun `parses exercise record`() {
+        val result = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.Exercise,
+                note = "Walk",
+                weightKg = "",
+                fetalMovementCount = "",
+                appointmentTime = "",
+                appointmentLocation = "",
+                exerciseMinutes = "30",
+            ),
+        )
+
+        val record = (result as CalendarRecordParseResult.Success).record
+        assertEquals(30, record.exerciseMinutes)
+    }
+
+    @Test
+    fun `rejects invalid exercise minutes`() {
+        val result = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.Exercise,
+                note = "",
+                weightKg = "",
+                fetalMovementCount = "",
+                appointmentTime = "",
+                appointmentLocation = "",
+                exerciseMinutes = "0",
+            ),
+        )
+
+        assertEquals(CalendarRecordParseResult.InvalidExerciseMinutes, result)
+    }
+
+    @Test
     fun `rejects invalid date`() {
         val result = parser.parse(
             CalendarRecordInput(
