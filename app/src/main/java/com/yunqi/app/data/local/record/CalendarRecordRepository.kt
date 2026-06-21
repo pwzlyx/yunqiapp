@@ -19,6 +19,14 @@ class CalendarRecordRepository(context: Context) {
         }
 
     /**
+     * Emits all local records for aggregate views such as trends.
+     */
+    fun allRecords(): Flow<List<CalendarRecord>> =
+        dao.allRecords().map { records ->
+            records.map(CalendarRecordEntity::toDomain)
+        }
+
+    /**
      * Saves a calendar record to the private local Room database.
      */
     suspend fun save(record: CalendarRecord) {
@@ -29,4 +37,3 @@ class CalendarRecordRepository(context: Context) {
         dao.deleteById(id)
     }
 }
-

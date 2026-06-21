@@ -17,10 +17,12 @@ interface CalendarRecordDao {
     )
     fun recordsForDate(date: String): Flow<List<CalendarRecordEntity>>
 
+    @Query("SELECT * FROM calendar_records ORDER BY date DESC, createdAtEpochMillis DESC")
+    fun allRecords(): Flow<List<CalendarRecordEntity>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun upsert(record: CalendarRecordEntity)
 
     @Query("DELETE FROM calendar_records WHERE id = :id")
     suspend fun deleteById(id: String)
 }
-

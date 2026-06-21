@@ -60,8 +60,10 @@
     <string name="trends_title">趋势</string>
     <string name="trends_weight_title">体重趋势</string>
     <string name="trends_weight_body">记录两次以上体重后展示变化曲线。</string>
+    <string name="trends_weight_summary">已记录 %1$d 次，最近体重 %2$.1f kg。</string>
     <string name="trends_fetal_movement_title">胎动趋势</string>
     <string name="trends_fetal_movement_body">记录胎动后帮助回看日常模式。</string>
+    <string name="trends_fetal_movement_summary">已记录 %1$d 次，最近胎动 %2$d 次。</string>
     <string name="trends_exercise_title">运动统计</string>
     <string name="trends_exercise_body">记录运动时长后展示每周活动量。</string>
 
