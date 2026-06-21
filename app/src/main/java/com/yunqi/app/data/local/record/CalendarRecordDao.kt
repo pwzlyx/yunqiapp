@@ -23,6 +23,15 @@ interface CalendarRecordDao {
     @Query(
         """
         SELECT * FROM calendar_records
+        WHERE date BETWEEN :startDate AND :endDate
+        ORDER BY date ASC, createdAtEpochMillis DESC
+        """,
+    )
+    fun recordsBetween(startDate: String, endDate: String): Flow<List<CalendarRecordEntity>>
+
+    @Query(
+        """
+        SELECT * FROM calendar_records
         WHERE type = 'Appointment' AND date >= :fromDate
         ORDER BY date ASC, appointmentTime ASC
         """,

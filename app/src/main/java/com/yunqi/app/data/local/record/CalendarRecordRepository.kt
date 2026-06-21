@@ -27,6 +27,14 @@ class CalendarRecordRepository(context: Context) {
         }
 
     /**
+     * Emits records within an inclusive local date range.
+     */
+    fun recordsBetween(startDate: LocalDate, endDate: LocalDate): Flow<List<CalendarRecord>> =
+        dao.recordsBetween(startDate.toString(), endDate.toString()).map { records ->
+            records.map(CalendarRecordEntity::toDomain)
+        }
+
+    /**
      * Returns future appointment records so reminder settings can rebuild scheduled work.
      */
     suspend fun futureAppointmentRecords(fromDate: LocalDate): List<CalendarRecord> =

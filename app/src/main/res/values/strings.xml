@@ -129,4 +129,13 @@
     <string name="settings_appointment_reminders">产检提醒</string>
     <string name="settings_appointment_reminders_body">提前 1 小时提醒已记录时间的产检。</string>
     <string name="settings_notifications_permission_missing">通知权限未开启</string>
+    <string name="calendar_previous_month">上个月</string>
+    <string name="calendar_next_month">下个月</string>
+    <string name="calendar_week_monday">一</string>
+    <string name="calendar_week_tuesday">二</string>
+    <string name="calendar_week_wednesday">三</string>
+    <string name="calendar_week_thursday">四</string>
+    <string name="calendar_week_friday">五</string>
+    <string name="calendar_week_saturday">六</string>
+    <string name="calendar_week_sunday">日</string>
 </resources>

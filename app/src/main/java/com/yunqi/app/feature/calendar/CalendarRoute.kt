@@ -1,14 +1,19 @@
 package com.yunqi.app.feature.calendar
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
@@ -16,25 +21,37 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.FilterChip
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
+import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yunqi.app.R
 import com.yunqi.app.domain.calendar.CalendarRecord
 import com.yunqi.app.domain.calendar.CalendarRecordType
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @Composable
 fun CalendarRoute(
@@ -46,6 +63,7 @@ fun CalendarRoute(
         contentPadding = contentPadding,
         uiState = uiState,
         onSelectDate = viewModel::selectDate,
+        onSelectCalendarDate = viewModel::selectDate,
         onSaveRecord = viewModel::save,
         onDeleteRecord = viewModel::delete,
     )
@@ -56,6 +74,7 @@ private fun CalendarScreen(
     contentPadding: PaddingValues,
     uiState: CalendarUiState,
     onSelectDate: (String) -> CalendarRecordActionResult,
+    onSelectCalendarDate: (LocalDate) -> Unit,
     onSaveRecord: suspend (CalendarRecordInput) -> CalendarRecordActionResult,
     onDeleteRecord: suspend (String) -> Unit,
 ) {
@@ -80,6 +99,11 @@ private fun CalendarScreen(
         Text(
             text = stringResource(R.string.calendar_title),
             style = MaterialTheme.typography.headlineMedium,
+        )
+
+        MonthCalendar(
+            uiState = uiState,
+            onDateSelected = onSelectCalendarDate,
         )
 
         DateSelector(
@@ -143,6 +167,144 @@ private fun CalendarScreen(
             onDeleteRecord = onDeleteRecord,
         )
     }
+}
+
+@Composable
+private fun MonthCalendar(
+    uiState: CalendarUiState,
+    onDateSelected: (LocalDate) -> Unit,
+) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(12.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                IconButton(onClick = { onDateSelected(uiState.selectedDate.minusMonths(1)) }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
+                        contentDescription = stringResource(R.string.calendar_previous_month),
+                    )
+                }
+                Text(
+                    text = uiState.displayedMonth.toString(),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                IconButton(onClick = { onDateSelected(uiState.selectedDate.plusMonths(1)) }) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Rounded.KeyboardArrowRight,
+                        contentDescription = stringResource(R.string.calendar_next_month),
+                    )
+                }
+            }
+            CalendarWeekHeader()
+            uiState.monthDays.chunked(7).forEach { week ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                ) {
+                    week.forEach { day ->
+                        CalendarDayCell(
+                            day = day,
+                            selected = day.date == uiState.selectedDate,
+                            onClick = { onDateSelected(day.date) },
+                            modifier = Modifier.weight(1f),
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun CalendarWeekHeader() {
+    val labels = listOf(
+        R.string.calendar_week_monday,
+        R.string.calendar_week_tuesday,
+        R.string.calendar_week_wednesday,
+        R.string.calendar_week_thursday,
+        R.string.calendar_week_friday,
+        R.string.calendar_week_saturday,
+        R.string.calendar_week_sunday,
+    )
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        labels.forEach { labelResId ->
+            Text(
+                text = stringResource(labelResId),
+                modifier = Modifier.weight(1f),
+                style = MaterialTheme.typography.labelSmall,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+}
+
+@Composable
+private fun CalendarDayCell(
+    day: CalendarMonthDay,
+    selected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    val colorScheme = MaterialTheme.colorScheme
+    val backgroundColor = if (selected) colorScheme.primaryContainer else Color.Transparent
+    val textColor = when {
+        selected -> colorScheme.onPrimaryContainer
+        day.isInDisplayedMonth -> colorScheme.onSurface
+        else -> colorScheme.onSurfaceVariant
+    }
+
+    Column(
+        modifier = modifier
+            .aspectRatio(1f)
+            .clip(RoundedCornerShape(8.dp))
+            .background(backgroundColor)
+            .clickable(onClick = onClick)
+            .padding(4.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Text(
+            text = day.date.dayOfMonth.toString(),
+            style = MaterialTheme.typography.bodySmall,
+            color = textColor,
+        )
+        RecordTypeDots(recordTypes = day.recordTypes)
+    }
+}
+
+@Composable
+private fun RecordTypeDots(recordTypes: Set<CalendarRecordType>) {
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        recordTypes.take(4).forEach { type ->
+            Box(
+                modifier = Modifier
+                    .size(5.dp)
+                    .clip(CircleShape)
+                    .background(type.toMarkerColor()),
+            )
+        }
+    }
+}
+
+@Composable
+private fun CalendarRecordType.toMarkerColor(): Color = when (this) {
+    CalendarRecordType.Appointment -> MaterialTheme.colorScheme.primary
+    CalendarRecordType.Weight -> MaterialTheme.colorScheme.tertiary
+    CalendarRecordType.FetalMovement -> MaterialTheme.colorScheme.secondary
+    CalendarRecordType.Note -> MaterialTheme.colorScheme.outline
 }
 
 @Composable

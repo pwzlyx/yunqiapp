@@ -6,6 +6,7 @@ import androidx.lifecycle.viewModelScope
 import com.yunqi.app.data.local.ReminderSettingsRepository
 import com.yunqi.app.data.local.record.CalendarRecordRepository
 import com.yunqi.app.notification.AppointmentReminderScheduler
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -15,20 +16,31 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import java.time.LocalDate
+import java.time.YearMonth
 
 class CalendarViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = CalendarRecordRepository(application.applicationContext)
     private val reminderSettingsRepository = ReminderSettingsRepository(application.applicationContext)
     private val reminderScheduler = AppointmentReminderScheduler(application.applicationContext)
+    private val monthBuilder = CalendarMonthBuilder()
     private val parser = CalendarRecordFormParser()
     private val selectedDate = MutableStateFlow(LocalDate.now())
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val uiState: StateFlow<CalendarUiState> = selectedDate
         .flatMapLatest { date ->
-            repository.recordsForDate(date).map { records ->
+            val displayedMonth = YearMonth.from(date)
+            combine(
+                repository.recordsForDate(date),
+                repository.recordsBetween(
+                    startDate = displayedMonth.atDay(1),
+                    endDate = displayedMonth.atEndOfMonth(),
+                ),
+            ) { records, monthRecords ->
                 CalendarUiState(
                     selectedDate = date,
+                    displayedMonth = displayedMonth,
+                    monthDays = monthBuilder.build(displayedMonth, monthRecords),
                     records = records,
                 )
             }
@@ -50,6 +62,10 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
             ?: return CalendarRecordActionResult.InvalidDate
         selectedDate.value = date
         return CalendarRecordActionResult.Success
+    }
+
+    fun selectDate(date: LocalDate) {
+        selectedDate.value = date
     }
 
     suspend fun save(input: CalendarRecordInput): CalendarRecordActionResult = when (val result = parser.parse(input)) {
