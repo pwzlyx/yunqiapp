@@ -4,6 +4,7 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.yunqi.app.data.local.record.CalendarRecordRepository
+import com.yunqi.app.notification.AppointmentReminderScheduler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -15,6 +16,7 @@ import java.time.LocalDate
 
 class CalendarViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = CalendarRecordRepository(application.applicationContext)
+    private val reminderScheduler = AppointmentReminderScheduler(application.applicationContext)
     private val parser = CalendarRecordFormParser()
     private val selectedDate = MutableStateFlow(LocalDate.now())
 
@@ -50,6 +52,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     suspend fun save(input: CalendarRecordInput): CalendarRecordActionResult = when (val result = parser.parse(input)) {
         is CalendarRecordParseResult.Success -> {
             repository.save(result.record)
+            reminderScheduler.schedule(result.record)
             selectedDate.value = result.record.date
             CalendarRecordActionResult.Success
         }
@@ -61,6 +64,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
 
     suspend fun delete(id: String) {
         repository.delete(id)
+        reminderScheduler.cancel(id)
     }
 }
 

@@ -56,6 +56,9 @@
     <string name="calendar_record_fetal_movement_value">胎动：%1$d 次</string>
     <string name="calendar_record_appointment_time">时间：%1$s</string>
     <string name="calendar_record_appointment_location">地点：%1$s</string>
+    <string name="notification_channel_appointments">产检提醒</string>
+    <string name="notification_appointment_title">产检提醒</string>
+    <string name="notification_appointment_body">你有一项产检安排：%1$s。</string>
 
     <string name="trends_title">趋势</string>
     <string name="trends_weight_title">体重趋势</string>
