@@ -41,4 +41,4 @@ Use a physical Android device or emulator:
 ## Known Verification Gap
 
 - Physical-device notification delivery has not been observed inside this workspace.
-- Compose UI instrumentation tests are not yet implemented; current coverage is unit tests plus Android lint/build.
+- Compose UI instrumentation tests are implemented and can be built with `:app:assembleDebugAndroidTest`, but have not been executed on a physical device inside this workspace.
