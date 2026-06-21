@@ -27,10 +27,35 @@
     <string name="medical_disclaimer">本 App 用于记录与健康管理提醒，不能替代医生诊断或治疗建议。</string>
 
     <string name="calendar_title">日历</string>
-    <string name="calendar_month_placeholder">月历视图将在下一阶段接入</string>
-    <string name="calendar_today_records">今日记录</string>
+    <string name="calendar_selected_date">查看日期</string>
+    <string name="calendar_selected_date_hint">YYYY-MM-DD</string>
+    <string name="calendar_view_date">查看</string>
+    <string name="calendar_selected_date_records">所选日期记录</string>
     <string name="calendar_records_placeholder">产检、体重、胎动、症状记录会在这里汇总。</string>
     <string name="calendar_add_record">新增记录</string>
+    <string name="calendar_record_type_appointment">产检</string>
+    <string name="calendar_record_type_weight">体重</string>
+    <string name="calendar_record_type_fetal_movement">胎动</string>
+    <string name="calendar_record_type_note">备注</string>
+    <string name="calendar_note_label">备注</string>
+    <string name="calendar_weight_label">体重 kg</string>
+    <string name="calendar_fetal_movement_label">胎动次数</string>
+    <string name="calendar_appointment_time_label">产检时间</string>
+    <string name="calendar_appointment_location_label">医院/地点</string>
+    <string name="calendar_save_record">保存记录</string>
+    <string name="calendar_empty_records">这一天还没有记录。</string>
+    <string name="calendar_delete_record">删除</string>
+    <string name="calendar_delete_confirm_title">删除这条记录？</string>
+    <string name="calendar_delete_confirm_body">删除后无法在本机恢复。</string>
+    <string name="calendar_delete_confirm_action">确认删除</string>
+    <string name="calendar_delete_cancel_action">取消</string>
+    <string name="calendar_error_invalid_date">请输入有效日期，格式为 YYYY-MM-DD。</string>
+    <string name="calendar_error_invalid_weight">请输入有效体重。</string>
+    <string name="calendar_error_invalid_fetal_movement">请输入有效胎动次数。</string>
+    <string name="calendar_record_weight_value">体重：%1$.1f kg</string>
+    <string name="calendar_record_fetal_movement_value">胎动：%1$d 次</string>
+    <string name="calendar_record_appointment_time">时间：%1$s</string>
+    <string name="calendar_record_appointment_location">地点：%1$s</string>
 
     <string name="trends_title">趋势</string>
     <string name="trends_weight_title">体重趋势</string>
