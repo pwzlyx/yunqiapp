@@ -29,6 +29,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yunqi.app.R
 import com.yunqi.app.domain.calendar.CalendarRecordType
 import com.yunqi.app.domain.trends.TrendRange
+import com.yunqi.app.domain.trends.TrendChartPolicy
 import com.yunqi.app.domain.trends.TrendPoint
 import com.yunqi.app.domain.trends.TrendSummary
 import kotlin.math.max
@@ -76,14 +77,7 @@ private fun TrendsScreen(
         )
         TrendCard(
             titleResId = R.string.trends_weight_title,
-            body = summary.latestWeightKg?.let {
-                stringResource(
-                    R.string.trends_weight_summary_with_change,
-                    summary.weightRecordCount,
-                    it,
-                    summary.weightChangeKg ?: 0.0,
-                )
-            } ?: stringResource(R.string.trends_weight_body),
+            body = summary.weightBody(),
             points = summary.weightPoints,
             emptyActionResId = R.string.trends_record_weight,
             recordType = CalendarRecordType.Weight,
@@ -91,14 +85,7 @@ private fun TrendsScreen(
         )
         TrendCard(
             titleResId = R.string.trends_fetal_movement_title,
-            body = summary.latestFetalMovementCount?.let {
-                stringResource(
-                    R.string.trends_fetal_movement_summary_with_average,
-                    summary.fetalMovementRecordCount,
-                    it,
-                    summary.averageFetalMovementCount ?: 0.0,
-                )
-            } ?: stringResource(R.string.trends_fetal_movement_body),
+            body = summary.fetalMovementBody(),
             points = summary.fetalMovementPoints,
             emptyActionResId = R.string.trends_record_fetal_movement,
             recordType = CalendarRecordType.FetalMovement,
@@ -121,6 +108,34 @@ private fun TrendsScreen(
         )
     }
 }
+
+@Composable
+private fun TrendSummary.weightBody(): String = latestWeightKg?.let { latestWeight ->
+    if (TrendChartPolicy.shouldShowChart(weightPoints)) {
+        stringResource(
+            R.string.trends_weight_summary_with_change,
+            weightRecordCount,
+            latestWeight,
+            weightChangeKg ?: 0.0,
+        )
+    } else {
+        stringResource(R.string.trends_weight_summary, weightRecordCount, latestWeight)
+    }
+} ?: stringResource(R.string.trends_weight_body)
+
+@Composable
+private fun TrendSummary.fetalMovementBody(): String = latestFetalMovementCount?.let { latestCount ->
+    if (TrendChartPolicy.shouldShowChart(fetalMovementPoints)) {
+        stringResource(
+            R.string.trends_fetal_movement_summary_with_average,
+            fetalMovementRecordCount,
+            latestCount,
+            averageFetalMovementCount ?: 0.0,
+        )
+    } else {
+        stringResource(R.string.trends_fetal_movement_summary, fetalMovementRecordCount, latestCount)
+    }
+} ?: stringResource(R.string.trends_fetal_movement_body)
 
 @Composable
 @OptIn(ExperimentalLayoutApi::class)
@@ -172,7 +187,7 @@ private fun TrendCard(
                 text = body,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
-            if (points.isNotEmpty()) {
+            if (TrendChartPolicy.shouldShowChart(points)) {
                 TrendLineChart(points = points)
             } else {
                 Button(onClick = { onRecordClick(recordType) }) {

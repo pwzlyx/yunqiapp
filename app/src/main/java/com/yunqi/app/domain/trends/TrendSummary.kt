@@ -99,3 +99,10 @@ object TrendRecordFilter {
         return records.filter { record -> record.date in startDate..today }
     }
 }
+
+object TrendChartPolicy {
+    /**
+     * Shows a trend chart only when there are enough points to compare change over time.
+     */
+    fun shouldShowChart(points: List<TrendPoint>): Boolean = points.size >= 2
+}
