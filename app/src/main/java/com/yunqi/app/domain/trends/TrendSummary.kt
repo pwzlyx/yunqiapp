@@ -82,3 +82,20 @@ object TrendSummaryCalculator {
         return latest - first
     }
 }
+
+enum class TrendRange(val days: Long?) {
+    Last7Days(days = 7),
+    Last30Days(days = 30),
+    All(days = null),
+}
+
+object TrendRecordFilter {
+    /**
+     * Keeps records inside the selected inclusive trend range.
+     */
+    fun filter(records: List<CalendarRecord>, range: TrendRange, today: LocalDate): List<CalendarRecord> {
+        val days = range.days ?: return records
+        val startDate = today.minusDays(days - 1)
+        return records.filter { record -> record.date in startDate..today }
+    }
+}

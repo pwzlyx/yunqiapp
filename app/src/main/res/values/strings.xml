@@ -155,6 +155,9 @@
     <string name="calendar_error_invalid_exercise_minutes">请输入有效运动时长。</string>
     <string name="calendar_filter_all">全部</string>
     <string name="trends_exercise_summary">已记录 %1$d 次，最近运动 %2$d 分钟，累计 %3$d 分钟。</string>
+    <string name="trends_range_7_days">近 7 天</string>
+    <string name="trends_range_30_days">近 30 天</string>
+    <string name="trends_range_all">全部</string>
     <string name="settings_privacy">隐私与数据</string>
     <string name="settings_local_data_body">孕期档案、日历记录和提醒设置仅保存在本机。</string>
     <string name="settings_clear_local_data">清除本机数据</string>

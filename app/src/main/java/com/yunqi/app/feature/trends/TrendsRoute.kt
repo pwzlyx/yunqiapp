@@ -4,6 +4,8 @@ import androidx.annotation.StringRes
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -12,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
+import androidx.compose.material3.FilterChip
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yunqi.app.R
+import com.yunqi.app.domain.trends.TrendRange
 import com.yunqi.app.domain.trends.TrendPoint
 import com.yunqi.app.domain.trends.TrendSummary
 import kotlin.math.max
@@ -36,14 +40,18 @@ fun TrendsRoute(
 
     TrendsScreen(
         contentPadding = contentPadding,
+        selectedRange = uiState.selectedRange,
         summary = uiState.summary,
+        onRangeSelected = viewModel::selectRange,
     )
 }
 
 @Composable
 private fun TrendsScreen(
     contentPadding: PaddingValues,
+    selectedRange: TrendRange,
     summary: TrendSummary,
+    onRangeSelected: (TrendRange) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -56,6 +64,10 @@ private fun TrendsScreen(
         Text(
             text = stringResource(R.string.trends_title),
             style = MaterialTheme.typography.headlineMedium,
+        )
+        TrendRangeSelector(
+            selectedRange = selectedRange,
+            onRangeSelected = onRangeSelected,
         )
         TrendCard(
             titleResId = R.string.trends_weight_title,
@@ -94,6 +106,34 @@ private fun TrendsScreen(
             points = summary.exercisePoints,
         )
     }
+}
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+private fun TrendRangeSelector(
+    selectedRange: TrendRange,
+    onRangeSelected: (TrendRange) -> Unit,
+) {
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        TrendRange.entries.forEach { range ->
+            FilterChip(
+                selected = selectedRange == range,
+                onClick = { onRangeSelected(range) },
+                label = { Text(range.toDisplayText()) },
+            )
+        }
+    }
+}
+
+@Composable
+private fun TrendRange.toDisplayText(): String = when (this) {
+    TrendRange.Last7Days -> stringResource(R.string.trends_range_7_days)
+    TrendRange.Last30Days -> stringResource(R.string.trends_range_30_days)
+    TrendRange.All -> stringResource(R.string.trends_range_all)
 }
 
 @Composable
