@@ -88,8 +88,12 @@ private fun CalendarScreen(
     var appointmentTime by remember { mutableStateOf("") }
     var appointmentLocation by remember { mutableStateOf("") }
     var editingRecord by remember { mutableStateOf<CalendarRecord?>(null) }
+    var recordFilter by remember { mutableStateOf<CalendarRecordType?>(null) }
     var errorMessageResId by remember { mutableStateOf<Int?>(null) }
     val coroutineScope = rememberCoroutineScope()
+    val filteredRecords = remember(uiState.records, recordFilter) {
+        recordFilter?.let { type -> uiState.records.filter { it.type == type } } ?: uiState.records
+    }
 
     Column(
         modifier = Modifier
@@ -187,7 +191,10 @@ private fun CalendarScreen(
         }
 
         RecordList(
-            records = uiState.records,
+            records = filteredRecords,
+            hasRecordsForDate = uiState.records.isNotEmpty(),
+            recordFilter = recordFilter,
+            onRecordFilterChange = { recordFilter = it },
             onEditRecord = { record ->
                 editingRecord = record
                 selectedDateText = record.date.toString()
@@ -515,6 +522,9 @@ private fun RecordTypeSelector(
 @Composable
 private fun RecordList(
     records: List<CalendarRecord>,
+    hasRecordsForDate: Boolean,
+    recordFilter: CalendarRecordType?,
+    onRecordFilterChange: (CalendarRecordType?) -> Unit,
     onEditRecord: (CalendarRecord) -> Unit,
     onDeleteRecord: suspend (String) -> Unit,
 ) {
@@ -524,9 +534,19 @@ private fun RecordList(
         text = stringResource(R.string.calendar_selected_date_records),
         style = MaterialTheme.typography.titleMedium,
     )
+    RecordFilterSelector(
+        recordFilter = recordFilter,
+        onRecordFilterChange = onRecordFilterChange,
+    )
     if (records.isEmpty()) {
         Text(
-            text = stringResource(R.string.calendar_empty_records),
+            text = stringResource(
+                if (hasRecordsForDate) {
+                    R.string.calendar_empty_filtered_records
+                } else {
+                    R.string.calendar_empty_records
+                },
+            ),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
     } else {
@@ -537,6 +557,32 @@ private fun RecordList(
                 onDelete = {
                     coroutineScope.launch { onDeleteRecord(record.id) }
                 },
+            )
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+private fun RecordFilterSelector(
+    recordFilter: CalendarRecordType?,
+    onRecordFilterChange: (CalendarRecordType?) -> Unit,
+) {
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        FilterChip(
+            selected = recordFilter == null,
+            onClick = { onRecordFilterChange(null) },
+            label = { Text(stringResource(R.string.calendar_filter_all)) },
+        )
+        CalendarRecordType.entries.forEach { type ->
+            FilterChip(
+                selected = recordFilter == type,
+                onClick = { onRecordFilterChange(type) },
+                label = { Text(type.toDisplayText()) },
             )
         }
     }
