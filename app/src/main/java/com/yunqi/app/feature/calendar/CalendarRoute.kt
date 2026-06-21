@@ -742,6 +742,7 @@ private fun CalendarRecordActionResult.toErrorMessageResId(): Int? = when (this)
     CalendarRecordActionResult.InvalidWeight -> R.string.calendar_error_invalid_weight
     CalendarRecordActionResult.InvalidFetalMovement -> R.string.calendar_error_invalid_fetal_movement
     CalendarRecordActionResult.InvalidExerciseMinutes -> R.string.calendar_error_invalid_exercise_minutes
+    CalendarRecordActionResult.InvalidAppointmentTime -> R.string.calendar_error_invalid_appointment_time
 }
 
 private fun clearRecordForm(

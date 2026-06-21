@@ -3,6 +3,7 @@ package com.yunqi.app.feature.calendar
 import com.yunqi.app.domain.calendar.CalendarRecord
 import com.yunqi.app.domain.calendar.CalendarRecordType
 import java.time.LocalDate
+import java.time.LocalTime
 import java.util.UUID
 
 class CalendarRecordFormParser(
@@ -27,6 +28,13 @@ class CalendarRecordFormParser(
         }
         if (input.type == CalendarRecordType.Exercise && (exerciseMinutes == null || exerciseMinutes <= 0)) {
             return CalendarRecordParseResult.InvalidExerciseMinutes
+        }
+        if (
+            input.type == CalendarRecordType.Appointment &&
+            input.appointmentTime.isNotBlank() &&
+            input.appointmentTime.parseTime() == null
+        ) {
+            return CalendarRecordParseResult.InvalidAppointmentTime
         }
 
         return CalendarRecordParseResult.Success(
@@ -61,6 +69,10 @@ class CalendarRecordFormParser(
     private fun String.parseDate(): LocalDate? = runCatching {
         LocalDate.parse(trim())
     }.getOrNull()
+
+    private fun String.parseTime(): LocalTime? = runCatching {
+        LocalTime.parse(trim())
+    }.getOrNull()
 }
 
 data class CalendarRecordInput(
@@ -85,4 +97,5 @@ sealed interface CalendarRecordParseResult {
     data object InvalidWeight : CalendarRecordParseResult
     data object InvalidFetalMovement : CalendarRecordParseResult
     data object InvalidExerciseMinutes : CalendarRecordParseResult
+    data object InvalidAppointmentTime : CalendarRecordParseResult
 }
