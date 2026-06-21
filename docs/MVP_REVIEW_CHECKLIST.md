@@ -5,7 +5,7 @@
 Run from `android-app` with JDK 17 and Android SDK configured:
 
 ```powershell
-.\gradlew.bat :app:assembleDebug :app:testDebugUnitTest :app:lintDebug --stacktrace
+.\gradlew.bat :app:assembleDebug :app:assembleDebugAndroidTest :app:testDebugUnitTest :app:lintDebug --stacktrace
 ```
 
 Current result: passing.
@@ -18,6 +18,7 @@ Current result: passing.
 - Calendar record types include appointment, weight, fetal movement, symptom, exercise, diet, and note.
 - Appointment reminders use local WorkManager jobs, Android notifications, a notification channel, notification permission handling, and a settings toggle.
 - Trends show weight, fetal movement, and exercise charts from local Room records.
+- Trends support 7-day, 30-day, and all-time ranges.
 - Settings can edit pregnancy profile, manage appointment reminders, and clear all local pregnancy data.
 - Sensitive data stays local: cloud backup and device transfer extraction are disabled.
 
@@ -41,4 +42,5 @@ Use a physical Android device or emulator:
 ## Known Verification Gap
 
 - Physical-device notification delivery has not been observed inside this workspace.
+- `adb devices` currently reports no attached device, and the workspace Android SDK does not include an `emulator` command.
 - Compose UI instrumentation tests are implemented and can be built with `:app:assembleDebugAndroidTest`, but have not been executed on a physical device inside this workspace.
