@@ -14,12 +14,16 @@ class TrendSummaryCalculatorTest {
 
         assertEquals(0, summary.weightRecordCount)
         assertNull(summary.latestWeightKg)
+        assertNull(summary.weightChangeKg)
+        assertEquals(emptyList<TrendPoint>(), summary.weightPoints)
         assertEquals(0, summary.fetalMovementRecordCount)
         assertNull(summary.latestFetalMovementCount)
+        assertNull(summary.averageFetalMovementCount)
+        assertEquals(emptyList<TrendPoint>(), summary.fetalMovementPoints)
     }
 
     @Test
-    fun `calculates latest weight and fetal movement`() {
+    fun `calculates trend summaries and points`() {
         val records = listOf(
             record(
                 id = "weight-old",
@@ -39,14 +43,36 @@ class TrendSummaryCalculatorTest {
                 type = CalendarRecordType.FetalMovement,
                 fetalMovementCount = 12,
             ),
+            record(
+                id = "movement-new",
+                date = LocalDate.of(2026, 6, 4),
+                type = CalendarRecordType.FetalMovement,
+                fetalMovementCount = 16,
+            ),
         )
 
         val summary = TrendSummaryCalculator.calculate(records)
 
         assertEquals(2, summary.weightRecordCount)
         assertEquals(56.2, summary.latestWeightKg ?: 0.0, 0.001)
-        assertEquals(1, summary.fetalMovementRecordCount)
-        assertEquals(12, summary.latestFetalMovementCount)
+        assertEquals(1.2, summary.weightChangeKg ?: 0.0, 0.001)
+        assertEquals(
+            listOf(
+                TrendPoint(LocalDate.of(2026, 6, 1), 55.0),
+                TrendPoint(LocalDate.of(2026, 6, 5), 56.2),
+            ),
+            summary.weightPoints,
+        )
+        assertEquals(2, summary.fetalMovementRecordCount)
+        assertEquals(16, summary.latestFetalMovementCount)
+        assertEquals(14.0, summary.averageFetalMovementCount ?: 0.0, 0.001)
+        assertEquals(
+            listOf(
+                TrendPoint(LocalDate.of(2026, 6, 3), 12.0),
+                TrendPoint(LocalDate.of(2026, 6, 4), 16.0),
+            ),
+            summary.fetalMovementPoints,
+        )
     }
 
     private fun record(
@@ -67,4 +93,3 @@ class TrendSummaryCalculatorTest {
         createdAtEpochMillis = 0L,
     )
 }
-
