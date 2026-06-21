@@ -1,7 +1,9 @@
 package com.yunqi.app.notification
 
+import com.yunqi.app.domain.reminder.DailyReminderType
 import java.time.LocalDateTime
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
 
@@ -34,5 +36,14 @@ class DailyReminderSchedulerTest {
         )
 
         assertNull(delayMillis)
+    }
+
+    @Test
+    fun `uses distinct work names for reminder types`() {
+        assertNotEquals(
+            dailyReminderWorkName(DailyReminderType.Weight),
+            dailyReminderWorkName(DailyReminderType.FetalMovement),
+        )
+        assertNotEquals("daily-record-reminder", dailyReminderWorkName(DailyReminderType.Weight))
     }
 }

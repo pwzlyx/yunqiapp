@@ -21,7 +21,7 @@ Current result: passing.
 - Appointment records include time, hospital or location, doctor, check items, result, and note.
 - Appointment time input is validated as `HH:mm` before reminder scheduling.
 - Appointment reminders use local WorkManager jobs, Android notifications, a notification channel, notification permission handling, and a settings toggle.
-- Daily record reminders use local WorkManager jobs, Android notifications, notification permission handling, and configurable preset times.
+- Daily reminders support weight, fetal movement, folic acid or vitamin, water, exercise, and custom reminder types with independent local WorkManager jobs, Android notifications, notification permission handling, toggles, and configurable preset times.
 - Trends show weight, fetal movement, and exercise charts from local Room records.
 - Trends support 7-day, 30-day, and all-time ranges.
 - Trends empty states provide direct entry points for recording weight, fetal movement, and exercise.

@@ -3,7 +3,9 @@ package com.yunqi.app.data.local
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.yunqi.app.domain.reminder.DailyReminderType
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -26,10 +28,19 @@ class ReminderSettingsRepository(
 
     val reminderSettingsFlow: Flow<ReminderSettings> =
         context.reminderSettingsDataStore.data.map { preferences ->
+            val legacyDailyReminderEnabled = preferences[Keys.legacyDailyReminderEnabled] ?: false
+            val legacyDailyReminderTime = preferences[Keys.legacyDailyReminderTime] ?: DEFAULT_DAILY_REMINDER_TIME
             ReminderSettings(
                 appointmentRemindersEnabled = preferences[Keys.appointmentRemindersEnabled] ?: false,
-                dailyReminderEnabled = preferences[Keys.dailyReminderEnabled] ?: false,
-                dailyReminderTime = preferences[Keys.dailyReminderTime] ?: DEFAULT_DAILY_REMINDER_TIME,
+                dailyReminders = DailyReminderType.entries.map { type ->
+                    DailyReminderPreference(
+                        type = type,
+                        enabled = preferences[Keys.dailyReminderEnabled(type)]
+                            ?: type.usesLegacyDailyReminder(legacyDailyReminderEnabled),
+                        time = preferences[Keys.dailyReminderTime(type)]
+                            ?: type.legacyOrDefaultTime(legacyDailyReminderEnabled, legacyDailyReminderTime),
+                    )
+                },
             )
         }
 
@@ -42,10 +53,10 @@ class ReminderSettingsRepository(
         }
     }
 
-    suspend fun setDailyReminder(enabled: Boolean, time: String) {
+    suspend fun setDailyReminder(type: DailyReminderType, enabled: Boolean, time: String) {
         context.reminderSettingsDataStore.edit { preferences ->
-            preferences[Keys.dailyReminderEnabled] = enabled
-            preferences[Keys.dailyReminderTime] = time
+            preferences[Keys.dailyReminderEnabled(type)] = enabled
+            preferences[Keys.dailyReminderTime(type)] = time
         }
     }
 
@@ -57,13 +68,36 @@ class ReminderSettingsRepository(
 
     private object Keys {
         val appointmentRemindersEnabled = booleanPreferencesKey("appointment_reminders_enabled")
-        val dailyReminderEnabled = booleanPreferencesKey("daily_reminder_enabled")
-        val dailyReminderTime = androidx.datastore.preferences.core.stringPreferencesKey("daily_reminder_time")
+        val legacyDailyReminderEnabled = booleanPreferencesKey("daily_reminder_enabled")
+        val legacyDailyReminderTime = stringPreferencesKey("daily_reminder_time")
+
+        fun dailyReminderEnabled(type: DailyReminderType) =
+            booleanPreferencesKey("daily_reminder_${type.name.lowercase()}_enabled")
+
+        fun dailyReminderTime(type: DailyReminderType) =
+            stringPreferencesKey("daily_reminder_${type.name.lowercase()}_time")
     }
 }
 
 data class ReminderSettings(
     val appointmentRemindersEnabled: Boolean,
-    val dailyReminderEnabled: Boolean,
-    val dailyReminderTime: String,
+    val dailyReminders: List<DailyReminderPreference>,
+)
+
+data class DailyReminderPreference(
+    val type: DailyReminderType,
+    val enabled: Boolean,
+    val time: String,
+)
+
+private fun DailyReminderType.usesLegacyDailyReminder(legacyEnabled: Boolean): Boolean =
+    legacyEnabled && this in legacyReminderTypes
+
+private fun DailyReminderType.legacyOrDefaultTime(legacyEnabled: Boolean, legacyTime: String): String =
+    if (usesLegacyDailyReminder(legacyEnabled)) legacyTime else defaultTime
+
+private val legacyReminderTypes = setOf(
+    DailyReminderType.Weight,
+    DailyReminderType.FetalMovement,
+    DailyReminderType.Exercise,
 )

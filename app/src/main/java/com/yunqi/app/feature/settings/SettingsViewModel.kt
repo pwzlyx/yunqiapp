@@ -6,10 +6,11 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.yunqi.app.data.export.CalendarRecordCsvExporter
-import com.yunqi.app.data.local.DEFAULT_DAILY_REMINDER_TIME
+import com.yunqi.app.data.local.DailyReminderPreference
 import com.yunqi.app.data.local.PregnancyProfileRepository
 import com.yunqi.app.data.local.ReminderSettingsRepository
 import com.yunqi.app.data.local.record.CalendarRecordRepository
+import com.yunqi.app.domain.reminder.DailyReminderType
 import com.yunqi.app.notification.AppointmentReminderScheduler
 import com.yunqi.app.notification.DailyReminderScheduler
 import java.io.File
@@ -35,8 +36,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         .map { settings ->
             SettingsUiState(
                 appointmentRemindersEnabled = settings.appointmentRemindersEnabled,
-                dailyReminderEnabled = settings.dailyReminderEnabled,
-                dailyReminderTime = settings.dailyReminderTime,
+                dailyReminders = settings.dailyReminders,
             )
         }
         .stateIn(
@@ -62,28 +62,41 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun setDailyReminderEnabled(enabled: Boolean, time: String) {
+    fun setDailyReminderEnabled(type: DailyReminderType, enabled: Boolean, time: String) {
         viewModelScope.launch {
-            reminderSettingsRepository.setDailyReminder(enabled, time)
+            reminderSettingsRepository.setDailyReminder(type, enabled, time)
             if (enabled) {
-                dailyReminderScheduler.schedule(time)
+                dailyReminderScheduler.schedule(type, time)
             } else {
-                dailyReminderScheduler.cancel()
+                dailyReminderScheduler.cancel(type)
             }
         }
     }
 
-    fun setDailyReminderTime(time: String) {
+    fun setDailyReminderTime(type: DailyReminderType, time: String) {
         viewModelScope.launch {
-            reminderSettingsRepository.setDailyReminder(enabled = true, time = time)
-            dailyReminderScheduler.schedule(time)
+            reminderSettingsRepository.setDailyReminder(type = type, enabled = true, time = time)
+            dailyReminderScheduler.schedule(type, time)
+        }
+    }
+
+    fun syncDailyReminders(reminders: List<DailyReminderPreference>) {
+        viewModelScope.launch {
+            dailyReminderScheduler.cancelLegacy()
+            reminders.forEach { reminder ->
+                if (reminder.enabled) {
+                    dailyReminderScheduler.schedule(reminder.type, reminder.time)
+                } else {
+                    dailyReminderScheduler.cancel(reminder.type)
+                }
+            }
         }
     }
 
     fun clearAllLocalData() {
         viewModelScope.launch {
             reminderScheduler.cancelAll()
-            dailyReminderScheduler.cancel()
+            dailyReminderScheduler.cancelAll()
             calendarRecordRepository.deleteAll()
             pregnancyProfileRepository.clearProfile()
             reminderSettingsRepository.clearSettings()
@@ -106,6 +119,11 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
 data class SettingsUiState(
     val appointmentRemindersEnabled: Boolean = false,
-    val dailyReminderEnabled: Boolean = false,
-    val dailyReminderTime: String = DEFAULT_DAILY_REMINDER_TIME,
+    val dailyReminders: List<DailyReminderPreference> = DailyReminderType.entries.map { type ->
+        DailyReminderPreference(
+            type = type,
+            enabled = false,
+            time = type.defaultTime,
+        )
+    },
 )
