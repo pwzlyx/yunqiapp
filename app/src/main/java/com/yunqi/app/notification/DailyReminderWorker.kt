@@ -34,6 +34,7 @@ class DailyReminderWorker(
             .setContentTitle(context.getString(content.titleResId))
             .setContentText(content.bodyText ?: context.getString(content.bodyResId))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(yunqiLaunchPendingIntent(context))
             .setAutoCancel(true)
             .build()
 

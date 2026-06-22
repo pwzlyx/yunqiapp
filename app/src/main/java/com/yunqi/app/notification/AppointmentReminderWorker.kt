@@ -29,6 +29,7 @@ class AppointmentReminderWorker(
             .setContentTitle(context.getString(R.string.notification_appointment_title))
             .setContentText(context.getString(R.string.notification_appointment_body, appointmentLabel))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+            .setContentIntent(yunqiLaunchPendingIntent(context))
             .setAutoCancel(true)
             .build()
 
