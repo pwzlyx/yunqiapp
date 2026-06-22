@@ -25,24 +25,31 @@ class AppointmentReminderScheduler(
      * Schedules an appointment reminder when the record has a future date and HH:mm time.
      */
     fun schedule(record: CalendarRecord) {
-        val plan = record.toAppointmentReminderPlan(nowProvider()) ?: return
+        when (val decision = record.toAppointmentReminderScheduleDecision(nowProvider())) {
+            is AppointmentReminderScheduleDecision.Cancel -> {
+                cancel(decision.recordId)
+                return
+            }
 
-        val request = OneTimeWorkRequestBuilder<AppointmentReminderWorker>()
-            .setInitialDelay(plan.delayMillis, TimeUnit.MILLISECONDS)
-            .addTag(APPOINTMENT_REMINDER_TAG)
-            .setInputData(
-                Data.Builder()
-                    .putString(AppointmentReminderWorker.KEY_RECORD_ID, record.id)
-                    .putString(AppointmentReminderWorker.KEY_APPOINTMENT_LABEL, plan.appointmentLabel)
-                    .build(),
-            )
-            .build()
+            is AppointmentReminderScheduleDecision.Schedule -> {
+                val request = OneTimeWorkRequestBuilder<AppointmentReminderWorker>()
+                    .setInitialDelay(decision.plan.delayMillis, TimeUnit.MILLISECONDS)
+                    .addTag(APPOINTMENT_REMINDER_TAG)
+                    .setInputData(
+                        Data.Builder()
+                            .putString(AppointmentReminderWorker.KEY_RECORD_ID, decision.recordId)
+                            .putString(AppointmentReminderWorker.KEY_APPOINTMENT_LABEL, decision.plan.appointmentLabel)
+                            .build(),
+                    )
+                    .build()
 
-        workManager.enqueueUniqueWork(
-            workNameFor(record.id),
-            ExistingWorkPolicy.REPLACE,
-            request,
-        )
+                workManager.enqueueUniqueWork(
+                    workNameFor(decision.recordId),
+                    ExistingWorkPolicy.REPLACE,
+                    request,
+                )
+            }
+        }
     }
 
     fun cancel(recordId: String) {
@@ -60,6 +67,26 @@ internal data class AppointmentReminderPlan(
     val delayMillis: Long,
     val appointmentLabel: String,
 )
+
+internal sealed interface AppointmentReminderScheduleDecision {
+    data class Schedule(
+        val recordId: String,
+        val plan: AppointmentReminderPlan,
+    ) : AppointmentReminderScheduleDecision
+
+    data class Cancel(
+        val recordId: String,
+    ) : AppointmentReminderScheduleDecision
+}
+
+internal fun CalendarRecord.toAppointmentReminderScheduleDecision(now: LocalDateTime): AppointmentReminderScheduleDecision {
+    val plan = toAppointmentReminderPlan(now)
+    return if (plan == null) {
+        AppointmentReminderScheduleDecision.Cancel(id)
+    } else {
+        AppointmentReminderScheduleDecision.Schedule(id, plan)
+    }
+}
 
 /**
  * Calculates reminder metadata without touching Android APIs, which keeps scheduling rules testable.

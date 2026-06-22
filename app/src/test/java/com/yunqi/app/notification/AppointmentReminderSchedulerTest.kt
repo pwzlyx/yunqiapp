@@ -68,6 +68,57 @@ class AppointmentReminderSchedulerTest {
     }
 
     @Test
+    fun `ignores appointment without time`() {
+        val record = appointmentRecord(
+            date = LocalDate.of(2026, 7, 1),
+            time = "",
+        )
+
+        val plan = record.toAppointmentReminderPlan(
+            now = LocalDateTime.of(2026, 7, 1, 12, 0),
+        )
+
+        assertNull(plan)
+    }
+
+    @Test
+    fun `chooses cancel decision when appointment no longer has a reminder plan`() {
+        val record = appointmentRecord(
+            date = LocalDate.of(2026, 7, 1),
+            time = "",
+        )
+
+        val decision = record.toAppointmentReminderScheduleDecision(
+            now = LocalDateTime.of(2026, 7, 1, 12, 0),
+        )
+
+        assertEquals(AppointmentReminderScheduleDecision.Cancel("appointment-1"), decision)
+    }
+
+    @Test
+    fun `chooses schedule decision when appointment has a reminder plan`() {
+        val record = appointmentRecord(
+            date = LocalDate.of(2026, 7, 1),
+            time = "14:30",
+        )
+
+        val decision = record.toAppointmentReminderScheduleDecision(
+            now = LocalDateTime.of(2026, 7, 1, 12, 30),
+        )
+
+        assertEquals(
+            AppointmentReminderScheduleDecision.Schedule(
+                recordId = "appointment-1",
+                plan = AppointmentReminderPlan(
+                    delayMillis = 60L * 60L * 1000L,
+                    appointmentLabel = "14:30",
+                ),
+            ),
+            decision,
+        )
+    }
+
+    @Test
     fun `ignores non appointment records`() {
         val record = appointmentRecord(
             date = LocalDate.of(2026, 7, 1),
