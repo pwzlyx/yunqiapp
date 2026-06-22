@@ -31,6 +31,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yunqi.app.R
+import com.yunqi.app.domain.pregnancy.PregnancyBabyCount
 import com.yunqi.app.domain.pregnancy.Trimester
 import com.yunqi.app.domain.pregnancy.calculateProgress
 import kotlinx.coroutines.launch
@@ -49,6 +50,9 @@ fun PregnancySetupRoute(
     var week by remember { mutableStateOf("") }
     var day by remember { mutableStateOf("") }
     var exerciseRestricted by remember { mutableStateOf(false) }
+    var heightCm by remember { mutableStateOf("") }
+    var prePregnancyWeightKg by remember { mutableStateOf("") }
+    var babyCount by remember { mutableStateOf(PregnancyBabyCount.Singleton) }
     var errorMessageResId by remember { mutableStateOf<Int?>(null) }
     val parser = remember { PregnancyProfileFormParser() }
     val coroutineScope = rememberCoroutineScope()
@@ -60,6 +64,9 @@ fun PregnancySetupRoute(
         week = week,
         day = day,
         exerciseRestricted = exerciseRestricted,
+        heightCm = heightCm,
+        prePregnancyWeightKg = prePregnancyWeightKg,
+        babyCount = babyCount,
     )
     val previewResult = remember(input) { parser.parse(input) }
 
@@ -133,6 +140,15 @@ fun PregnancySetupRoute(
             }
         }
 
+        OptionalProfileFields(
+            heightCm = heightCm,
+            onHeightCmChange = { heightCm = it },
+            prePregnancyWeightKg = prePregnancyWeightKg,
+            onPrePregnancyWeightKgChange = { prePregnancyWeightKg = it },
+            babyCount = babyCount,
+            onBabyCountChange = { babyCount = it },
+        )
+
         ExerciseRestrictionToggle(
             checked = exerciseRestricted,
             onCheckedChange = { exerciseRestricted = it },
@@ -167,6 +183,72 @@ fun PregnancySetupRoute(
             text = stringResource(R.string.medical_disclaimer),
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+    }
+}
+
+@Composable
+private fun OptionalProfileFields(
+    heightCm: String,
+    onHeightCmChange: (String) -> Unit,
+    prePregnancyWeightKg: String,
+    onPrePregnancyWeightKgChange: (String) -> Unit,
+    babyCount: PregnancyBabyCount,
+    onBabyCountChange: (PregnancyBabyCount) -> Unit,
+) {
+    Card(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.padding(16.dp),
+            verticalArrangement = Arrangement.spacedBy(10.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.setup_optional_profile_title),
+                style = MaterialTheme.typography.titleMedium,
+            )
+            OutlinedTextField(
+                value = heightCm,
+                onValueChange = onHeightCmChange,
+                label = { Text(stringResource(R.string.setup_height_cm_label)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            OutlinedTextField(
+                value = prePregnancyWeightKg,
+                onValueChange = onPrePregnancyWeightKgChange,
+                label = { Text(stringResource(R.string.setup_pre_pregnancy_weight_label)) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+                singleLine = true,
+                modifier = Modifier.fillMaxWidth(),
+            )
+            BabyCountSelector(
+                babyCount = babyCount,
+                onBabyCountChange = onBabyCountChange,
+            )
+        }
+    }
+}
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+private fun BabyCountSelector(
+    babyCount: PregnancyBabyCount,
+    onBabyCountChange: (PregnancyBabyCount) -> Unit,
+) {
+    FlowRow(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+    ) {
+        FilterChip(
+            selected = babyCount == PregnancyBabyCount.Singleton,
+            onClick = { onBabyCountChange(PregnancyBabyCount.Singleton) },
+            label = { Text(stringResource(R.string.setup_baby_count_singleton)) },
+        )
+        FilterChip(
+            selected = babyCount == PregnancyBabyCount.Twin,
+            onClick = { onBabyCountChange(PregnancyBabyCount.Twin) },
+            label = { Text(stringResource(R.string.setup_baby_count_twin)) },
         )
     }
 }
@@ -308,4 +390,6 @@ private fun SaveProfileResult.toErrorMessageResId(): Int? = when (this) {
     SaveProfileResult.InvalidDate -> R.string.setup_error_invalid_date
     SaveProfileResult.InvalidWeek -> R.string.setup_error_invalid_week
     SaveProfileResult.InvalidDay -> R.string.setup_error_invalid_day
+    SaveProfileResult.InvalidHeight -> R.string.setup_error_invalid_height
+    SaveProfileResult.InvalidPrePregnancyWeight -> R.string.setup_error_invalid_pre_pregnancy_weight
 }

@@ -2,10 +2,12 @@ package com.yunqi.app.data.local
 
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
+import androidx.datastore.preferences.core.doublePreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import com.yunqi.app.domain.pregnancy.PregnancyBabyCount
 import com.yunqi.app.domain.pregnancy.PregnancyCalculationMethod
 import com.yunqi.app.domain.pregnancy.PregnancyProfile
 import kotlinx.coroutines.flow.Flow
@@ -37,6 +39,11 @@ class PregnancyProfileRepository(
             gestationalWeekAtSetup = preferences[Keys.gestationalWeekAtSetup],
             gestationalDayAtSetup = preferences[Keys.gestationalDayAtSetup],
             exerciseRestricted = preferences[Keys.exerciseRestricted] ?: false,
+            heightCm = preferences[Keys.heightCm],
+            prePregnancyWeightKg = preferences[Keys.prePregnancyWeightKg],
+            babyCount = preferences[Keys.babyCount]
+                ?.let { runCatching { PregnancyBabyCount.valueOf(it) }.getOrNull() }
+                ?: PregnancyBabyCount.Singleton,
             setupDate = setupDate,
         )
     }
@@ -54,6 +61,9 @@ class PregnancyProfileRepository(
             putOrRemove(preferences, Keys.gestationalWeekAtSetup, profile.gestationalWeekAtSetup)
             putOrRemove(preferences, Keys.gestationalDayAtSetup, profile.gestationalDayAtSetup)
             preferences[Keys.exerciseRestricted] = profile.exerciseRestricted
+            putOrRemove(preferences, Keys.heightCm, profile.heightCm)
+            putOrRemove(preferences, Keys.prePregnancyWeightKg, profile.prePregnancyWeightKg)
+            preferences[Keys.babyCount] = profile.babyCount.name
         }
     }
 
@@ -83,6 +93,9 @@ class PregnancyProfileRepository(
         val gestationalWeekAtSetup = intPreferencesKey("gestational_week_at_setup")
         val gestationalDayAtSetup = intPreferencesKey("gestational_day_at_setup")
         val exerciseRestricted = booleanPreferencesKey("exercise_restricted")
+        val heightCm = doublePreferencesKey("height_cm")
+        val prePregnancyWeightKg = doublePreferencesKey("pre_pregnancy_weight_kg")
+        val babyCount = stringPreferencesKey("baby_count")
         val setupDate = stringPreferencesKey("setup_date")
     }
 }

@@ -149,6 +149,11 @@
     <string name="setup_date_hint">YYYY-MM-DD</string>
     <string name="setup_week_label">孕周</string>
     <string name="setup_day_label">孕天</string>
+    <string name="setup_optional_profile_title">可选档案信息</string>
+    <string name="setup_height_cm_label">身高 cm</string>
+    <string name="setup_pre_pregnancy_weight_label">孕前体重 kg</string>
+    <string name="setup_baby_count_singleton">单胎</string>
+    <string name="setup_baby_count_twin">双胎</string>
     <string name="setup_exercise_restricted">医生限制运动</string>
     <string name="setup_exercise_restricted_body">开启后，首页不会展示默认运动建议。</string>
     <string name="setup_save">保存档案</string>
@@ -164,6 +169,8 @@
     <string name="setup_error_invalid_date">请输入有效日期，格式为 YYYY-MM-DD。</string>
     <string name="setup_error_invalid_week">孕周必须是 0 到 42 之间的数字。</string>
     <string name="setup_error_invalid_day">孕天必须是 0 到 6 之间的数字。</string>
+    <string name="setup_error_invalid_height">请输入有效身高。</string>
+    <string name="setup_error_invalid_pre_pregnancy_weight">请输入有效孕前体重。</string>
 
     <string name="source_cdc_folic_acid">CDC 叶酸建议</string>
     <string name="source_cdc_physical_activity">CDC 孕期运动建议</string>

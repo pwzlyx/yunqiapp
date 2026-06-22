@@ -9,6 +9,11 @@ enum class PregnancyCalculationMethod {
     CurrentGestationalAge,
 }
 
+enum class PregnancyBabyCount {
+    Singleton,
+    Twin,
+}
+
 data class PregnancyProfile(
     val calculationMethod: PregnancyCalculationMethod,
     val lmpDate: LocalDate?,
@@ -17,6 +22,9 @@ data class PregnancyProfile(
     val gestationalWeekAtSetup: Int?,
     val gestationalDayAtSetup: Int?,
     val exerciseRestricted: Boolean = false,
+    val heightCm: Double? = null,
+    val prePregnancyWeightKg: Double? = null,
+    val babyCount: PregnancyBabyCount = PregnancyBabyCount.Singleton,
     val setupDate: LocalDate,
 )
 

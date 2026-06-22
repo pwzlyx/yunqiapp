@@ -20,6 +20,8 @@ class PregnancySetupViewModel(application: Application) : AndroidViewModel(appli
         PregnancyProfileParseResult.InvalidDate -> SaveProfileResult.InvalidDate
         PregnancyProfileParseResult.InvalidWeek -> SaveProfileResult.InvalidWeek
         PregnancyProfileParseResult.InvalidDay -> SaveProfileResult.InvalidDay
+        PregnancyProfileParseResult.InvalidHeight -> SaveProfileResult.InvalidHeight
+        PregnancyProfileParseResult.InvalidPrePregnancyWeight -> SaveProfileResult.InvalidPrePregnancyWeight
     }
 }
 
@@ -35,4 +37,6 @@ sealed interface SaveProfileResult {
     data object InvalidDate : SaveProfileResult
     data object InvalidWeek : SaveProfileResult
     data object InvalidDay : SaveProfileResult
+    data object InvalidHeight : SaveProfileResult
+    data object InvalidPrePregnancyWeight : SaveProfileResult
 }

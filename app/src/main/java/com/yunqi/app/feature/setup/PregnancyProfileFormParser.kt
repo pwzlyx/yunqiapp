@@ -1,5 +1,6 @@
 package com.yunqi.app.feature.setup
 
+import com.yunqi.app.domain.pregnancy.PregnancyBabyCount
 import com.yunqi.app.domain.pregnancy.PregnancyCalculationMethod
 import com.yunqi.app.domain.pregnancy.PregnancyProfile
 import java.time.LocalDate
@@ -15,6 +16,14 @@ class PregnancyProfileFormParser(
 ) {
     fun parse(input: PregnancySetupInput): PregnancyProfileParseResult {
         val setupDate = todayProvider()
+        val heightCm = input.heightCm.parseOptionalPositiveDouble()
+        if (input.heightCm.isNotBlank() && heightCm == null) {
+            return PregnancyProfileParseResult.InvalidHeight
+        }
+        val prePregnancyWeightKg = input.prePregnancyWeightKg.parseOptionalPositiveDouble()
+        if (input.prePregnancyWeightKg.isNotBlank() && prePregnancyWeightKg == null) {
+            return PregnancyProfileParseResult.InvalidPrePregnancyWeight
+        }
 
         return when (input.method) {
             SetupMethod.LastMenstrualPeriod -> {
@@ -29,6 +38,9 @@ class PregnancyProfileFormParser(
                         gestationalWeekAtSetup = null,
                         gestationalDayAtSetup = null,
                         exerciseRestricted = input.exerciseRestricted,
+                        heightCm = heightCm,
+                        prePregnancyWeightKg = prePregnancyWeightKg,
+                        babyCount = input.babyCount,
                         setupDate = setupDate,
                     ),
                 )
@@ -46,6 +58,9 @@ class PregnancyProfileFormParser(
                         gestationalWeekAtSetup = null,
                         gestationalDayAtSetup = null,
                         exerciseRestricted = input.exerciseRestricted,
+                        heightCm = heightCm,
+                        prePregnancyWeightKg = prePregnancyWeightKg,
+                        babyCount = input.babyCount,
                         setupDate = setupDate,
                     ),
                 )
@@ -63,6 +78,9 @@ class PregnancyProfileFormParser(
                         gestationalWeekAtSetup = null,
                         gestationalDayAtSetup = null,
                         exerciseRestricted = input.exerciseRestricted,
+                        heightCm = heightCm,
+                        prePregnancyWeightKg = prePregnancyWeightKg,
+                        babyCount = input.babyCount,
                         setupDate = setupDate,
                     ),
                 )
@@ -86,6 +104,9 @@ class PregnancyProfileFormParser(
                         gestationalWeekAtSetup = week,
                         gestationalDayAtSetup = day,
                         exerciseRestricted = input.exerciseRestricted,
+                        heightCm = heightCm,
+                        prePregnancyWeightKg = prePregnancyWeightKg,
+                        babyCount = input.babyCount,
                         setupDate = setupDate,
                     ),
                 )
@@ -96,6 +117,12 @@ class PregnancyProfileFormParser(
     private fun String.parseIsoDate(): LocalDate? = runCatching {
         LocalDate.parse(trim())
     }.getOrNull()
+
+    private fun String.parseOptionalPositiveDouble(): Double? {
+        if (isBlank()) return null
+        val value = toDoubleOrNull() ?: return null
+        return value.takeIf { it > 0.0 }
+    }
 }
 
 data class PregnancySetupInput(
@@ -106,6 +133,9 @@ data class PregnancySetupInput(
     val week: String,
     val day: String,
     val exerciseRestricted: Boolean = false,
+    val heightCm: String = "",
+    val prePregnancyWeightKg: String = "",
+    val babyCount: PregnancyBabyCount = PregnancyBabyCount.Singleton,
 )
 
 sealed interface PregnancyProfileParseResult {
@@ -113,4 +143,6 @@ sealed interface PregnancyProfileParseResult {
     data object InvalidDate : PregnancyProfileParseResult
     data object InvalidWeek : PregnancyProfileParseResult
     data object InvalidDay : PregnancyProfileParseResult
+    data object InvalidHeight : PregnancyProfileParseResult
+    data object InvalidPrePregnancyWeight : PregnancyProfileParseResult
 }

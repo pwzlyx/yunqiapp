@@ -1,6 +1,7 @@
 package com.yunqi.app.feature.setup
 
 import com.yunqi.app.domain.pregnancy.PregnancyCalculationMethod
+import com.yunqi.app.domain.pregnancy.PregnancyBabyCount
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -108,6 +109,28 @@ class PregnancyProfileFormParserTest {
     }
 
     @Test
+    fun `parses optional profile details`() {
+        val result = parser.parse(
+            PregnancySetupInput(
+                method = SetupMethod.LastMenstrualPeriod,
+                lmpDate = "2026-01-01",
+                dueDate = "",
+                conceptionDate = "",
+                week = "",
+                day = "",
+                heightCm = " 168.5 ",
+                prePregnancyWeightKg = "55.2",
+                babyCount = PregnancyBabyCount.Twin,
+            ),
+        )
+
+        val profile = (result as PregnancyProfileParseResult.Success).profile
+        assertEquals(168.5, profile.heightCm ?: 0.0, 0.001)
+        assertEquals(55.2, profile.prePregnancyWeightKg ?: 0.0, 0.001)
+        assertEquals(PregnancyBabyCount.Twin, profile.babyCount)
+    }
+
+    @Test
     fun `rejects invalid date input`() {
         val result = parser.parse(
             PregnancySetupInput(
@@ -153,5 +176,39 @@ class PregnancyProfileFormParserTest {
         )
 
         assertEquals(PregnancyProfileParseResult.InvalidDay, result)
+    }
+
+    @Test
+    fun `rejects invalid optional height`() {
+        val result = parser.parse(
+            PregnancySetupInput(
+                method = SetupMethod.LastMenstrualPeriod,
+                lmpDate = "2026-01-01",
+                dueDate = "",
+                conceptionDate = "",
+                week = "",
+                day = "",
+                heightCm = "0",
+            ),
+        )
+
+        assertEquals(PregnancyProfileParseResult.InvalidHeight, result)
+    }
+
+    @Test
+    fun `rejects invalid optional pre pregnancy weight`() {
+        val result = parser.parse(
+            PregnancySetupInput(
+                method = SetupMethod.LastMenstrualPeriod,
+                lmpDate = "2026-01-01",
+                dueDate = "",
+                conceptionDate = "",
+                week = "",
+                day = "",
+                prePregnancyWeightKg = "abc",
+            ),
+        )
+
+        assertEquals(PregnancyProfileParseResult.InvalidPrePregnancyWeight, result)
     }
 }
