@@ -41,6 +41,21 @@ class AppointmentReminderSchedulerTest {
     }
 
     @Test
+    fun `trims appointment label fields before scheduling notification`() {
+        val record = appointmentRecord(
+            date = LocalDate.of(2026, 7, 1),
+            time = " 14:30 ",
+            location = "  City Hospital  ",
+        )
+
+        val plan = record.toAppointmentReminderPlan(
+            now = LocalDateTime.of(2026, 7, 1, 12, 30),
+        )
+
+        assertEquals("14:30 City Hospital", plan?.appointmentLabel)
+    }
+
+    @Test
     fun `uses immediate reminder when appointment is still future but lead time has passed`() {
         val record = appointmentRecord(
             date = LocalDate.of(2026, 7, 1),

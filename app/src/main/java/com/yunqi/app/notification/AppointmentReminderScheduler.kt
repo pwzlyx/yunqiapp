@@ -110,7 +110,10 @@ internal fun CalendarRecord.toAppointmentReminderPlan(
     val label = listOfNotNull(
         this.appointmentTime,
         appointmentLocation,
-    ).joinToString(" ")
+    )
+        .map(String::trim)
+        .filter(String::isNotBlank)
+        .joinToString(" ")
     return AppointmentReminderPlan(
         delayMillis = delayMillis,
         appointmentLabel = label,
