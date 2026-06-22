@@ -1,12 +1,8 @@
 package com.yunqi.app.notification
 
-import android.Manifest
 import android.app.NotificationManager
 import android.content.Context
-import android.content.pm.PackageManager
-import android.os.Build
 import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.yunqi.app.R
@@ -19,7 +15,7 @@ class DailyReminderWorker(
     params: WorkerParameters,
 ) : CoroutineWorker(context, params) {
     override suspend fun doWork(): Result {
-        if (!canPostNotifications()) return Result.success()
+        if (!canPostYunqiNotifications(context)) return Result.success()
 
         val reminderType = inputData.getString(KEY_REMINDER_TYPE)
             ?.let { runCatching { DailyReminderType.valueOf(it) }.getOrNull() }
@@ -41,14 +37,6 @@ class DailyReminderWorker(
         context.getSystemService(NotificationManager::class.java)
             .notify(DAILY_REMINDER_NOTIFICATION_ID_BASE + reminderType.ordinal, notification)
         return Result.success()
-    }
-
-    private fun canPostNotifications(): Boolean {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return true
-        return ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.POST_NOTIFICATIONS,
-        ) == PackageManager.PERMISSION_GRANTED
     }
 
     companion object {

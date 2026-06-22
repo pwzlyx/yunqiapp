@@ -5,7 +5,6 @@ import android.content.ActivityNotFoundException
 import android.content.ClipData
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.os.Build
 import android.provider.Settings as AndroidSettings
 import android.widget.Toast
@@ -44,7 +43,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -53,6 +51,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yunqi.app.R
 import com.yunqi.app.data.local.DailyReminderPreference
 import com.yunqi.app.domain.reminder.DailyReminderType
+import com.yunqi.app.notification.canPostYunqiNotifications
 import kotlinx.coroutines.launch
 
 @Composable
@@ -527,11 +526,7 @@ private fun Context.mustRequestNotificationPermission(): Boolean =
     Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
 
 private fun Context.canPostNotifications(): Boolean {
-    if (!mustRequestNotificationPermission()) return true
-    return ContextCompat.checkSelfPermission(
-        this,
-        Manifest.permission.POST_NOTIFICATIONS,
-    ) == PackageManager.PERMISSION_GRANTED
+    return canPostYunqiNotifications(this)
 }
 
 private fun Context.openAppNotificationSettings() {
