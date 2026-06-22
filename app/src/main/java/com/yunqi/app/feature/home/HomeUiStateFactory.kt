@@ -53,24 +53,20 @@ class HomeUiStateFactory(
         calendarRecords: List<CalendarRecord>,
         today: LocalDate,
     ): List<HomeReminderItem> {
-        val appointmentItems = if (reminderSettings.appointmentRemindersEnabled) {
-            calendarRecords
-                .filter { it.date == today && it.type == CalendarRecordType.Appointment }
-                .sortedWith(compareBy<CalendarRecord> { it.appointmentTime.orEmpty() }.thenBy { it.createdAtEpochMillis })
-                .map { record ->
-                    HomeReminderItem(
-                        id = "appointment_${record.id}",
-                        titleResId = R.string.home_today_appointment_reminder,
-                        detail = listOfNotNull(record.appointmentTime, record.appointmentLocation)
-                            .filter(String::isNotBlank)
-                            .joinToString(" - ")
-                            .ifBlank { null },
-                        actionRecordType = CalendarRecordType.Appointment,
-                    )
-                }
-        } else {
-            emptyList()
-        }
+        val appointmentItems = calendarRecords
+            .filter { it.date == today && it.type == CalendarRecordType.Appointment }
+            .sortedWith(compareBy<CalendarRecord> { it.appointmentTime.orEmpty() }.thenBy { it.createdAtEpochMillis })
+            .map { record ->
+                HomeReminderItem(
+                    id = "appointment_${record.id}",
+                    titleResId = R.string.home_today_appointment_reminder,
+                    detail = listOfNotNull(record.appointmentTime, record.appointmentLocation)
+                        .filter(String::isNotBlank)
+                        .joinToString(" - ")
+                        .ifBlank { null },
+                    actionRecordType = CalendarRecordType.Appointment,
+                )
+            }
 
         val dailyItems = reminderSettings.dailyReminders
             .filter { it.enabled }

@@ -144,7 +144,7 @@ class HomeUiStateFactoryTest {
     }
 
     @Test
-    fun `ready state hides appointment reminders when appointment reminders are disabled`() {
+    fun `ready state includes today's appointments when notification reminders are disabled`() {
         val factory = HomeUiStateFactory(
             todayProvider = { LocalDate.of(2026, 6, 21) },
         )
@@ -166,7 +166,10 @@ class HomeUiStateFactoryTest {
             ),
         ) as HomeUiState.Ready
 
-        assertEquals(emptyList<HomeReminderItem>(), state.reminderItems)
+        assertEquals(1, state.reminderItems.size)
+        assertEquals(R.string.home_today_appointment_reminder, state.reminderItems.single().titleResId)
+        assertEquals("10:30 - City Hospital", state.reminderItems.single().detail)
+        assertEquals(CalendarRecordType.Appointment, state.reminderItems.single().actionRecordType)
     }
 
     @Test
