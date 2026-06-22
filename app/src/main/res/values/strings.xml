@@ -25,6 +25,7 @@
     <string name="home_reminder_weight">记录今日体重变化</string>
     <string name="home_reminder_fetal_movement">留意胎动日常模式</string>
     <string name="home_reminder_symptom">记录症状或不适</string>
+    <string name="home_reminder_note">记录备注</string>
     <string name="home_reminder_appointment">查看或安排下次产检</string>
     <string name="home_reminder_empty">今天还没有开启的提醒或产检计划。</string>
     <string name="home_reminder_open_record">去记录</string>
