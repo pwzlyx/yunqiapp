@@ -54,6 +54,7 @@ Current result: passing.
 - Settings shows notification-permission guidance and a system settings entry point when Android notifications are disabled.
 - Settings enables the requested reminder from the latest notification permission state after the Android 13 permission prompt returns.
 - Settings preserves saved reminder preferences when Android notifications are temporarily unavailable.
+- Settings rebuilds future appointment reminder work when Android notifications become available again and appointment reminders are still enabled.
 - Trends show weight, fetal movement, and exercise charts from local Room records.
 - Trends show CDC-sourced pregnancy weight-gain guidance when the local profile includes height, pre-pregnancy weight, and singleton or twin status.
 - Trends show charts only when a metric has at least two comparable records.

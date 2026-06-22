@@ -116,6 +116,18 @@ fun SettingsRoute(
             }
         }
     }
+    LaunchedEffect(
+        notificationsAllowed,
+        uiState.appointmentRemindersEnabled,
+        uiState.appointmentReminderLeadMinutes,
+    ) {
+        when (appointmentReminderAvailabilityAction(notificationsAllowed, uiState.appointmentRemindersEnabled)) {
+            AppointmentReminderAvailabilityAction.PreserveAppointmentReminderPreference -> Unit
+            AppointmentReminderAvailabilityAction.SyncScheduledAppointmentWork -> {
+                viewModel.syncAppointmentReminders(uiState.appointmentReminderLeadMinutes)
+            }
+        }
+    }
 
     SettingsScreen(
         contentPadding = contentPadding,
@@ -193,6 +205,21 @@ internal fun notificationAvailabilityAction(notificationsAllowed: Boolean): Noti
         NotificationAvailabilityAction.SyncScheduledReminderWork
     } else {
         NotificationAvailabilityAction.PreserveReminderPreferences
+    }
+
+internal enum class AppointmentReminderAvailabilityAction {
+    PreserveAppointmentReminderPreference,
+    SyncScheduledAppointmentWork,
+}
+
+internal fun appointmentReminderAvailabilityAction(
+    notificationsAllowed: Boolean,
+    appointmentRemindersEnabled: Boolean,
+): AppointmentReminderAvailabilityAction =
+    if (notificationsAllowed && appointmentRemindersEnabled) {
+        AppointmentReminderAvailabilityAction.SyncScheduledAppointmentWork
+    } else {
+        AppointmentReminderAvailabilityAction.PreserveAppointmentReminderPreference
     }
 
 @Composable

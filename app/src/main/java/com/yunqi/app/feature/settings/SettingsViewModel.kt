@@ -134,6 +134,14 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun syncAppointmentReminders(leadMinutes: Long) {
+        viewModelScope.launch {
+            reminderScheduler.cancelAll()
+            calendarRecordRepository.futureAppointmentRecords(LocalDate.now())
+                .forEach { record -> reminderScheduler.schedule(record, leadMinutes) }
+        }
+    }
+
     fun clearPregnancyProfileAndReminders() {
         viewModelScope.launch {
             reminderScheduler.cancelAll()

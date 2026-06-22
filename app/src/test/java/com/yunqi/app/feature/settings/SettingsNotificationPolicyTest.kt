@@ -19,4 +19,37 @@ class SettingsNotificationPolicyTest {
             notificationAvailabilityAction(notificationsAllowed = true),
         )
     }
+
+    @Test
+    fun `preserves appointment reminder preference when notifications are unavailable`() {
+        assertEquals(
+            AppointmentReminderAvailabilityAction.PreserveAppointmentReminderPreference,
+            appointmentReminderAvailabilityAction(
+                notificationsAllowed = false,
+                appointmentRemindersEnabled = true,
+            ),
+        )
+    }
+
+    @Test
+    fun `preserves appointment reminder preference when appointment reminders are disabled`() {
+        assertEquals(
+            AppointmentReminderAvailabilityAction.PreserveAppointmentReminderPreference,
+            appointmentReminderAvailabilityAction(
+                notificationsAllowed = true,
+                appointmentRemindersEnabled = false,
+            ),
+        )
+    }
+
+    @Test
+    fun `syncs appointment reminder work when notifications and appointment reminders are enabled`() {
+        assertEquals(
+            AppointmentReminderAvailabilityAction.SyncScheduledAppointmentWork,
+            appointmentReminderAvailabilityAction(
+                notificationsAllowed = true,
+                appointmentRemindersEnabled = true,
+            ),
+        )
+    }
 }
