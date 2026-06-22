@@ -108,20 +108,12 @@ fun SettingsRoute(
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
-    LaunchedEffect(notificationsAllowed, uiState.appointmentRemindersEnabled) {
-        if (!notificationsAllowed && uiState.appointmentRemindersEnabled) {
-            viewModel.setAppointmentRemindersEnabled(false)
-        }
-    }
     LaunchedEffect(notificationsAllowed, uiState.dailyReminders) {
-        if (!notificationsAllowed) {
-            uiState.dailyReminders
-                .filter(DailyReminderPreference::enabled)
-                .forEach { reminder ->
-                    viewModel.setDailyReminderEnabled(reminder.type, false, reminder.time)
-                }
-        } else {
-            viewModel.syncDailyReminders(uiState.dailyReminders)
+        when (notificationAvailabilityAction(notificationsAllowed)) {
+            NotificationAvailabilityAction.PreserveReminderPreferences -> Unit
+            NotificationAvailabilityAction.SyncScheduledReminderWork -> {
+                viewModel.syncDailyReminders(uiState.dailyReminders)
+            }
         }
     }
 
@@ -190,6 +182,18 @@ private sealed interface NotificationPermissionRequest {
         val customMessage: String,
     ) : NotificationPermissionRequest
 }
+
+internal enum class NotificationAvailabilityAction {
+    PreserveReminderPreferences,
+    SyncScheduledReminderWork,
+}
+
+internal fun notificationAvailabilityAction(notificationsAllowed: Boolean): NotificationAvailabilityAction =
+    if (notificationsAllowed) {
+        NotificationAvailabilityAction.SyncScheduledReminderWork
+    } else {
+        NotificationAvailabilityAction.PreserveReminderPreferences
+    }
 
 @Composable
 private fun SettingsScreen(
