@@ -238,6 +238,8 @@
     <string name="settings_daily_reminder_afternoon">17:00 下午</string>
     <string name="settings_daily_reminder_evening">20:00 晚上</string>
     <string name="settings_notifications_permission_missing">通知权限未开启</string>
+    <string name="settings_notifications_permission_guidance">通知权限未开启，本地提醒无法触达。打开任一提醒时会请求权限；如果已拒绝，请在系统设置中允许通知。</string>
+    <string name="settings_open_notification_settings">打开通知设置</string>
     <string name="calendar_previous_month">上个月</string>
     <string name="calendar_next_month">下个月</string>
     <string name="calendar_week_monday">一</string>

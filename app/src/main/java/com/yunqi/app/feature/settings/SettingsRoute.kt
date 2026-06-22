@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
+import android.provider.Settings as AndroidSettings
 import android.widget.Toast
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -133,6 +134,9 @@ fun SettingsRoute(
             }
         },
         onDailyReminderTimeSelected = viewModel::setDailyReminderTime,
+        onOpenNotificationSettings = {
+            context.openAppNotificationSettings()
+        },
         onExportRecords = {
             coroutineScope.launch {
                 val uri = viewModel.exportCalendarRecordsCsv()
@@ -161,6 +165,7 @@ private fun SettingsScreen(
     onReminderEnabledChange: (Boolean) -> Unit,
     onDailyReminderEnabledChange: (DailyReminderPreference, Boolean) -> Unit,
     onDailyReminderTimeSelected: (DailyReminderType, String) -> Unit,
+    onOpenNotificationSettings: () -> Unit,
     onExportRecords: () -> Unit,
     onClearAllLocalData: () -> Unit,
 ) {
@@ -218,6 +223,19 @@ private fun SettingsScreen(
             text = stringResource(R.string.settings_reminders),
             style = MaterialTheme.typography.titleMedium,
         )
+        if (!notificationsAllowed) {
+            Text(
+                text = stringResource(R.string.settings_notifications_permission_guidance),
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.error,
+            )
+            OutlinedButton(
+                onClick = onOpenNotificationSettings,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(stringResource(R.string.settings_open_notification_settings))
+            }
+        }
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -396,6 +414,19 @@ private fun Context.canPostNotifications(): Boolean {
         this,
         Manifest.permission.POST_NOTIFICATIONS,
     ) == PackageManager.PERMISSION_GRANTED
+}
+
+private fun Context.openAppNotificationSettings() {
+    val notificationSettingsIntent = Intent(AndroidSettings.ACTION_APP_NOTIFICATION_SETTINGS)
+        .putExtra(AndroidSettings.EXTRA_APP_PACKAGE, packageName)
+    val fallbackIntent = Intent(AndroidSettings.ACTION_APPLICATION_DETAILS_SETTINGS)
+        .setData(android.net.Uri.parse("package:$packageName"))
+
+    try {
+        startActivity(notificationSettingsIntent)
+    } catch (_: ActivityNotFoundException) {
+        startActivity(fallbackIntent)
+    }
 }
 
 private fun Context.shareCsvExport(uri: android.net.Uri) {
