@@ -151,6 +151,10 @@
     <string name="settings_pregnancy_profile">孕期档案</string>
     <string name="settings_pregnancy_profile_body">设置末次月经、预产期或当前孕周。</string>
     <string name="settings_edit_pregnancy_profile">编辑孕期档案</string>
+    <string name="settings_clear_pregnancy_profile">删除孕期档案</string>
+    <string name="settings_clear_profile_confirm_title">删除孕期档案？</string>
+    <string name="settings_clear_profile_confirm_body">删除后首页将回到未设置状态，并会关闭已开启的本地提醒；日历记录会保留在本机。</string>
+    <string name="settings_clear_profile_confirm_action">确认删除</string>
     <string name="settings_reminders">提醒设置</string>
 
     <string name="setup_title">孕期档案设置</string>

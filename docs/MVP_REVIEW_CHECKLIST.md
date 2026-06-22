@@ -40,6 +40,7 @@ Current result: passing.
 - Trends support 7-day, 30-day, and all-time ranges.
 - Trends empty states provide direct entry points for recording weight, fetal movement, and exercise.
 - Settings can edit pregnancy profile, manage appointment reminders, and clear all local pregnancy data.
+- Settings can delete only the pregnancy profile after confirmation, while preserving calendar records and disabling local reminders.
 - Settings can export local calendar records as a CSV file through the Android share sheet.
 - CSV export protects user-entered cells from being interpreted as spreadsheet formulas.
 - Clearing local data also removes cached CSV export files.

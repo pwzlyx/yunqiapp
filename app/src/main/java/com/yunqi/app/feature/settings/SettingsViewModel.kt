@@ -119,6 +119,15 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
+    fun clearPregnancyProfileAndReminders() {
+        viewModelScope.launch {
+            reminderScheduler.cancelAll()
+            dailyReminderScheduler.cancelAll()
+            pregnancyProfileRepository.clearProfile()
+            reminderSettingsRepository.clearSettings()
+        }
+    }
+
     fun clearAllLocalData() {
         viewModelScope.launch {
             reminderScheduler.cancelAll()

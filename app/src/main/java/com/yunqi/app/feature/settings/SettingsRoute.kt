@@ -159,6 +159,7 @@ fun SettingsRoute(
                 context.shareCsvExport(uri)
             }
         },
+        onClearPregnancyProfile = viewModel::clearPregnancyProfileAndReminders,
         onClearAllLocalData = viewModel::clearAllLocalData,
     )
 }
@@ -185,10 +186,35 @@ private fun SettingsScreen(
     onDailyReminderCustomMessageChange: (DailyReminderType, String, Boolean, String) -> Unit,
     onOpenNotificationSettings: () -> Unit,
     onExportRecords: () -> Unit,
+    onClearPregnancyProfile: () -> Unit,
     onClearAllLocalData: () -> Unit,
 ) {
     val remindersChecked = uiState.appointmentRemindersEnabled && notificationsAllowed
+    var showProfileClearConfirm by remember { mutableStateOf(false) }
     var showClearConfirm by remember { mutableStateOf(false) }
+
+    if (showProfileClearConfirm) {
+        AlertDialog(
+            onDismissRequest = { showProfileClearConfirm = false },
+            title = { Text(stringResource(R.string.settings_clear_profile_confirm_title)) },
+            text = { Text(stringResource(R.string.settings_clear_profile_confirm_body)) },
+            confirmButton = {
+                Button(
+                    onClick = {
+                        showProfileClearConfirm = false
+                        onClearPregnancyProfile()
+                    },
+                ) {
+                    Text(stringResource(R.string.settings_clear_profile_confirm_action))
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { showProfileClearConfirm = false }) {
+                    Text(stringResource(R.string.calendar_delete_cancel_action))
+                }
+            },
+        )
+    }
 
     if (showClearConfirm) {
         AlertDialog(
@@ -235,6 +261,12 @@ private fun SettingsScreen(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Text(stringResource(R.string.settings_edit_pregnancy_profile))
+        }
+        OutlinedButton(
+            onClick = { showProfileClearConfirm = true },
+            modifier = Modifier.fillMaxWidth(),
+        ) {
+            Text(stringResource(R.string.settings_clear_pregnancy_profile))
         }
         HorizontalDivider()
         Text(
