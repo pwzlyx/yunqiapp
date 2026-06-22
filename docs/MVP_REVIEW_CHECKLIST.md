@@ -47,6 +47,7 @@ Current result: passing.
 - Settings and reminder workers check both Android 13 notification runtime permission and the app-level notification switch.
 - Settings shows separate guidance for missing runtime notification permission and disabled app-level notifications.
 - Settings shows notification-permission guidance and a system settings entry point when Android notifications are disabled.
+- Settings enables the requested reminder from the latest notification permission state after the Android 13 permission prompt returns.
 - Trends show weight, fetal movement, and exercise charts from local Room records.
 - Trends show CDC-sourced pregnancy weight-gain guidance when the local profile includes height, pre-pregnancy weight, and singleton or twin status.
 - Trends show charts only when a metric has at least two comparable records.

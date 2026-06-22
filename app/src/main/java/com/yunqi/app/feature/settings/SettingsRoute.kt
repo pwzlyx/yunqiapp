@@ -73,18 +73,20 @@ fun SettingsRoute(
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
     ) { granted ->
-        runtimeNotificationPermissionGranted = context.hasNotificationRuntimePermission()
-        notificationsAllowed = context.canPostNotifications()
+        val runtimePermissionGranted = context.hasNotificationRuntimePermission()
+        val canPostNotifications = context.canPostNotifications()
+        runtimeNotificationPermissionGranted = runtimePermissionGranted
+        notificationsAllowed = canPostNotifications
         when (pendingNotificationRequest) {
             NotificationPermissionRequest.Appointment -> {
-                viewModel.setAppointmentRemindersEnabled(granted && notificationsAllowed)
+                viewModel.setAppointmentRemindersEnabled(granted && canPostNotifications)
             }
 
             is NotificationPermissionRequest.Daily -> {
                 val request = pendingNotificationRequest as NotificationPermissionRequest.Daily
                 viewModel.setDailyReminderEnabled(
                     type = request.type,
-                    enabled = granted && notificationsAllowed,
+                    enabled = granted && canPostNotifications,
                     time = request.time,
                     customMessage = request.customMessage,
                 )
