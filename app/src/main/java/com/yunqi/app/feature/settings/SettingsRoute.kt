@@ -52,6 +52,7 @@ import com.yunqi.app.R
 import com.yunqi.app.data.local.DailyReminderPreference
 import com.yunqi.app.domain.reminder.DailyReminderType
 import com.yunqi.app.notification.canPostYunqiNotifications
+import com.yunqi.app.notification.hasYunqiNotificationRuntimePermission
 import kotlinx.coroutines.launch
 
 @Composable
@@ -69,14 +70,17 @@ fun SettingsRoute(
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
     ) { granted ->
-        notificationsAllowed = granted
+        notificationsAllowed = context.canPostNotifications()
         when (pendingNotificationRequest) {
-            NotificationPermissionRequest.Appointment -> viewModel.setAppointmentRemindersEnabled(granted)
+            NotificationPermissionRequest.Appointment -> {
+                viewModel.setAppointmentRemindersEnabled(granted && notificationsAllowed)
+            }
+
             is NotificationPermissionRequest.Daily -> {
                 val request = pendingNotificationRequest as NotificationPermissionRequest.Daily
                 viewModel.setDailyReminderEnabled(
                     type = request.type,
-                    enabled = granted,
+                    enabled = granted && notificationsAllowed,
                     time = request.time,
                     customMessage = request.customMessage,
                 )
@@ -122,9 +126,11 @@ fun SettingsRoute(
         onReminderEnabledChange = { enabled ->
             if (!enabled) {
                 viewModel.setAppointmentRemindersEnabled(false)
-            } else if (context.mustRequestNotificationPermission() && !notificationsAllowed) {
+            } else if (context.shouldRequestNotificationRuntimePermission()) {
                 pendingNotificationRequest = NotificationPermissionRequest.Appointment
                 notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else if (!notificationsAllowed) {
+                context.openAppNotificationSettings()
             } else {
                 viewModel.setAppointmentRemindersEnabled(true)
             }
@@ -132,13 +138,15 @@ fun SettingsRoute(
         onDailyReminderEnabledChange = { reminder, enabled ->
             if (!enabled) {
                 viewModel.setDailyReminderEnabled(reminder.type, false, reminder.time)
-            } else if (context.mustRequestNotificationPermission() && !notificationsAllowed) {
+            } else if (context.shouldRequestNotificationRuntimePermission()) {
                 pendingNotificationRequest = NotificationPermissionRequest.Daily(
                     type = reminder.type,
                     time = reminder.time,
                     customMessage = reminder.customMessage,
                 )
                 notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            } else if (!notificationsAllowed) {
+                context.openAppNotificationSettings()
             } else {
                 viewModel.setDailyReminderEnabled(
                     type = reminder.type,
@@ -524,6 +532,9 @@ private fun DailyReminderType.bodyResId(): Int = when (this) {
 
 private fun Context.mustRequestNotificationPermission(): Boolean =
     Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+
+private fun Context.shouldRequestNotificationRuntimePermission(): Boolean =
+    mustRequestNotificationPermission() && !hasYunqiNotificationRuntimePermission(this)
 
 private fun Context.canPostNotifications(): Boolean {
     return canPostYunqiNotifications(this)

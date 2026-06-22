@@ -11,12 +11,13 @@ import androidx.core.content.ContextCompat
  * Checks both the Android 13 runtime permission and the app-level notification switch.
  */
 fun canPostYunqiNotifications(context: Context): Boolean {
-    val runtimePermissionGranted = Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+    return hasYunqiNotificationRuntimePermission(context) &&
+        NotificationManagerCompat.from(context).areNotificationsEnabled()
+}
+
+fun hasYunqiNotificationRuntimePermission(context: Context): Boolean =
+    Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
         ContextCompat.checkSelfPermission(
             context,
             Manifest.permission.POST_NOTIFICATIONS,
         ) == PackageManager.PERMISSION_GRANTED
-
-    return runtimePermissionGranted &&
-        NotificationManagerCompat.from(context).areNotificationsEnabled()
-}
