@@ -9,6 +9,7 @@ import com.yunqi.app.data.export.CalendarRecordExportStore
 import com.yunqi.app.data.export.CalendarRecordCsvExporter
 import com.yunqi.app.data.local.ContentStatusRepository
 import com.yunqi.app.data.local.DailyReminderPreference
+import com.yunqi.app.data.local.DEFAULT_APPOINTMENT_REMINDER_LEAD_MINUTES
 import com.yunqi.app.data.local.PregnancyProfileRepository
 import com.yunqi.app.data.local.ReminderSettingsRepository
 import com.yunqi.app.data.local.record.CalendarRecordRepository
@@ -19,6 +20,7 @@ import java.time.LocalDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
@@ -39,6 +41,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         .map { settings ->
             SettingsUiState(
                 appointmentRemindersEnabled = settings.appointmentRemindersEnabled,
+                appointmentReminderLeadMinutes = settings.appointmentReminderLeadMinutes,
                 dailyReminders = settings.dailyReminders,
             )
         }
@@ -54,13 +57,25 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun setAppointmentRemindersEnabled(enabled: Boolean) {
         viewModelScope.launch {
             reminderSettingsRepository.setAppointmentRemindersEnabled(enabled)
+            val leadMinutes = reminderSettingsRepository.reminderSettingsFlow.first().appointmentReminderLeadMinutes
             if (enabled) {
                 calendarRecordRepository.futureAppointmentRecords(LocalDate.now())
-                    .forEach(reminderScheduler::schedule)
+                    .forEach { record -> reminderScheduler.schedule(record, leadMinutes) }
             } else {
                 calendarRecordRepository.futureAppointmentRecords(LocalDate.now())
                     .forEach { record -> reminderScheduler.cancel(record.id) }
                 reminderScheduler.cancelAll()
+            }
+        }
+    }
+
+    fun setAppointmentReminderLeadMinutes(leadMinutes: Long) {
+        viewModelScope.launch {
+            reminderSettingsRepository.setAppointmentReminderLeadMinutes(leadMinutes)
+            if (reminderSettingsRepository.appointmentRemindersEnabledFlow.first()) {
+                reminderScheduler.cancelAll()
+                calendarRecordRepository.futureAppointmentRecords(LocalDate.now())
+                    .forEach { record -> reminderScheduler.schedule(record, leadMinutes) }
             }
         }
     }
@@ -154,6 +169,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
 data class SettingsUiState(
     val appointmentRemindersEnabled: Boolean = false,
+    val appointmentReminderLeadMinutes: Long = DEFAULT_APPOINTMENT_REMINDER_LEAD_MINUTES,
     val dailyReminders: List<DailyReminderPreference> = DailyReminderType.entries.map { type ->
         DailyReminderPreference(
             type = type,

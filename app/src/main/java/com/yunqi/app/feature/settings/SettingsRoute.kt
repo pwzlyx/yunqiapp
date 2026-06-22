@@ -150,6 +150,7 @@ fun SettingsRoute(
         },
         onDailyReminderTimeSelected = viewModel::setDailyReminderTime,
         onDailyReminderCustomMessageChange = viewModel::setDailyReminderCustomMessage,
+        onAppointmentReminderLeadSelected = viewModel::setAppointmentReminderLeadMinutes,
         onOpenNotificationSettings = {
             context.openAppNotificationSettings()
         },
@@ -184,6 +185,7 @@ private fun SettingsScreen(
     onDailyReminderEnabledChange: (DailyReminderPreference, Boolean) -> Unit,
     onDailyReminderTimeSelected: (DailyReminderType, String, String) -> Unit,
     onDailyReminderCustomMessageChange: (DailyReminderType, String, Boolean, String) -> Unit,
+    onAppointmentReminderLeadSelected: (Long) -> Unit,
     onOpenNotificationSettings: () -> Unit,
     onExportRecords: () -> Unit,
     onClearPregnancyProfile: () -> Unit,
@@ -317,6 +319,10 @@ private fun SettingsScreen(
                 onCheckedChange = onReminderEnabledChange,
             )
         }
+        AppointmentReminderLeadSettings(
+            selectedLeadMinutes = uiState.appointmentReminderLeadMinutes,
+            onLeadSelected = onAppointmentReminderLeadSelected,
+        )
         DailyReminderSettings(
             reminders = uiState.dailyReminders,
             notificationsAllowed = notificationsAllowed,
@@ -356,6 +362,38 @@ private fun SettingsScreen(
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.error,
         )
+    }
+}
+
+@Composable
+@OptIn(ExperimentalLayoutApi::class)
+private fun AppointmentReminderLeadSettings(
+    selectedLeadMinutes: Long,
+    onLeadSelected: (Long) -> Unit,
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(
+            text = stringResource(R.string.settings_appointment_reminder_lead_time),
+            style = MaterialTheme.typography.bodyLarge,
+        )
+        Text(
+            text = stringResource(R.string.settings_appointment_reminder_lead_time_body),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        FlowRow(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            appointmentReminderLeadOptions().forEach { option ->
+                FilterChip(
+                    selected = selectedLeadMinutes == option.minutes,
+                    onClick = { onLeadSelected(option.minutes) },
+                    label = { Text(stringResource(option.labelResId)) },
+                )
+            }
+        }
     }
 }
 
@@ -446,6 +484,17 @@ private fun DailyReminderSettings(
 private data class DailyReminderTimeOption(
     val time: String,
     val labelResId: Int,
+)
+
+private data class AppointmentReminderLeadOption(
+    val minutes: Long,
+    val labelResId: Int,
+)
+
+private fun appointmentReminderLeadOptions(): List<AppointmentReminderLeadOption> = listOf(
+    AppointmentReminderLeadOption(60L, R.string.settings_appointment_reminder_lead_1_hour),
+    AppointmentReminderLeadOption(6L * 60L, R.string.settings_appointment_reminder_lead_6_hours),
+    AppointmentReminderLeadOption(24L * 60L, R.string.settings_appointment_reminder_lead_1_day),
 )
 
 private fun dailyReminderTimeOptions(): List<DailyReminderTimeOption> = listOf(

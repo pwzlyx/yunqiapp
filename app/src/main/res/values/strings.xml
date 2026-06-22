@@ -227,7 +227,12 @@
     <string name="content_safety_third_title">胎动减少或模式改变要立即联系医生</string>
     <string name="content_safety_third_body">如果感觉宝宝活动减少、变弱或和平时明显不同，不要等待到第二天，请及时联系助产士、医生或产科单位。</string>
     <string name="settings_appointment_reminders">产检提醒</string>
-    <string name="settings_appointment_reminders_body">提前 1 小时提醒已记录时间的产检。</string>
+    <string name="settings_appointment_reminders_body">为已记录时间的产检发送本地提醒。</string>
+    <string name="settings_appointment_reminder_lead_time">产检提前提醒</string>
+    <string name="settings_appointment_reminder_lead_time_body">选择产检通知提前多久触达；修改后会重新安排未来产检提醒。</string>
+    <string name="settings_appointment_reminder_lead_1_hour">提前 1 小时</string>
+    <string name="settings_appointment_reminder_lead_6_hours">提前 6 小时</string>
+    <string name="settings_appointment_reminder_lead_1_day">提前 1 天</string>
     <string name="settings_daily_reminders">每日记录提醒</string>
     <string name="settings_daily_reminders_body">按类型开启本地每日提醒，每类提醒都可以单独设置时间。</string>
     <string name="settings_daily_reminder_weight">体重记录</string>

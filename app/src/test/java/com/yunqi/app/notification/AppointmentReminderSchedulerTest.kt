@@ -26,6 +26,21 @@ class AppointmentReminderSchedulerTest {
     }
 
     @Test
+    fun `creates reminder plan using configured lead time`() {
+        val record = appointmentRecord(
+            date = LocalDate.of(2026, 7, 2),
+            time = "14:30",
+        )
+
+        val plan = record.toAppointmentReminderPlan(
+            now = LocalDateTime.of(2026, 7, 1, 14, 30),
+            leadMinutes = 6L * 60L,
+        )
+
+        assertEquals(18L * 60L * 60L * 1000L, plan?.delayMillis)
+    }
+
+    @Test
     fun `uses immediate reminder when appointment is still future but lead time has passed`() {
         val record = appointmentRecord(
             date = LocalDate.of(2026, 7, 1),
@@ -104,13 +119,14 @@ class AppointmentReminderSchedulerTest {
 
         val decision = record.toAppointmentReminderScheduleDecision(
             now = LocalDateTime.of(2026, 7, 1, 12, 30),
+            leadMinutes = 6L * 60L,
         )
 
         assertEquals(
             AppointmentReminderScheduleDecision.Schedule(
                 recordId = "appointment-1",
                 plan = AppointmentReminderPlan(
-                    delayMillis = 60L * 60L * 1000L,
+                    delayMillis = 0L,
                     appointmentLabel = "14:30",
                 ),
             ),

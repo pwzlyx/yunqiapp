@@ -8,7 +8,6 @@ import com.yunqi.app.data.local.record.CalendarRecordRepository
 import com.yunqi.app.domain.calendar.CalendarRecordType
 import com.yunqi.app.notification.AppointmentReminderScheduler
 import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -16,6 +15,7 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.first
 import java.time.LocalDate
 import java.time.YearMonth
 
@@ -72,11 +72,9 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
     suspend fun save(input: CalendarRecordInput): CalendarRecordActionResult = when (val result = parser.parse(input)) {
         is CalendarRecordParseResult.Success -> {
             repository.save(result.record)
-            if (
-                result.record.type == CalendarRecordType.Appointment &&
-                reminderSettingsRepository.appointmentRemindersEnabledFlow.first()
-            ) {
-                reminderScheduler.schedule(result.record)
+            val reminderSettings = reminderSettingsRepository.reminderSettingsFlow.first()
+            if (result.record.type == CalendarRecordType.Appointment && reminderSettings.appointmentRemindersEnabled) {
+                reminderScheduler.schedule(result.record, reminderSettings.appointmentReminderLeadMinutes)
             } else {
                 reminderScheduler.cancel(result.record.id)
             }

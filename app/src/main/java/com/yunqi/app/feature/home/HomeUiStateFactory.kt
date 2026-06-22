@@ -4,6 +4,7 @@ import com.yunqi.app.R
 import com.yunqi.app.data.content.PregnancyContentRepository
 import com.yunqi.app.data.local.ContentStatus
 import com.yunqi.app.data.local.DailyReminderPreference
+import com.yunqi.app.data.local.DEFAULT_APPOINTMENT_REMINDER_LEAD_MINUTES
 import com.yunqi.app.data.local.ReminderSettings
 import com.yunqi.app.domain.calendar.CalendarRecord
 import com.yunqi.app.domain.calendar.CalendarRecordType
@@ -24,6 +25,7 @@ class HomeUiStateFactory(
         contentStatus: ContentStatus = ContentStatus(),
         reminderSettings: ReminderSettings = ReminderSettings(
             appointmentRemindersEnabled = false,
+            appointmentReminderLeadMinutes = DEFAULT_APPOINTMENT_REMINDER_LEAD_MINUTES,
             dailyReminders = emptyList(),
         ),
         calendarRecords: List<CalendarRecord> = emptyList(),

@@ -3,6 +3,7 @@ package com.yunqi.app.data.local
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.yunqi.app.domain.reminder.DailyReminderType
@@ -10,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 const val DEFAULT_DAILY_REMINDER_TIME = "09:00"
+const val DEFAULT_APPOINTMENT_REMINDER_LEAD_MINUTES = 60L
 
 private val Context.reminderSettingsDataStore by preferencesDataStore(
     name = "reminder_settings",
@@ -32,6 +34,8 @@ class ReminderSettingsRepository(
             val legacyDailyReminderTime = preferences[Keys.legacyDailyReminderTime] ?: DEFAULT_DAILY_REMINDER_TIME
             ReminderSettings(
                 appointmentRemindersEnabled = preferences[Keys.appointmentRemindersEnabled] ?: false,
+                appointmentReminderLeadMinutes = preferences[Keys.appointmentReminderLeadMinutes]
+                    ?: DEFAULT_APPOINTMENT_REMINDER_LEAD_MINUTES,
                 dailyReminders = DailyReminderType.entries.map { type ->
                     DailyReminderPreference(
                         type = type,
@@ -51,6 +55,12 @@ class ReminderSettingsRepository(
     suspend fun setAppointmentRemindersEnabled(enabled: Boolean) {
         context.reminderSettingsDataStore.edit { preferences ->
             preferences[Keys.appointmentRemindersEnabled] = enabled
+        }
+    }
+
+    suspend fun setAppointmentReminderLeadMinutes(leadMinutes: Long) {
+        context.reminderSettingsDataStore.edit { preferences ->
+            preferences[Keys.appointmentReminderLeadMinutes] = leadMinutes
         }
     }
 
@@ -75,6 +85,7 @@ class ReminderSettingsRepository(
 
     private object Keys {
         val appointmentRemindersEnabled = booleanPreferencesKey("appointment_reminders_enabled")
+        val appointmentReminderLeadMinutes = longPreferencesKey("appointment_reminder_lead_minutes")
         val legacyDailyReminderEnabled = booleanPreferencesKey("daily_reminder_enabled")
         val legacyDailyReminderTime = stringPreferencesKey("daily_reminder_time")
 
@@ -91,6 +102,7 @@ class ReminderSettingsRepository(
 
 data class ReminderSettings(
     val appointmentRemindersEnabled: Boolean,
+    val appointmentReminderLeadMinutes: Long = DEFAULT_APPOINTMENT_REMINDER_LEAD_MINUTES,
     val dailyReminders: List<DailyReminderPreference>,
 )
 

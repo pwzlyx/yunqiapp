@@ -74,7 +74,9 @@ internal class ReminderRestorer(
             appointmentReminderScheduler.cancelAll()
             calendarRecordRepository
                 .futureAppointmentRecords(todayProvider())
-                .forEach(appointmentReminderScheduler::schedule)
+                .forEach { record ->
+                    appointmentReminderScheduler.schedule(record, settings.appointmentReminderLeadMinutes)
+                }
         } else {
             appointmentReminderScheduler.cancelAll()
         }
