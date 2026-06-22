@@ -63,6 +63,7 @@ Current result: passing.
 - Clearing local data also removes cached CSV export files.
 - Reminder restore failures use sanitized logs that omit exception details which could contain local health records.
 - Sensitive data stays local: cloud backup and device transfer extraction are disabled.
+- Compose instrumentation smoke tests cover core tab navigation, medical notices, and pregnancy setup due-date preview.
 
 ## Manual Smoke Test
 

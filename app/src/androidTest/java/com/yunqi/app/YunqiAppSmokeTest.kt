@@ -4,6 +4,8 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performScrollTo
 import org.junit.Rule
 import org.junit.Test
@@ -31,6 +33,29 @@ class YunqiAppSmokeTest {
             .performScrollTo()
             .assertIsDisplayed()
         composeRule.onNodeWithText(activity.getString(R.string.emergency_attention_notice))
+            .performScrollTo()
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun pregnancySetupShowsDueDatePreviewFromLastMenstrualPeriod() {
+        val activity = composeRule.activity
+
+        composeRule.onNodeWithText(activity.getString(R.string.nav_settings)).performClick()
+        composeRule.onNodeWithText(activity.getString(R.string.settings_edit_pregnancy_profile))
+            .performScrollTo()
+            .performClick()
+
+        composeRule.onNodeWithText(activity.getString(R.string.setup_title)).assertIsDisplayed()
+        composeRule.onNodeWithText(activity.getString(R.string.setup_method_lmp)).performClick()
+        val lmpField = composeRule.onNodeWithText(activity.getString(R.string.setup_lmp_label))
+        lmpField.performTextClearance()
+        lmpField.performTextInput("2026-03-01")
+
+        composeRule.onNodeWithText(activity.getString(R.string.setup_preview_title))
+            .performScrollTo()
+            .assertIsDisplayed()
+        composeRule.onNodeWithText(activity.getString(R.string.setup_preview_due_date, "2026-12-06"))
             .performScrollTo()
             .assertIsDisplayed()
     }
