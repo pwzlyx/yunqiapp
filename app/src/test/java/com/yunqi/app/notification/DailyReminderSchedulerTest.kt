@@ -46,4 +46,25 @@ class DailyReminderSchedulerTest {
         )
         assertNotEquals("daily-record-reminder", dailyReminderWorkName(DailyReminderType.Weight))
     }
+
+    @Test
+    fun `uses custom message for custom reminder notification`() {
+        val content = DailyReminderType.Custom.notificationContent("Pack hospital bag")
+
+        assertEquals("Pack hospital bag", content.bodyText)
+    }
+
+    @Test
+    fun `falls back to default body when custom reminder message is blank`() {
+        val content = DailyReminderType.Custom.notificationContent("   ")
+
+        assertNull(content.bodyText)
+    }
+
+    @Test
+    fun `ignores custom message for fixed reminder types`() {
+        val content = DailyReminderType.Weight.notificationContent("Custom weight text")
+
+        assertNull(content.bodyText)
+    }
 }

@@ -27,6 +27,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -73,7 +74,12 @@ fun SettingsRoute(
             NotificationPermissionRequest.Appointment -> viewModel.setAppointmentRemindersEnabled(granted)
             is NotificationPermissionRequest.Daily -> {
                 val request = pendingNotificationRequest as NotificationPermissionRequest.Daily
-                viewModel.setDailyReminderEnabled(request.type, granted, request.time)
+                viewModel.setDailyReminderEnabled(
+                    type = request.type,
+                    enabled = granted,
+                    time = request.time,
+                    customMessage = request.customMessage,
+                )
             }
 
             null -> Unit
@@ -127,13 +133,23 @@ fun SettingsRoute(
             if (!enabled) {
                 viewModel.setDailyReminderEnabled(reminder.type, false, reminder.time)
             } else if (context.mustRequestNotificationPermission() && !notificationsAllowed) {
-                pendingNotificationRequest = NotificationPermissionRequest.Daily(reminder.type, reminder.time)
+                pendingNotificationRequest = NotificationPermissionRequest.Daily(
+                    type = reminder.type,
+                    time = reminder.time,
+                    customMessage = reminder.customMessage,
+                )
                 notificationPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
             } else {
-                viewModel.setDailyReminderEnabled(reminder.type, true, reminder.time)
+                viewModel.setDailyReminderEnabled(
+                    type = reminder.type,
+                    enabled = true,
+                    time = reminder.time,
+                    customMessage = reminder.customMessage,
+                )
             }
         },
         onDailyReminderTimeSelected = viewModel::setDailyReminderTime,
+        onDailyReminderCustomMessageChange = viewModel::setDailyReminderCustomMessage,
         onOpenNotificationSettings = {
             context.openAppNotificationSettings()
         },
@@ -153,6 +169,7 @@ private sealed interface NotificationPermissionRequest {
     data class Daily(
         val type: DailyReminderType,
         val time: String,
+        val customMessage: String,
     ) : NotificationPermissionRequest
 }
 
@@ -164,7 +181,8 @@ private fun SettingsScreen(
     onPregnancyProfileClick: () -> Unit,
     onReminderEnabledChange: (Boolean) -> Unit,
     onDailyReminderEnabledChange: (DailyReminderPreference, Boolean) -> Unit,
-    onDailyReminderTimeSelected: (DailyReminderType, String) -> Unit,
+    onDailyReminderTimeSelected: (DailyReminderType, String, String) -> Unit,
+    onDailyReminderCustomMessageChange: (DailyReminderType, String, Boolean, String) -> Unit,
     onOpenNotificationSettings: () -> Unit,
     onExportRecords: () -> Unit,
     onClearAllLocalData: () -> Unit,
@@ -272,6 +290,7 @@ private fun SettingsScreen(
             notificationsAllowed = notificationsAllowed,
             onEnabledChange = onDailyReminderEnabledChange,
             onTimeSelected = onDailyReminderTimeSelected,
+            onCustomMessageChange = onDailyReminderCustomMessageChange,
         )
         HorizontalDivider()
         Text(
@@ -309,7 +328,8 @@ private fun DailyReminderSettings(
     reminders: List<DailyReminderPreference>,
     notificationsAllowed: Boolean,
     onEnabledChange: (DailyReminderPreference, Boolean) -> Unit,
-    onTimeSelected: (DailyReminderType, String) -> Unit,
+    onTimeSelected: (DailyReminderType, String, String) -> Unit,
+    onCustomMessageChange: (DailyReminderType, String, Boolean, String) -> Unit,
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Text(
@@ -355,6 +375,17 @@ private fun DailyReminderSettings(
                         onCheckedChange = { enabled -> onEnabledChange(reminder, enabled) },
                     )
                 }
+                if (reminder.type == DailyReminderType.Custom) {
+                    OutlinedTextField(
+                        value = reminder.customMessage,
+                        onValueChange = { message ->
+                            onCustomMessageChange(reminder.type, message, reminder.enabled, reminder.time)
+                        },
+                        label = { Text(stringResource(R.string.settings_daily_reminder_custom_message_label)) },
+                        modifier = Modifier.fillMaxWidth(),
+                        minLines = 2,
+                    )
+                }
                 if (checked) {
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
@@ -364,7 +395,7 @@ private fun DailyReminderSettings(
                         dailyReminderTimeOptions().forEach { option ->
                             FilterChip(
                                 selected = reminder.time == option.time,
-                                onClick = { onTimeSelected(reminder.type, option.time) },
+                                onClick = { onTimeSelected(reminder.type, option.time, reminder.customMessage) },
                                 label = { Text(stringResource(option.labelResId)) },
                             )
                         }

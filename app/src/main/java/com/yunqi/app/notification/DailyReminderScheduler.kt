@@ -23,7 +23,7 @@ class DailyReminderScheduler(
     /**
      * Schedules one local daily reminder type when the requested HH:mm time is valid.
      */
-    fun schedule(type: DailyReminderType, time: String) {
+    fun schedule(type: DailyReminderType, time: String, customMessage: String = "") {
         val delayMillis = calculateDailyReminderInitialDelay(time, nowProvider()) ?: return
         cancelLegacy()
         val request = PeriodicWorkRequestBuilder<DailyReminderWorker>(1, TimeUnit.DAYS)
@@ -31,6 +31,7 @@ class DailyReminderScheduler(
             .setInputData(
                 Data.Builder()
                     .putString(DailyReminderWorker.KEY_REMINDER_TYPE, type.name)
+                    .putString(DailyReminderWorker.KEY_CUSTOM_MESSAGE, customMessage.trim())
                     .build(),
             )
             .build()

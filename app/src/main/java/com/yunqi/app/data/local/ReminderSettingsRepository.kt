@@ -39,6 +39,7 @@ class ReminderSettingsRepository(
                             ?: type.usesLegacyDailyReminder(legacyDailyReminderEnabled),
                         time = preferences[Keys.dailyReminderTime(type)]
                             ?: type.legacyOrDefaultTime(legacyDailyReminderEnabled, legacyDailyReminderTime),
+                        customMessage = preferences[Keys.dailyReminderCustomMessage(type)].orEmpty(),
                     )
                 },
             )
@@ -60,6 +61,12 @@ class ReminderSettingsRepository(
         }
     }
 
+    suspend fun setDailyReminderCustomMessage(type: DailyReminderType, message: String) {
+        context.reminderSettingsDataStore.edit { preferences ->
+            preferences[Keys.dailyReminderCustomMessage(type)] = message.trim()
+        }
+    }
+
     suspend fun clearSettings() {
         context.reminderSettingsDataStore.edit { preferences ->
             preferences.clear()
@@ -76,6 +83,9 @@ class ReminderSettingsRepository(
 
         fun dailyReminderTime(type: DailyReminderType) =
             stringPreferencesKey("daily_reminder_${type.name.lowercase()}_time")
+
+        fun dailyReminderCustomMessage(type: DailyReminderType) =
+            stringPreferencesKey("daily_reminder_${type.name.lowercase()}_custom_message")
     }
 }
 
@@ -88,6 +98,7 @@ data class DailyReminderPreference(
     val type: DailyReminderType,
     val enabled: Boolean,
     val time: String,
+    val customMessage: String = "",
 )
 
 private fun DailyReminderType.usesLegacyDailyReminder(legacyEnabled: Boolean): Boolean =

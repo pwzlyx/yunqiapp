@@ -24,13 +24,15 @@ class DailyReminderWorker(
         val reminderType = inputData.getString(KEY_REMINDER_TYPE)
             ?.let { runCatching { DailyReminderType.valueOf(it) }.getOrNull() }
             ?: DailyReminderType.Custom
+        val customMessage = inputData.getString(KEY_CUSTOM_MESSAGE).orEmpty()
+        val content = reminderType.notificationContent(customMessage)
         val notification = NotificationCompat.Builder(
             context,
             YunqiNotificationChannels.DAILY_REMINDERS_CHANNEL_ID,
         )
             .setSmallIcon(R.drawable.ic_notification)
-            .setContentTitle(context.getString(reminderType.notificationTitleResId()))
-            .setContentText(context.getString(reminderType.notificationBodyResId()))
+            .setContentTitle(context.getString(content.titleResId))
+            .setContentText(content.bodyText ?: context.getString(content.bodyResId))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
             .build()
@@ -50,23 +52,47 @@ class DailyReminderWorker(
 
     companion object {
         const val KEY_REMINDER_TYPE = "reminder_type"
+        const val KEY_CUSTOM_MESSAGE = "custom_message"
     }
 }
 
-private fun DailyReminderType.notificationTitleResId(): Int = when (this) {
-    DailyReminderType.Weight -> R.string.notification_daily_weight_title
-    DailyReminderType.FetalMovement -> R.string.notification_daily_fetal_movement_title
-    DailyReminderType.Vitamin -> R.string.notification_daily_vitamin_title
-    DailyReminderType.Water -> R.string.notification_daily_water_title
-    DailyReminderType.Exercise -> R.string.notification_daily_exercise_title
-    DailyReminderType.Custom -> R.string.notification_daily_custom_title
-}
+internal data class DailyReminderNotificationContent(
+    val titleResId: Int,
+    val bodyResId: Int,
+    val bodyText: String? = null,
+)
 
-private fun DailyReminderType.notificationBodyResId(): Int = when (this) {
-    DailyReminderType.Weight -> R.string.notification_daily_weight_body
-    DailyReminderType.FetalMovement -> R.string.notification_daily_fetal_movement_body
-    DailyReminderType.Vitamin -> R.string.notification_daily_vitamin_body
-    DailyReminderType.Water -> R.string.notification_daily_water_body
-    DailyReminderType.Exercise -> R.string.notification_daily_exercise_body
-    DailyReminderType.Custom -> R.string.notification_daily_custom_body
+internal fun DailyReminderType.notificationContent(
+    customMessage: String,
+): DailyReminderNotificationContent = when (this) {
+    DailyReminderType.Weight -> DailyReminderNotificationContent(
+        titleResId = R.string.notification_daily_weight_title,
+        bodyResId = R.string.notification_daily_weight_body,
+    )
+
+    DailyReminderType.FetalMovement -> DailyReminderNotificationContent(
+        titleResId = R.string.notification_daily_fetal_movement_title,
+        bodyResId = R.string.notification_daily_fetal_movement_body,
+    )
+
+    DailyReminderType.Vitamin -> DailyReminderNotificationContent(
+        titleResId = R.string.notification_daily_vitamin_title,
+        bodyResId = R.string.notification_daily_vitamin_body,
+    )
+
+    DailyReminderType.Water -> DailyReminderNotificationContent(
+        titleResId = R.string.notification_daily_water_title,
+        bodyResId = R.string.notification_daily_water_body,
+    )
+
+    DailyReminderType.Exercise -> DailyReminderNotificationContent(
+        titleResId = R.string.notification_daily_exercise_title,
+        bodyResId = R.string.notification_daily_exercise_body,
+    )
+
+    DailyReminderType.Custom -> DailyReminderNotificationContent(
+        titleResId = R.string.notification_daily_custom_title,
+        bodyResId = R.string.notification_daily_custom_body,
+        bodyText = customMessage.trim().takeIf(String::isNotBlank),
+    )
 }

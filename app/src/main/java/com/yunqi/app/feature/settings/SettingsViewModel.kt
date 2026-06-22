@@ -64,21 +64,40 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         }
     }
 
-    fun setDailyReminderEnabled(type: DailyReminderType, enabled: Boolean, time: String) {
+    fun setDailyReminderEnabled(
+        type: DailyReminderType,
+        enabled: Boolean,
+        time: String,
+        customMessage: String = "",
+    ) {
         viewModelScope.launch {
             reminderSettingsRepository.setDailyReminder(type, enabled, time)
             if (enabled) {
-                dailyReminderScheduler.schedule(type, time)
+                dailyReminderScheduler.schedule(type, time, customMessage)
             } else {
                 dailyReminderScheduler.cancel(type)
             }
         }
     }
 
-    fun setDailyReminderTime(type: DailyReminderType, time: String) {
+    fun setDailyReminderTime(type: DailyReminderType, time: String, customMessage: String = "") {
         viewModelScope.launch {
             reminderSettingsRepository.setDailyReminder(type = type, enabled = true, time = time)
-            dailyReminderScheduler.schedule(type, time)
+            dailyReminderScheduler.schedule(type, time, customMessage)
+        }
+    }
+
+    fun setDailyReminderCustomMessage(
+        type: DailyReminderType,
+        message: String,
+        enabled: Boolean,
+        time: String,
+    ) {
+        viewModelScope.launch {
+            reminderSettingsRepository.setDailyReminderCustomMessage(type, message)
+            if (enabled) {
+                dailyReminderScheduler.schedule(type, time, message)
+            }
         }
     }
 
@@ -87,7 +106,11 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             dailyReminderScheduler.cancelLegacy()
             reminders.forEach { reminder ->
                 if (reminder.enabled) {
-                    dailyReminderScheduler.schedule(reminder.type, reminder.time)
+                    dailyReminderScheduler.schedule(
+                        type = reminder.type,
+                        time = reminder.time,
+                        customMessage = reminder.customMessage,
+                    )
                 } else {
                     dailyReminderScheduler.cancel(reminder.type)
                 }
@@ -127,6 +150,7 @@ data class SettingsUiState(
             type = type,
             enabled = false,
             time = type.defaultTime,
+            customMessage = "",
         )
     },
 )
