@@ -55,12 +55,13 @@ class HomeUiStateFactory(
     ): List<HomeReminderItem> {
         val appointmentItems = calendarRecords
             .filter { it.date == today && it.type == CalendarRecordType.Appointment }
-            .sortedWith(compareBy<CalendarRecord> { it.appointmentTime.orEmpty() }.thenBy { it.createdAtEpochMillis })
+            .sortedWith(compareBy<CalendarRecord> { it.appointmentTime.orEmpty().trim() }.thenBy { it.createdAtEpochMillis })
             .map { record ->
                 HomeReminderItem(
                     id = "appointment_${record.id}",
                     titleResId = R.string.home_today_appointment_reminder,
                     detail = listOfNotNull(record.appointmentTime, record.appointmentLocation)
+                        .map(String::trim)
                         .filter(String::isNotBlank)
                         .joinToString(" - ")
                         .ifBlank { null },

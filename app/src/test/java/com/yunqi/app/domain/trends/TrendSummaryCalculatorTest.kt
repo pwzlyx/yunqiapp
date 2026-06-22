@@ -192,6 +192,60 @@ class TrendSummaryCalculatorTest {
         assertEquals(1, summary.weightRecordCount)
     }
 
+    @Test
+    fun `trims appointment plan fields from stored records`() {
+        val summary = TrendSummaryCalculator.calculate(
+            records = listOf(
+                record(
+                    id = "future",
+                    date = LocalDate.of(2026, 6, 30),
+                    type = CalendarRecordType.Appointment,
+                    appointmentTime = " 10:00 ",
+                    appointmentLocation = "  Clinic A  ",
+                    appointmentDoctor = "   ",
+                    appointmentItems = " Ultrasound ",
+                ),
+            ),
+        )
+
+        assertEquals(
+            listOf(
+                AppointmentPlan(
+                    date = LocalDate.of(2026, 6, 30),
+                    time = "10:00",
+                    location = "Clinic A",
+                    doctor = null,
+                    items = "Ultrasound",
+                ),
+            ),
+            summary.appointmentPlans,
+        )
+    }
+
+    @Test
+    fun `sorts appointment plan fields by trimmed time`() {
+        val summary = TrendSummaryCalculator.calculate(
+            records = listOf(
+                record(
+                    id = "afternoon",
+                    date = LocalDate.of(2026, 6, 30),
+                    type = CalendarRecordType.Appointment,
+                    appointmentTime = " 14:00 ",
+                    appointmentLocation = "Clinic B",
+                ),
+                record(
+                    id = "morning",
+                    date = LocalDate.of(2026, 6, 30),
+                    type = CalendarRecordType.Appointment,
+                    appointmentTime = "09:00",
+                    appointmentLocation = "Clinic A",
+                ),
+            ),
+        )
+
+        assertEquals("09:00", summary.appointmentPlans.first().time)
+    }
+
     private fun record(
         id: String,
         date: LocalDate,

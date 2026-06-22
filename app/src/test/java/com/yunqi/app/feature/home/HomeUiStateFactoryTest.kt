@@ -173,6 +173,54 @@ class HomeUiStateFactoryTest {
     }
 
     @Test
+    fun `ready state trims today's appointment detail from stored records`() {
+        val factory = HomeUiStateFactory(
+            todayProvider = { LocalDate.of(2026, 6, 21) },
+        )
+
+        val state = factory.create(
+            profile = pregnancyProfile(),
+            calendarRecords = listOf(
+                appointmentRecord(
+                    id = "today",
+                    date = LocalDate.of(2026, 6, 21),
+                    time = " 10:30 ",
+                    location = "  City Hospital  ",
+                ),
+            ),
+        ) as HomeUiState.Ready
+
+        assertEquals("10:30 - City Hospital", state.reminderItems.single().detail)
+    }
+
+    @Test
+    fun `ready state sorts today's appointments by trimmed time`() {
+        val factory = HomeUiStateFactory(
+            todayProvider = { LocalDate.of(2026, 6, 21) },
+        )
+
+        val state = factory.create(
+            profile = pregnancyProfile(),
+            calendarRecords = listOf(
+                appointmentRecord(
+                    id = "afternoon",
+                    date = LocalDate.of(2026, 6, 21),
+                    time = " 14:00 ",
+                    location = "Clinic B",
+                ),
+                appointmentRecord(
+                    id = "morning",
+                    date = LocalDate.of(2026, 6, 21),
+                    time = "09:00",
+                    location = "Clinic A",
+                ),
+            ),
+        ) as HomeUiState.Ready
+
+        assertEquals("09:00 - Clinic A", state.reminderItems.first().detail)
+    }
+
+    @Test
     fun `ready state includes custom reminder message in home detail`() {
         val factory = HomeUiStateFactory(
             todayProvider = { LocalDate.of(2026, 6, 21) },

@@ -54,14 +54,14 @@ object TrendSummaryCalculator {
         val appointmentPlans = appointmentRecords
             .filter { it.type == CalendarRecordType.Appointment }
             .filter { record -> today == null || record.date >= today }
-            .sortedWith(compareBy<CalendarRecord> { it.date }.thenBy { it.appointmentTime.orEmpty() })
+            .sortedWith(compareBy<CalendarRecord> { it.date }.thenBy { it.appointmentTime.orEmpty().trim() })
             .map { record ->
                 AppointmentPlan(
                     date = record.date,
-                    time = record.appointmentTime,
-                    location = record.appointmentLocation,
-                    doctor = record.appointmentDoctor,
-                    items = record.appointmentItems,
+                    time = record.appointmentTime.trimmedOrNull(),
+                    location = record.appointmentLocation.trimmedOrNull(),
+                    doctor = record.appointmentDoctor.trimmedOrNull(),
+                    items = record.appointmentItems.trimmedOrNull(),
                 )
             }
         val weightPoints = weightRecords.map { record ->
@@ -109,6 +109,10 @@ object TrendSummaryCalculator {
         return latest - first
     }
 }
+
+private fun String?.trimmedOrNull(): String? = this
+    ?.trim()
+    ?.takeIf(String::isNotBlank)
 
 enum class TrendRange(val days: Long?) {
     Last7Days(days = 7),
