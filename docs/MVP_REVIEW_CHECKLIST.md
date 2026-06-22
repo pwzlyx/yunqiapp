@@ -15,6 +15,7 @@ Current result: passing.
 - Pregnancy setup supports last menstrual period, due date, conception date, and current gestational age.
 - Pregnancy setup supports marking doctor-restricted exercise; Home suppresses default exercise suggestions when enabled.
 - Home reads the local pregnancy profile and displays current gestational age, due date countdown, reminders, quick record entry points for weight, fetal movement, symptoms, and appointments, diet guidance, antenatal care guidance, exercise guidance, safety guidance, source names, source URLs, and review dates.
+- Diet guidance cards can be marked as read or favorited with local-only state.
 - Calendar supports month view, date markers, day detail list, create, edit, and delete with confirmation.
 - Calendar record types include appointment, weight, fetal movement, symptom, exercise, diet, and note.
 - Fetal movement records include count, time period, feeling, and note.

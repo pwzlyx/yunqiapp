@@ -3,6 +3,7 @@ package com.yunqi.app.feature.home
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,6 +22,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yunqi.app.R
 import com.yunqi.app.data.content.PregnancyContentCard
 import com.yunqi.app.data.content.PregnancyContentCategory
+import com.yunqi.app.data.local.ContentStatus
 import com.yunqi.app.domain.calendar.CalendarRecordType
 import com.yunqi.app.domain.pregnancy.PregnancyCalculationMethod
 
@@ -38,6 +40,8 @@ fun HomeRoute(
         uiState = uiState,
         onSetProfileClick = onSetProfileClick,
         onQuickRecordClick = onQuickRecordClick,
+        onToggleContentRead = viewModel::toggleContentRead,
+        onToggleContentFavorite = viewModel::toggleContentFavorite,
     )
 }
 
@@ -47,6 +51,8 @@ private fun HomeScreen(
     uiState: HomeUiState,
     onSetProfileClick: () -> Unit,
     onQuickRecordClick: (CalendarRecordType) -> Unit,
+    onToggleContentRead: (String) -> Unit,
+    onToggleContentFavorite: (String) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -72,7 +78,10 @@ private fun HomeScreen(
                 item {
                     PlanningCard(
                         contentCards = uiState.contentCards,
+                        contentStatus = uiState.contentStatus,
                         exerciseRestricted = uiState.exerciseRestricted,
+                        onToggleContentRead = onToggleContentRead,
+                        onToggleContentFavorite = onToggleContentFavorite,
                     )
                 }
             }
@@ -183,7 +192,10 @@ private fun ReminderCard(
 @Composable
 private fun PlanningCard(
     contentCards: List<PregnancyContentCard>,
+    contentStatus: ContentStatus,
     exerciseRestricted: Boolean,
+    onToggleContentRead: (String) -> Unit,
+    onToggleContentFavorite: (String) -> Unit,
 ) {
     val cardsByCategory = contentCards.groupBy { it.category }
 
@@ -191,6 +203,10 @@ private fun PlanningCard(
         ContentSection(
             title = stringResource(R.string.home_section_diet),
             cards = cardsByCategory[PregnancyContentCategory.Diet].orEmpty(),
+            readContentIds = contentStatus.readContentIds,
+            favoriteContentIds = contentStatus.favoriteContentIds,
+            onToggleRead = onToggleContentRead,
+            onToggleFavorite = onToggleContentFavorite,
         )
         ContentSection(
             title = stringResource(R.string.home_section_antenatal_care),
@@ -220,13 +236,57 @@ private fun PlanningCard(
 private fun ContentSection(
     title: String,
     cards: List<PregnancyContentCard>,
+    readContentIds: Set<String> = emptySet(),
+    favoriteContentIds: Set<String> = emptySet(),
+    onToggleRead: ((String) -> Unit)? = null,
+    onToggleFavorite: ((String) -> Unit)? = null,
 ) {
     SectionCard(title = title) {
         cards.forEach { card ->
+            val isRead = card.id in readContentIds
+            val isFavorite = card.id in favoriteContentIds
             Text(
                 text = stringResource(card.titleResId),
                 style = MaterialTheme.typography.titleSmall,
             )
+            if (onToggleRead != null || onToggleFavorite != null) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
+                    onToggleRead?.let { toggleRead ->
+                        AssistChip(
+                            onClick = { toggleRead(card.id) },
+                            label = {
+                                Text(
+                                    stringResource(
+                                        if (isRead) {
+                                            R.string.home_content_mark_unread
+                                        } else {
+                                            R.string.home_content_mark_read
+                                        },
+                                    ),
+                                )
+                            },
+                        )
+                    }
+                    onToggleFavorite?.let { toggleFavorite ->
+                        AssistChip(
+                            onClick = { toggleFavorite(card.id) },
+                            label = {
+                                Text(
+                                    stringResource(
+                                        if (isFavorite) {
+                                            R.string.home_content_remove_favorite
+                                        } else {
+                                            R.string.home_content_add_favorite
+                                        },
+                                    ),
+                                )
+                            },
+                        )
+                    }
+                }
+            }
             Text(
                 text = stringResource(card.bodyResId),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,

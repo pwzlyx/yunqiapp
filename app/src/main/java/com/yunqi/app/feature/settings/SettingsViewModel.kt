@@ -6,6 +6,7 @@ import androidx.core.content.FileProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.yunqi.app.data.export.CalendarRecordCsvExporter
+import com.yunqi.app.data.local.ContentStatusRepository
 import com.yunqi.app.data.local.DailyReminderPreference
 import com.yunqi.app.data.local.PregnancyProfileRepository
 import com.yunqi.app.data.local.ReminderSettingsRepository
@@ -26,6 +27,7 @@ import kotlinx.coroutines.withContext
 class SettingsViewModel(application: Application) : AndroidViewModel(application) {
     private val pregnancyProfileRepository = PregnancyProfileRepository(application.applicationContext)
     private val reminderSettingsRepository = ReminderSettingsRepository(application.applicationContext)
+    private val contentStatusRepository = ContentStatusRepository(application.applicationContext)
     private val calendarRecordRepository = CalendarRecordRepository(application.applicationContext)
     private val reminderScheduler = AppointmentReminderScheduler(application.applicationContext)
     private val dailyReminderScheduler = DailyReminderScheduler(application.applicationContext)
@@ -100,6 +102,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             calendarRecordRepository.deleteAll()
             pregnancyProfileRepository.clearProfile()
             reminderSettingsRepository.clearSettings()
+            contentStatusRepository.clearStatus()
         }
     }
 

@@ -1,6 +1,7 @@
 package com.yunqi.app.feature.home
 
 import com.yunqi.app.data.content.PregnancyContentCard
+import com.yunqi.app.data.local.ContentStatus
 import com.yunqi.app.domain.pregnancy.PregnancyProgress
 import com.yunqi.app.domain.pregnancy.PregnancyCalculationMethod
 
@@ -12,5 +13,6 @@ sealed interface HomeUiState {
         val calculationMethod: PregnancyCalculationMethod,
         val exerciseRestricted: Boolean,
         val contentCards: List<PregnancyContentCard>,
+        val contentStatus: ContentStatus = ContentStatus(),
     ) : HomeUiState
 }

@@ -1,6 +1,7 @@
 package com.yunqi.app.feature.home
 
 import com.yunqi.app.data.content.PregnancyContentCategory
+import com.yunqi.app.data.local.ContentStatus
 import com.yunqi.app.domain.pregnancy.PregnancyCalculationMethod
 import com.yunqi.app.domain.pregnancy.PregnancyProfile
 import java.time.LocalDate
@@ -64,5 +65,29 @@ class HomeUiStateFactoryTest {
         val state = factory.create(profile) as HomeUiState.Ready
 
         assertEquals(true, state.exerciseRestricted)
+    }
+
+    @Test
+    fun `ready state includes local content status`() {
+        val factory = HomeUiStateFactory(
+            todayProvider = { LocalDate.of(2026, 6, 21) },
+        )
+        val profile = PregnancyProfile(
+            calculationMethod = PregnancyCalculationMethod.LastMenstrualPeriod,
+            lmpDate = LocalDate.of(2026, 3, 1),
+            dueDate = null,
+            conceptionDate = null,
+            gestationalWeekAtSetup = null,
+            gestationalDayAtSetup = null,
+            setupDate = LocalDate.of(2026, 6, 1),
+        )
+        val contentStatus = ContentStatus(
+            readContentIds = setOf("diet_second_trimester_fish"),
+            favoriteContentIds = setOf("diet_second_trimester_fish"),
+        )
+
+        val state = factory.create(profile, contentStatus) as HomeUiState.Ready
+
+        assertEquals(contentStatus, state.contentStatus)
     }
 }
