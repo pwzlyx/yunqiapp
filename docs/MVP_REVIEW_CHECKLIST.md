@@ -43,6 +43,7 @@ Current result: passing.
 - Daily reminders cancel stale scheduled work when a stored reminder time is invalid instead of leaving an old notification active.
 - Daily and appointment reminders are rebuilt from local settings after device boot or app package replacement.
 - Settings and reminder workers check both Android 13 notification runtime permission and the app-level notification switch.
+- Settings shows separate guidance for missing runtime notification permission and disabled app-level notifications.
 - Settings shows notification-permission guidance and a system settings entry point when Android notifications are disabled.
 - Trends show weight, fetal movement, and exercise charts from local Room records.
 - Trends show CDC-sourced pregnancy weight-gain guidance when the local profile includes height, pre-pregnancy weight, and singleton or twin status.

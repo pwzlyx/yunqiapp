@@ -66,10 +66,14 @@ fun SettingsRoute(
     val lifecycleOwner = LocalLifecycleOwner.current
     val coroutineScope = rememberCoroutineScope()
     var notificationsAllowed by remember { mutableStateOf(context.canPostNotifications()) }
+    var runtimeNotificationPermissionGranted by remember {
+        mutableStateOf(context.hasNotificationRuntimePermission())
+    }
     var pendingNotificationRequest by remember { mutableStateOf<NotificationPermissionRequest?>(null) }
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
     ) { granted ->
+        runtimeNotificationPermissionGranted = context.hasNotificationRuntimePermission()
         notificationsAllowed = context.canPostNotifications()
         when (pendingNotificationRequest) {
             NotificationPermissionRequest.Appointment -> {
@@ -93,6 +97,7 @@ fun SettingsRoute(
     DisposableEffect(context, lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
+                runtimeNotificationPermissionGranted = context.hasNotificationRuntimePermission()
                 notificationsAllowed = context.canPostNotifications()
             }
         }
@@ -122,6 +127,7 @@ fun SettingsRoute(
         contentPadding = contentPadding,
         uiState = uiState,
         notificationsAllowed = notificationsAllowed,
+        runtimeNotificationPermissionGranted = runtimeNotificationPermissionGranted,
         onPregnancyProfileClick = onPregnancyProfileClick,
         onReminderEnabledChange = { enabled ->
             if (!enabled) {
@@ -188,6 +194,7 @@ private fun SettingsScreen(
     contentPadding: PaddingValues,
     uiState: SettingsUiState,
     notificationsAllowed: Boolean,
+    runtimeNotificationPermissionGranted: Boolean,
     onPregnancyProfileClick: () -> Unit,
     onReminderEnabledChange: (Boolean) -> Unit,
     onDailyReminderEnabledChange: (DailyReminderPreference, Boolean) -> Unit,
@@ -285,7 +292,13 @@ private fun SettingsScreen(
         )
         if (!notificationsAllowed) {
             Text(
-                text = stringResource(R.string.settings_notifications_permission_guidance),
+                text = stringResource(
+                    if (runtimeNotificationPermissionGranted) {
+                        R.string.settings_notifications_switch_guidance
+                    } else {
+                        R.string.settings_notifications_permission_guidance
+                    },
+                ),
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.error,
             )
@@ -535,6 +548,9 @@ private fun Context.mustRequestNotificationPermission(): Boolean =
 
 private fun Context.shouldRequestNotificationRuntimePermission(): Boolean =
     mustRequestNotificationPermission() && !hasYunqiNotificationRuntimePermission(this)
+
+private fun Context.hasNotificationRuntimePermission(): Boolean =
+    hasYunqiNotificationRuntimePermission(this)
 
 private fun Context.canPostNotifications(): Boolean {
     return canPostYunqiNotifications(this)
