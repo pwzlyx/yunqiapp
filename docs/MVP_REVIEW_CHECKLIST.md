@@ -41,6 +41,7 @@ Current result: passing.
 - Trends empty states provide direct entry points for recording weight, fetal movement, and exercise.
 - Settings can edit pregnancy profile, manage appointment reminders, and clear all local pregnancy data.
 - Settings can export local calendar records as a CSV file through the Android share sheet.
+- CSV export protects user-entered cells from being interpreted as spreadsheet formulas.
 - Sensitive data stays local: cloud backup and device transfer extraction are disabled.
 
 ## Manual Smoke Test

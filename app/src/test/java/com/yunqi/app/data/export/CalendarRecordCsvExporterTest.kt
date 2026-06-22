@@ -60,4 +60,44 @@ class CalendarRecordCsvExporterTest {
             csv,
         )
     }
+
+    @Test
+    fun `protects exported cells that could be interpreted as spreadsheet formulas`() {
+        val csv = exporter.export(
+            listOf(
+                CalendarRecord(
+                    id = "record-1",
+                    date = LocalDate.of(2026, 6, 21),
+                    type = CalendarRecordType.Note,
+                    note = "=IMPORTXML(\"https://example.com\",\"//title\")",
+                    weightKg = null,
+                    fetalMovementCount = null,
+                    fetalMovementPeriod = null,
+                    fetalMovementFeeling = null,
+                    symptomType = null,
+                    symptomSeverity = null,
+                    exerciseType = null,
+                    exerciseMinutes = null,
+                    exerciseIntensity = null,
+                    dietMeal = null,
+                    dietContent = null,
+                    appointmentTime = null,
+                    appointmentLocation = null,
+                    appointmentDoctor = null,
+                    appointmentItems = "+sensitive lab result",
+                    appointmentResult = null,
+                    createdAtEpochMillis = 42L,
+                ),
+            ),
+        )
+
+        assertEquals(
+            "id,date,type,weightKg,fetalMovementCount,fetalMovementPeriod,fetalMovementFeeling," +
+                "symptomType,symptomSeverity,exerciseType,exerciseMinutes,exerciseIntensity,dietMeal,dietContent,appointmentTime," +
+                "appointmentLocation,appointmentDoctor,appointmentItems,appointmentResult,note,createdAtEpochMillis\n" +
+                "record-1,2026-06-21,Note,,,,,,,,,,,,,,,'+sensitive lab result,," +
+                "\"'=IMPORTXML(\"\"https://example.com\"\",\"\"//title\"\")\",42\n",
+            csv,
+        )
+    }
 }

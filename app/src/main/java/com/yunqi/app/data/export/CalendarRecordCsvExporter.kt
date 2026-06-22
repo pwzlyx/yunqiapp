@@ -67,11 +67,24 @@ class CalendarRecordCsvExporter {
     }
 
     private fun escape(value: String): String {
-        val escaped = value.replace("\"", "\"\"")
+        val escaped = value.withSpreadsheetFormulaProtection().replace("\"", "\"\"")
         return if (escaped.any { it == ',' || it == '"' || it == '\n' || it == '\r' }) {
             "\"$escaped\""
         } else {
             escaped
         }
+    }
+
+    private fun String.withSpreadsheetFormulaProtection(): String {
+        val firstMeaningfulCharacter = firstOrNull { !it.isWhitespace() } ?: return this
+        return if (firstMeaningfulCharacter in formulaPrefixCharacters) {
+            "'$this"
+        } else {
+            this
+        }
+    }
+
+    private companion object {
+        val formulaPrefixCharacters = setOf('=', '+', '-', '@')
     }
 }
