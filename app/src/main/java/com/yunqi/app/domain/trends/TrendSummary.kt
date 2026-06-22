@@ -37,7 +37,11 @@ object TrendSummaryCalculator {
     /**
      * Aggregates local calendar records into the current trends dashboard summary.
      */
-    fun calculate(records: List<CalendarRecord>): TrendSummary {
+    fun calculate(
+        records: List<CalendarRecord>,
+        appointmentRecords: List<CalendarRecord> = records,
+        today: LocalDate? = null,
+    ): TrendSummary {
         val weightRecords = records
             .filter { it.type == CalendarRecordType.Weight && it.weightKg != null }
             .sortedWith(compareBy<CalendarRecord> { it.date }.thenBy { it.createdAtEpochMillis })
@@ -47,8 +51,9 @@ object TrendSummaryCalculator {
         val exerciseRecords = records
             .filter { it.type == CalendarRecordType.Exercise && it.exerciseMinutes != null }
             .sortedWith(compareBy<CalendarRecord> { it.date }.thenBy { it.createdAtEpochMillis })
-        val appointmentPlans = records
+        val appointmentPlans = appointmentRecords
             .filter { it.type == CalendarRecordType.Appointment }
+            .filter { record -> today == null || record.date >= today }
             .sortedWith(compareBy<CalendarRecord> { it.date }.thenBy { it.appointmentTime.orEmpty() })
             .map { record ->
                 AppointmentPlan(

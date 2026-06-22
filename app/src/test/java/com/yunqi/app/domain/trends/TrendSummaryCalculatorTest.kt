@@ -130,6 +130,68 @@ class TrendSummaryCalculatorTest {
         )
     }
 
+    @Test
+    fun `shows upcoming appointment plans from all records independent of trend range records`() {
+        val trendRecords = listOf(
+            record(
+                id = "weight",
+                date = LocalDate.of(2026, 6, 21),
+                type = CalendarRecordType.Weight,
+                weightKg = 56.2,
+            ),
+        )
+        val appointmentRecords = listOf(
+            record(
+                id = "past-appointment",
+                date = LocalDate.of(2026, 6, 20),
+                type = CalendarRecordType.Appointment,
+                appointmentTime = "09:00",
+                appointmentLocation = "Past Clinic",
+            ),
+            record(
+                id = "future-later",
+                date = LocalDate.of(2026, 7, 20),
+                type = CalendarRecordType.Appointment,
+                appointmentTime = "14:00",
+                appointmentLocation = "Clinic B",
+            ),
+            record(
+                id = "future-sooner",
+                date = LocalDate.of(2026, 6, 30),
+                type = CalendarRecordType.Appointment,
+                appointmentTime = "10:00",
+                appointmentLocation = "Clinic A",
+            ),
+        )
+
+        val summary = TrendSummaryCalculator.calculate(
+            records = trendRecords,
+            appointmentRecords = appointmentRecords,
+            today = LocalDate.of(2026, 6, 21),
+        )
+
+        assertEquals(
+            listOf(
+                AppointmentPlan(
+                    date = LocalDate.of(2026, 6, 30),
+                    time = "10:00",
+                    location = "Clinic A",
+                    doctor = null,
+                    items = null,
+                ),
+                AppointmentPlan(
+                    date = LocalDate.of(2026, 7, 20),
+                    time = "14:00",
+                    location = "Clinic B",
+                    doctor = null,
+                    items = null,
+                ),
+            ),
+            summary.appointmentPlans,
+        )
+        assertEquals(1, summary.weightRecordCount)
+    }
+
     private fun record(
         id: String,
         date: LocalDate,

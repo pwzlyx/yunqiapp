@@ -31,14 +31,19 @@ class TrendsViewModel(application: Application) : AndroidViewModel(application) 
         profileRepository.profileFlow,
         selectedRange,
     ) { records, profile, range ->
+        val today = LocalDate.now()
         val filteredRecords = TrendRecordFilter.filter(
             records = records,
             range = range,
-            today = LocalDate.now(),
+            today = today,
         )
         TrendsUiState(
             selectedRange = range,
-            summary = TrendSummaryCalculator.calculate(filteredRecords),
+            summary = TrendSummaryCalculator.calculate(
+                records = filteredRecords,
+                appointmentRecords = records,
+                today = today,
+            ),
             weightGainGuidance = WeightGainGuidanceCalculator.calculate(profile),
         )
     }
@@ -47,7 +52,11 @@ class TrendsViewModel(application: Application) : AndroidViewModel(application) 
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = TrendsUiState(
                 selectedRange = TrendRange.All,
-                summary = TrendSummaryCalculator.calculate(emptyList()),
+                summary = TrendSummaryCalculator.calculate(
+                    records = emptyList(),
+                    appointmentRecords = emptyList(),
+                    today = LocalDate.now(),
+                ),
                 weightGainGuidance = null,
             ),
         )

@@ -40,6 +40,7 @@ Current result: passing.
 - Trends show weight, fetal movement, and exercise charts from local Room records.
 - Trends show CDC-sourced pregnancy weight-gain guidance when the local profile includes height, pre-pregnancy weight, and singleton or twin status.
 - Trends show charts only when a metric has at least two comparable records.
+- Trends keep upcoming appointment plans visible from all local records while metric charts follow the selected 7-day, 30-day, or all-time range.
 - Trends show locally recorded appointment plans with date, time, location, doctor, and check items.
 - Trends support 7-day, 30-day, and all-time ranges.
 - Trends empty states provide direct entry points for recording weight, fetal movement, and exercise.
