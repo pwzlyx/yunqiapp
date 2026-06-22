@@ -48,6 +48,37 @@ class DailyReminderSchedulerTest {
     }
 
     @Test
+    fun `chooses schedule decision for valid daily reminder time`() {
+        val decision = dailyReminderScheduleDecision(
+            type = DailyReminderType.Custom,
+            time = "20:00",
+            customMessage = " Pack hospital bag ",
+            now = LocalDateTime.of(2026, 6, 21, 19, 0),
+        )
+
+        assertEquals(
+            DailyReminderScheduleDecision.Schedule(
+                type = DailyReminderType.Custom,
+                delayMillis = 60L * 60L * 1000L,
+                customMessage = "Pack hospital bag",
+            ),
+            decision,
+        )
+    }
+
+    @Test
+    fun `chooses cancel decision for invalid daily reminder time`() {
+        val decision = dailyReminderScheduleDecision(
+            type = DailyReminderType.Water,
+            time = "noon",
+            customMessage = "",
+            now = LocalDateTime.of(2026, 6, 21, 10, 0),
+        )
+
+        assertEquals(DailyReminderScheduleDecision.Cancel(DailyReminderType.Water), decision)
+    }
+
+    @Test
     fun `uses custom message for custom reminder notification`() {
         val content = DailyReminderType.Custom.notificationContent("Pack hospital bag")
 

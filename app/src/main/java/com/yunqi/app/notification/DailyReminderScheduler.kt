@@ -24,23 +24,31 @@ class DailyReminderScheduler(
      * Schedules one local daily reminder type when the requested HH:mm time is valid.
      */
     fun schedule(type: DailyReminderType, time: String, customMessage: String = "") {
-        val delayMillis = calculateDailyReminderInitialDelay(time, nowProvider()) ?: return
-        cancelLegacy()
-        val request = PeriodicWorkRequestBuilder<DailyReminderWorker>(1, TimeUnit.DAYS)
-            .setInitialDelay(delayMillis, TimeUnit.MILLISECONDS)
-            .setInputData(
-                Data.Builder()
-                    .putString(DailyReminderWorker.KEY_REMINDER_TYPE, type.name)
-                    .putString(DailyReminderWorker.KEY_CUSTOM_MESSAGE, customMessage.trim())
-                    .build(),
-            )
-            .build()
+        when (val decision = dailyReminderScheduleDecision(type, time, customMessage, nowProvider())) {
+            is DailyReminderScheduleDecision.Cancel -> {
+                cancel(decision.type)
+                return
+            }
 
-        workManager.enqueueUniquePeriodicWork(
-            dailyReminderWorkName(type),
-            ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
-            request,
-        )
+            is DailyReminderScheduleDecision.Schedule -> {
+                cancelLegacy()
+                val request = PeriodicWorkRequestBuilder<DailyReminderWorker>(1, TimeUnit.DAYS)
+                    .setInitialDelay(decision.delayMillis, TimeUnit.MILLISECONDS)
+                    .setInputData(
+                        Data.Builder()
+                            .putString(DailyReminderWorker.KEY_REMINDER_TYPE, decision.type.name)
+                            .putString(DailyReminderWorker.KEY_CUSTOM_MESSAGE, decision.customMessage)
+                            .build(),
+                    )
+                    .build()
+
+                workManager.enqueueUniquePeriodicWork(
+                    dailyReminderWorkName(decision.type),
+                    ExistingPeriodicWorkPolicy.CANCEL_AND_REENQUEUE,
+                    request,
+                )
+            }
+        }
     }
 
     fun cancel(type: DailyReminderType) {
@@ -59,6 +67,33 @@ class DailyReminderScheduler(
 
 internal fun dailyReminderWorkName(type: DailyReminderType): String =
     "$DAILY_REMINDER_WORK_NAME_PREFIX-${type.name.lowercase()}"
+
+internal sealed interface DailyReminderScheduleDecision {
+    data class Schedule(
+        val type: DailyReminderType,
+        val delayMillis: Long,
+        val customMessage: String,
+    ) : DailyReminderScheduleDecision
+
+    data class Cancel(
+        val type: DailyReminderType,
+    ) : DailyReminderScheduleDecision
+}
+
+internal fun dailyReminderScheduleDecision(
+    type: DailyReminderType,
+    time: String,
+    customMessage: String,
+    now: LocalDateTime,
+): DailyReminderScheduleDecision {
+    val delayMillis = calculateDailyReminderInitialDelay(time, now)
+        ?: return DailyReminderScheduleDecision.Cancel(type)
+    return DailyReminderScheduleDecision.Schedule(
+        type = type,
+        delayMillis = delayMillis,
+        customMessage = customMessage.trim(),
+    )
+}
 
 internal fun calculateDailyReminderInitialDelay(time: String, now: LocalDateTime): Long? {
     val reminderTime = runCatching { LocalTime.parse(time.trim()) }.getOrNull() ?: return null

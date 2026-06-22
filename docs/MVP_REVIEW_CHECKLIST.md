@@ -35,6 +35,7 @@ Current result: passing.
 - Editing an appointment so it no longer has a valid future reminder cancels stale scheduled reminder work for that record.
 - Daily reminders support weight, fetal movement, folic acid or vitamin, water, exercise, and custom reminder types with independent local WorkManager jobs, Android notifications, notification permission handling, toggles, and configurable preset times.
 - Custom daily reminders support a user-entered local message that is delivered in the notification body.
+- Daily reminders cancel stale scheduled work when a stored reminder time is invalid instead of leaving an old notification active.
 - Settings shows notification-permission guidance and a system settings entry point when Android notifications are disabled.
 - Trends show weight, fetal movement, and exercise charts from local Room records.
 - Trends show CDC-sourced pregnancy weight-gain guidance when the local profile includes height, pre-pregnancy weight, and singleton or twin status.
