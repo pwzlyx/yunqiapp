@@ -919,6 +919,7 @@ private fun CalendarRecordActionResult.toErrorMessageResId(): Int? = when (this)
     CalendarRecordActionResult.InvalidFetalMovement -> R.string.calendar_error_invalid_fetal_movement
     CalendarRecordActionResult.InvalidExerciseMinutes -> R.string.calendar_error_invalid_exercise_minutes
     CalendarRecordActionResult.InvalidAppointmentTime -> R.string.calendar_error_invalid_appointment_time
+    CalendarRecordActionResult.InvalidRecordContent -> R.string.calendar_error_empty_record_content
 }
 
 private fun CalendarRecordType.shouldShowMedicalAttentionNotice(): Boolean = when (this) {

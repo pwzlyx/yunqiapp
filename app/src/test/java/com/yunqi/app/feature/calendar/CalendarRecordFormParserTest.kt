@@ -318,6 +318,45 @@ class CalendarRecordFormParserTest {
     }
 
     @Test
+    fun `parses symptom record with note only`() {
+        val result = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.Symptom,
+                note = "  Slight nausea after breakfast  ",
+                weightKg = "",
+                fetalMovementCount = "",
+                appointmentTime = "",
+                appointmentLocation = "",
+            ),
+        )
+
+        val record = (result as CalendarRecordParseResult.Success).record
+        assertEquals("Slight nausea after breakfast", record.note)
+        assertNull(record.symptomType)
+        assertNull(record.symptomSeverity)
+    }
+
+    @Test
+    fun `rejects empty symptom record`() {
+        val result = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.Symptom,
+                note = "   ",
+                weightKg = "",
+                fetalMovementCount = "",
+                symptomType = "",
+                symptomSeverity = "",
+                appointmentTime = "",
+                appointmentLocation = "",
+            ),
+        )
+
+        assertEquals(CalendarRecordParseResult.InvalidRecordContent, result)
+    }
+
+    @Test
     fun `parses diet record`() {
         val result = parser.parse(
             CalendarRecordInput(
@@ -336,6 +375,45 @@ class CalendarRecordFormParserTest {
         val record = (result as CalendarRecordParseResult.Success).record
         assertEquals("lunch", record.dietMeal)
         assertEquals("Rice, fish, vegetables", record.dietContent)
+    }
+
+    @Test
+    fun `parses diet record with note only`() {
+        val result = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.Diet,
+                note = "  Drank extra water  ",
+                weightKg = "",
+                fetalMovementCount = "",
+                appointmentTime = "",
+                appointmentLocation = "",
+            ),
+        )
+
+        val record = (result as CalendarRecordParseResult.Success).record
+        assertEquals("Drank extra water", record.note)
+        assertNull(record.dietMeal)
+        assertNull(record.dietContent)
+    }
+
+    @Test
+    fun `rejects empty diet record`() {
+        val result = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.Diet,
+                note = "",
+                weightKg = "",
+                fetalMovementCount = "",
+                dietMeal = "   ",
+                dietContent = "",
+                appointmentTime = "",
+                appointmentLocation = "",
+            ),
+        )
+
+        assertEquals(CalendarRecordParseResult.InvalidRecordContent, result)
     }
 
     @Test
@@ -389,6 +467,23 @@ class CalendarRecordFormParserTest {
         )
 
         assertEquals(CalendarRecordParseResult.InvalidDate, result)
+    }
+
+    @Test
+    fun `rejects empty note record`() {
+        val result = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.Note,
+                note = "  ",
+                weightKg = "",
+                fetalMovementCount = "",
+                appointmentTime = "",
+                appointmentLocation = "",
+            ),
+        )
+
+        assertEquals(CalendarRecordParseResult.InvalidRecordContent, result)
     }
 
     @Test

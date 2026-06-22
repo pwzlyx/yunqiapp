@@ -43,6 +43,9 @@ class CalendarRecordFormParser(
         ) {
             return CalendarRecordParseResult.InvalidAppointmentTime
         }
+        if (!input.hasRequiredContent()) {
+            return CalendarRecordParseResult.InvalidRecordContent
+        }
 
         return CalendarRecordParseResult.Success(
             CalendarRecord(
@@ -124,6 +127,16 @@ class CalendarRecordFormParser(
         return fetalMovementFeeling.isNotBlank()
     }
 
+    private fun CalendarRecordInput.hasRequiredContent(): Boolean = when (type) {
+        CalendarRecordType.Symptom -> anyNonBlank(symptomType, symptomSeverity, note)
+        CalendarRecordType.Diet -> anyNonBlank(dietMeal, dietContent, note)
+        CalendarRecordType.Note -> note.isNotBlank()
+        else -> true
+    }
+
+    private fun anyNonBlank(vararg values: String): Boolean =
+        values.any(String::isNotBlank)
+
     private fun Int?.isValidExerciseMinutes(): Boolean =
         this != null && this in 1..MAX_EXERCISE_MINUTES_PER_DAY
 }
@@ -159,4 +172,5 @@ sealed interface CalendarRecordParseResult {
     data object InvalidFetalMovement : CalendarRecordParseResult
     data object InvalidExerciseMinutes : CalendarRecordParseResult
     data object InvalidAppointmentTime : CalendarRecordParseResult
+    data object InvalidRecordContent : CalendarRecordParseResult
 }

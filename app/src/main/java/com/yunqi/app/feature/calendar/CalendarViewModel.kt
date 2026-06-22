@@ -87,6 +87,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
         CalendarRecordParseResult.InvalidFetalMovement -> CalendarRecordActionResult.InvalidFetalMovement
         CalendarRecordParseResult.InvalidExerciseMinutes -> CalendarRecordActionResult.InvalidExerciseMinutes
         CalendarRecordParseResult.InvalidAppointmentTime -> CalendarRecordActionResult.InvalidAppointmentTime
+        CalendarRecordParseResult.InvalidRecordContent -> CalendarRecordActionResult.InvalidRecordContent
     }
 
     suspend fun delete(id: String) {
@@ -102,4 +103,5 @@ sealed interface CalendarRecordActionResult {
     data object InvalidFetalMovement : CalendarRecordActionResult
     data object InvalidExerciseMinutes : CalendarRecordActionResult
     data object InvalidAppointmentTime : CalendarRecordActionResult
+    data object InvalidRecordContent : CalendarRecordActionResult
 }

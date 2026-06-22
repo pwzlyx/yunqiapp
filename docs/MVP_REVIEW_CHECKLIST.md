@@ -36,6 +36,7 @@ Current result: passing.
 - Calendar record database mapping preserves all structured appointment, fetal movement, symptom, exercise, and diet fields.
 - Calendar record database migration SQL is covered by JVM tests for all structured fields added after version 1.
 - Calendar rejects unrealistic weight, fetal movement count, and exercise duration values before they can distort local trends.
+- Calendar rejects empty symptom, diet, and note records before they can clutter local history or CSV exports.
 - Calendar trims numeric weight, fetal movement, and exercise inputs before validation.
 - Calendar date input uses an ISO-date keyboard that supports entering hyphens.
 - Fetal movement records include count, time period, feeling, and note, and can be saved with either a count or a feeling.
