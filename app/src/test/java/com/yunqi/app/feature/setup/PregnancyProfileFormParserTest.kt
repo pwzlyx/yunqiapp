@@ -163,6 +163,38 @@ class PregnancyProfileFormParserTest {
     }
 
     @Test
+    fun `allows exactly forty two weeks and zero days`() {
+        val result = parser.parse(
+            PregnancySetupInput(
+                method = SetupMethod.CurrentGestationalAge,
+                lmpDate = "",
+                dueDate = "",
+                conceptionDate = "",
+                week = "42",
+                day = "0",
+            ),
+        )
+
+        assertTrue(result is PregnancyProfileParseResult.Success)
+    }
+
+    @Test
+    fun `rejects gestational age beyond forty two weeks`() {
+        val result = parser.parse(
+            PregnancySetupInput(
+                method = SetupMethod.CurrentGestationalAge,
+                lmpDate = "",
+                dueDate = "",
+                conceptionDate = "",
+                week = "42",
+                day = "1",
+            ),
+        )
+
+        assertEquals(PregnancyProfileParseResult.InvalidWeek, result)
+    }
+
+    @Test
     fun `rejects out of range gestational day`() {
         val result = parser.parse(
             PregnancySetupInput(

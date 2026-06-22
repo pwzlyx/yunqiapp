@@ -94,6 +94,9 @@ class PregnancyProfileFormParser(
 
                 if (week !in 0..42) return PregnancyProfileParseResult.InvalidWeek
                 if (day !in 0..6) return PregnancyProfileParseResult.InvalidDay
+                if (week == MAX_GESTATIONAL_WEEK && day > 0) {
+                    return PregnancyProfileParseResult.InvalidWeek
+                }
 
                 PregnancyProfileParseResult.Success(
                     PregnancyProfile(
@@ -122,6 +125,10 @@ class PregnancyProfileFormParser(
         if (isBlank()) return null
         val value = toDoubleOrNull() ?: return null
         return value.takeIf { it > 0.0 }
+    }
+
+    private companion object {
+        const val MAX_GESTATIONAL_WEEK = 42
     }
 }
 
