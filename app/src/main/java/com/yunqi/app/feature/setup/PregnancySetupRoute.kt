@@ -36,6 +36,7 @@ import com.yunqi.app.R
 import com.yunqi.app.domain.pregnancy.PregnancyBabyCount
 import com.yunqi.app.domain.pregnancy.Trimester
 import com.yunqi.app.domain.pregnancy.calculateProgress
+import com.yunqi.app.feature.common.isoDateKeyboardOptions
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -403,7 +404,7 @@ private fun DateField(
         onValueChange = onValueChange,
         label = { Text(label) },
         placeholder = { Text(stringResource(R.string.setup_date_hint)) },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        keyboardOptions = isoDateKeyboardOptions(),
         singleLine = true,
         modifier = Modifier.fillMaxWidth(),
     )

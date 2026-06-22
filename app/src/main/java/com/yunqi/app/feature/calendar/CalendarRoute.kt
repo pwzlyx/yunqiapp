@@ -51,6 +51,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yunqi.app.R
 import com.yunqi.app.domain.calendar.CalendarRecord
 import com.yunqi.app.domain.calendar.CalendarRecordType
+import com.yunqi.app.feature.common.isoDateKeyboardOptions
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 
@@ -451,7 +452,7 @@ private fun DateSelector(
                 onValueChange = onSelectedDateTextChange,
                 label = { Text(stringResource(R.string.calendar_selected_date)) },
                 placeholder = { Text(stringResource(R.string.calendar_selected_date_hint)) },
-                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                keyboardOptions = isoDateKeyboardOptions(),
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
             )

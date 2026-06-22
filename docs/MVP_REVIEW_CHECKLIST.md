@@ -18,6 +18,7 @@ Current result: passing.
 - Pregnancy setup rejects current gestational age entries beyond 42 weeks.
 - Pregnancy setup rejects unrealistic height and pre-pregnancy weight values before they can distort BMI guidance.
 - Pregnancy setup trims numeric gestational age inputs before validation.
+- Pregnancy setup date inputs use an ISO-date keyboard that supports entering hyphens.
 - Pregnancy setup supports marking doctor-restricted exercise; Home suppresses default exercise suggestions when enabled.
 - Pregnancy setup preview warns users to confirm dates when the calculation is already beyond 42 weeks.
 - Home avoids negative due-date countdowns and shows a doctor-judgment reminder on or after the due date.
@@ -35,6 +36,7 @@ Current result: passing.
 - Calendar record database migration SQL is covered by JVM tests for all structured fields added after version 1.
 - Calendar rejects unrealistic weight, fetal movement count, and exercise duration values before they can distort local trends.
 - Calendar trims numeric weight, fetal movement, and exercise inputs before validation.
+- Calendar date input uses an ISO-date keyboard that supports entering hyphens.
 - Fetal movement records include count, time period, feeling, and note.
 - Symptom, exercise, and diet records include PRD-specific structured fields in addition to notes.
 - Calendar shows a medical-attention notice when recording and reviewing fetal movement or symptom records.
