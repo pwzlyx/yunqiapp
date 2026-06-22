@@ -61,6 +61,7 @@ Current result: passing.
 - Settings shows local-data privacy guidance, the medical disclaimer, and urgent medical-attention reminder.
 - CSV export protects user-entered cells from being interpreted as spreadsheet formulas.
 - Clearing local data also removes cached CSV export files.
+- Reminder restore failures use sanitized logs that omit exception details which could contain local health records.
 - Sensitive data stays local: cloud backup and device transfer extraction are disabled.
 
 ## Manual Smoke Test

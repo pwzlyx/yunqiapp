@@ -27,7 +27,7 @@ class ReminderRestoreReceiver : BroadcastReceiver() {
                 runCatching {
                     ReminderRestorer(context.applicationContext).restore()
                 }.onFailure { error ->
-                    Log.w(REMINDER_RESTORE_TAG, "Unable to restore local reminders.", error)
+                    Log.w(REMINDER_RESTORE_TAG, reminderRestoreFailureLogMessage(error))
                 }
             } finally {
                 pendingResult.finish()
@@ -42,6 +42,12 @@ class ReminderRestoreReceiver : BroadcastReceiver() {
         )
     }
 }
+
+/**
+ * Builds a privacy-safe restore failure message without exception text or stack traces.
+ */
+internal fun reminderRestoreFailureLogMessage(error: Throwable): String =
+    "Unable to restore local reminders. Cause=${error::class.java.simpleName}"
 
 internal class ReminderRestorer(
     context: Context,
