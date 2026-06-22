@@ -889,6 +889,13 @@ private fun RecordCard(
             if (record.note.isNotBlank()) {
                 Text(record.note)
             }
+            if (record.type.shouldShowMedicalAttentionNotice()) {
+                Text(
+                    text = stringResource(R.string.calendar_medical_attention_notice),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
         }
     }
 }
