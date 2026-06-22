@@ -5,6 +5,8 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.yunqi.app.data.local.ContentStatusRepository
 import com.yunqi.app.data.local.PregnancyProfileRepository
+import com.yunqi.app.data.local.ReminderSettingsRepository
+import com.yunqi.app.data.local.record.CalendarRecordRepository
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -14,14 +16,18 @@ import kotlinx.coroutines.launch
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val profileRepository = PregnancyProfileRepository(application.applicationContext)
     private val contentStatusRepository = ContentStatusRepository(application.applicationContext)
+    private val reminderSettingsRepository = ReminderSettingsRepository(application.applicationContext)
+    private val calendarRecordRepository = CalendarRecordRepository(application.applicationContext)
     private val stateFactory = HomeUiStateFactory()
 
     /**
-     * Converts the local pregnancy profile stream into render-ready home screen state.
+     * Converts local profile, reminders, and records into render-ready home screen state.
      */
     val uiState: StateFlow<HomeUiState> = combine(
         profileRepository.profileFlow,
         contentStatusRepository.statusFlow,
+        reminderSettingsRepository.reminderSettingsFlow,
+        calendarRecordRepository.allRecords(),
         stateFactory::create,
     )
         .stateIn(

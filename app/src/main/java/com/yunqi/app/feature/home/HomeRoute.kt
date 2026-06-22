@@ -74,6 +74,7 @@ private fun HomeScreen(
                 item {
                     ReminderCard(
                         contentCards = uiState.contentCards,
+                        reminderItems = uiState.reminderItems,
                         onQuickRecordClick = onQuickRecordClick,
                     )
                 }
@@ -158,11 +159,37 @@ private fun ProfileSourceCard(calculationMethod: PregnancyCalculationMethod) {
 @Composable
 private fun ReminderCard(
     contentCards: List<PregnancyContentCard>,
+    reminderItems: List<HomeReminderItem>,
     onQuickRecordClick: (CalendarRecordType) -> Unit,
 ) {
     val safetyCard = contentCards.firstOrNull { it.category == PregnancyContentCategory.Safety }
 
     SectionCard(title = stringResource(R.string.home_section_reminders)) {
+        if (reminderItems.isEmpty()) {
+            Text(
+                text = stringResource(R.string.home_reminder_empty),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        } else {
+            reminderItems.forEach { item ->
+                Text(
+                    text = stringResource(item.titleResId),
+                    style = MaterialTheme.typography.titleSmall,
+                )
+                item.detail?.let { detail ->
+                    Text(
+                        text = detail,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                }
+                item.actionRecordType?.let { recordType ->
+                    AssistChip(
+                        onClick = { onQuickRecordClick(recordType) },
+                        label = { Text(stringResource(R.string.home_reminder_open_record)) },
+                    )
+                }
+            }
+        }
         AssistChip(
             onClick = { onQuickRecordClick(CalendarRecordType.Weight) },
             label = { Text(stringResource(R.string.home_reminder_weight)) },
