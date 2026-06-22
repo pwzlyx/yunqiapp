@@ -13,10 +13,13 @@ import com.yunqi.app.data.local.ContentStatusRepository
 import com.yunqi.app.data.local.PregnancyProfileRepository
 import com.yunqi.app.data.local.ReminderSettingsRepository
 import com.yunqi.app.data.local.record.CalendarRecordRepository
+import com.yunqi.app.domain.pregnancy.PregnancyCalculationMethod
+import com.yunqi.app.domain.pregnancy.PregnancyProfile
 import kotlinx.coroutines.runBlocking
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
+import java.time.LocalDate
 
 class YunqiAppSmokeTest {
     @get:Rule
@@ -83,6 +86,40 @@ class YunqiAppSmokeTest {
             .performScrollTo()
             .assertIsDisplayed()
         composeRule.onNodeWithText(activity.getString(R.string.setup_preview_due_date, "2026-12-06"))
+            .performScrollTo()
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun homeDietQuickRecordOpensDietCalendarForm() {
+        val activity = composeRule.activity
+
+        runBlocking {
+            PregnancyProfileRepository(activity.applicationContext).saveProfile(
+                PregnancyProfile(
+                    calculationMethod = PregnancyCalculationMethod.LastMenstrualPeriod,
+                    lmpDate = LocalDate.of(2026, 3, 1),
+                    dueDate = null,
+                    conceptionDate = null,
+                    gestationalWeekAtSetup = null,
+                    gestationalDayAtSetup = null,
+                    setupDate = LocalDate.of(2026, 3, 1),
+                ),
+            )
+        }
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            composeRule
+                .onAllNodesWithText(activity.getString(R.string.home_today))
+                .fetchSemanticsNodes()
+                .isNotEmpty()
+        }
+
+        composeRule.onNodeWithText(activity.getString(R.string.home_reminder_diet))
+            .performScrollTo()
+            .performClick()
+
+        composeRule.onNodeWithText(activity.getString(R.string.calendar_title)).assertIsDisplayed()
+        composeRule.onNodeWithText(activity.getString(R.string.calendar_diet_content_label))
             .performScrollTo()
             .assertIsDisplayed()
     }

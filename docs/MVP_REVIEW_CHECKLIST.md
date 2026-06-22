@@ -24,6 +24,7 @@ Current result: passing.
 - Pregnancy setup preview warns users to confirm dates when the calculation is already beyond 42 weeks.
 - Home avoids negative due-date countdowns and shows a doctor-judgment reminder on or after the due date.
 - Home reads the local pregnancy profile and displays current gestational age, due date countdown, reminders, quick record entry points for weight, fetal movement, symptoms, notes, and appointments, diet guidance, antenatal care guidance, exercise guidance, safety guidance, source names, source URLs, and review dates.
+- Home quick record entry points also cover diet and exercise so daily guidance can be recorded without first browsing Calendar record types.
 - Home shows the medical disclaimer and urgent medical-attention reminder even before a pregnancy profile is created.
 - Home shows today's reminder list from local daily reminder settings and today's appointment records.
 - Home keeps today's appointment records visible even when system appointment notifications are disabled.
@@ -79,7 +80,7 @@ Current result: passing.
 - Clearing local data also removes cached CSV export files.
 - Reminder restore failures use sanitized logs that omit exception details which could contain local health records.
 - Sensitive data stays local: cloud backup and device transfer extraction are disabled.
-- Compose instrumentation smoke tests cover core tab navigation, medical notices, and pregnancy setup due-date preview.
+- Compose instrumentation smoke tests cover core tab navigation, medical notices, pregnancy setup due-date preview, and the diet quick-record path into Calendar.
 - Compose instrumentation smoke tests reset local pregnancy data before each run to avoid device-state leakage.
 
 ## Manual Smoke Test

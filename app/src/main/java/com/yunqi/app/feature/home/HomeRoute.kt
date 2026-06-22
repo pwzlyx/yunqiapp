@@ -219,6 +219,14 @@ private fun ReminderCard(
             onClick = { onQuickRecordClick(CalendarRecordType.Appointment) },
             label = { Text(stringResource(R.string.home_reminder_appointment)) },
         )
+        AssistChip(
+            onClick = { onQuickRecordClick(CalendarRecordType.Diet) },
+            label = { Text(stringResource(R.string.home_reminder_diet)) },
+        )
+        AssistChip(
+            onClick = { onQuickRecordClick(CalendarRecordType.Exercise) },
+            label = { Text(stringResource(R.string.home_reminder_exercise)) },
+        )
         safetyCard?.let { card ->
             Text(
                 text = stringResource(card.titleResId),
