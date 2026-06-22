@@ -29,6 +29,7 @@ Current result: passing.
 - Calendar supports month view, date markers, day detail list, create, edit, and delete with confirmation.
 - Calendar record types include appointment, weight, fetal movement, symptom, exercise, diet, and note.
 - Calendar record database mapping preserves all structured appointment, fetal movement, symptom, exercise, and diet fields.
+- Calendar record database migration SQL is covered by JVM tests for all structured fields added after version 1.
 - Calendar rejects unrealistic weight, fetal movement count, and exercise duration values before they can distort local trends.
 - Fetal movement records include count, time period, feeling, and note.
 - Symptom, exercise, and diet records include PRD-specific structured fields in addition to notes.

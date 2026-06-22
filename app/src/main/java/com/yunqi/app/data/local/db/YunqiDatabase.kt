@@ -36,36 +36,61 @@ abstract class YunqiDatabase : RoomDatabase() {
                     .also { instance = it }
             }
 
-        private val MIGRATION_1_2 = object : Migration(1, 2) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("ALTER TABLE calendar_records ADD COLUMN exerciseMinutes INTEGER")
-            }
-        }
+        private val MIGRATION_1_2 = columnAdditionMigration(
+            startVersion = 1,
+            endVersion = 2,
+            statements = CalendarRecordMigrationSql.V1_TO_V2,
+        )
 
-        private val MIGRATION_2_3 = object : Migration(2, 3) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("ALTER TABLE calendar_records ADD COLUMN appointmentDoctor TEXT")
-                db.execSQL("ALTER TABLE calendar_records ADD COLUMN appointmentItems TEXT")
-                db.execSQL("ALTER TABLE calendar_records ADD COLUMN appointmentResult TEXT")
-            }
-        }
+        private val MIGRATION_2_3 = columnAdditionMigration(
+            startVersion = 2,
+            endVersion = 3,
+            statements = CalendarRecordMigrationSql.V2_TO_V3,
+        )
 
-        private val MIGRATION_3_4 = object : Migration(3, 4) {
-            override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("ALTER TABLE calendar_records ADD COLUMN fetalMovementPeriod TEXT")
-                db.execSQL("ALTER TABLE calendar_records ADD COLUMN fetalMovementFeeling TEXT")
-            }
-        }
+        private val MIGRATION_3_4 = columnAdditionMigration(
+            startVersion = 3,
+            endVersion = 4,
+            statements = CalendarRecordMigrationSql.V3_TO_V4,
+        )
 
-        private val MIGRATION_4_5 = object : Migration(4, 5) {
+        private val MIGRATION_4_5 = columnAdditionMigration(
+            startVersion = 4,
+            endVersion = 5,
+            statements = CalendarRecordMigrationSql.V4_TO_V5,
+        )
+
+        private fun columnAdditionMigration(
+            startVersion: Int,
+            endVersion: Int,
+            statements: List<String>,
+        ) = object : Migration(startVersion, endVersion) {
             override fun migrate(db: SupportSQLiteDatabase) {
-                db.execSQL("ALTER TABLE calendar_records ADD COLUMN symptomType TEXT")
-                db.execSQL("ALTER TABLE calendar_records ADD COLUMN symptomSeverity TEXT")
-                db.execSQL("ALTER TABLE calendar_records ADD COLUMN exerciseType TEXT")
-                db.execSQL("ALTER TABLE calendar_records ADD COLUMN exerciseIntensity TEXT")
-                db.execSQL("ALTER TABLE calendar_records ADD COLUMN dietMeal TEXT")
-                db.execSQL("ALTER TABLE calendar_records ADD COLUMN dietContent TEXT")
+                statements.forEach(db::execSQL)
             }
         }
     }
+}
+
+internal object CalendarRecordMigrationSql {
+    val V1_TO_V2 = listOf(
+        "ALTER TABLE calendar_records ADD COLUMN exerciseMinutes INTEGER",
+    )
+    val V2_TO_V3 = listOf(
+        "ALTER TABLE calendar_records ADD COLUMN appointmentDoctor TEXT",
+        "ALTER TABLE calendar_records ADD COLUMN appointmentItems TEXT",
+        "ALTER TABLE calendar_records ADD COLUMN appointmentResult TEXT",
+    )
+    val V3_TO_V4 = listOf(
+        "ALTER TABLE calendar_records ADD COLUMN fetalMovementPeriod TEXT",
+        "ALTER TABLE calendar_records ADD COLUMN fetalMovementFeeling TEXT",
+    )
+    val V4_TO_V5 = listOf(
+        "ALTER TABLE calendar_records ADD COLUMN symptomType TEXT",
+        "ALTER TABLE calendar_records ADD COLUMN symptomSeverity TEXT",
+        "ALTER TABLE calendar_records ADD COLUMN exerciseType TEXT",
+        "ALTER TABLE calendar_records ADD COLUMN exerciseIntensity TEXT",
+        "ALTER TABLE calendar_records ADD COLUMN dietMeal TEXT",
+        "ALTER TABLE calendar_records ADD COLUMN dietContent TEXT",
+    )
 }
