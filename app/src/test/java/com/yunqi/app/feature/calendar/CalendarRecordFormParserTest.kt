@@ -100,6 +100,48 @@ class CalendarRecordFormParserTest {
     }
 
     @Test
+    fun `parses numeric record inputs with surrounding spaces`() {
+        val weight = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.Weight,
+                note = "",
+                weightKg = " 56.5 ",
+                fetalMovementCount = "",
+                appointmentTime = "",
+                appointmentLocation = "",
+            ),
+        ) as CalendarRecordParseResult.Success
+        val fetalMovement = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.FetalMovement,
+                note = "",
+                weightKg = "",
+                fetalMovementCount = " 12 ",
+                appointmentTime = "",
+                appointmentLocation = "",
+            ),
+        ) as CalendarRecordParseResult.Success
+        val exercise = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.Exercise,
+                note = "",
+                weightKg = "",
+                fetalMovementCount = "",
+                exerciseMinutes = " 30 ",
+                appointmentTime = "",
+                appointmentLocation = "",
+            ),
+        ) as CalendarRecordParseResult.Success
+
+        assertEquals(56.5, weight.record.weightKg ?: 0.0, 0.001)
+        assertEquals(12, fetalMovement.record.fetalMovementCount)
+        assertEquals(30, exercise.record.exerciseMinutes)
+    }
+
+    @Test
     fun `rejects invalid weight`() {
         val result = parser.parse(
             CalendarRecordInput(

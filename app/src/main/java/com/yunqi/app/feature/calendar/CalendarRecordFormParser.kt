@@ -20,9 +20,9 @@ class CalendarRecordFormParser(
     fun parse(input: CalendarRecordInput): CalendarRecordParseResult {
         val date = input.date.parseDate()
             ?: return CalendarRecordParseResult.InvalidDate
-        val weightKg = input.weightKg.takeIf { it.isNotBlank() }?.toDoubleOrNull()
-        val fetalMovementCount = input.fetalMovementCount.takeIf { it.isNotBlank() }?.toIntOrNull()
-        val exerciseMinutes = input.exerciseMinutes.takeIf { it.isNotBlank() }?.toIntOrNull()
+        val weightKg = input.weightKg.parseOptionalDouble()
+        val fetalMovementCount = input.fetalMovementCount.parseOptionalInt()
+        val exerciseMinutes = input.exerciseMinutes.parseOptionalInt()
 
         if (input.type == CalendarRecordType.Weight && !weightKg.isValidWeightKg()) {
             return CalendarRecordParseResult.InvalidWeight
@@ -101,6 +101,12 @@ class CalendarRecordFormParser(
     private fun String.parseTime(): LocalTime? = runCatching {
         LocalTime.parse(trim())
     }.getOrNull()
+
+    private fun String.parseOptionalDouble(): Double? =
+        trim().takeIf(String::isNotEmpty)?.toDoubleOrNull()
+
+    private fun String.parseOptionalInt(): Int? =
+        trim().takeIf(String::isNotEmpty)?.toIntOrNull()
 
     private fun Double?.isValidWeightKg(): Boolean =
         this != null && this > 0.0 && this <= MAX_WEIGHT_KG

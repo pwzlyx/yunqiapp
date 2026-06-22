@@ -91,6 +91,24 @@ class PregnancyProfileFormParserTest {
     }
 
     @Test
+    fun `parses current gestational age input with surrounding spaces`() {
+        val result = parser.parse(
+            PregnancySetupInput(
+                method = SetupMethod.CurrentGestationalAge,
+                lmpDate = "",
+                dueDate = "",
+                conceptionDate = "",
+                week = " 10 ",
+                day = " 2 ",
+            ),
+        )
+
+        val profile = (result as PregnancyProfileParseResult.Success).profile
+        assertEquals(10, profile.gestationalWeekAtSetup)
+        assertEquals(2, profile.gestationalDayAtSetup)
+    }
+
+    @Test
     fun `preserves exercise restriction setting`() {
         val result = parser.parse(
             PregnancySetupInput(

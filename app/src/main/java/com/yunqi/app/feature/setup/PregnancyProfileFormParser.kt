@@ -93,9 +93,9 @@ class PregnancyProfileFormParser(
             }
 
             SetupMethod.CurrentGestationalAge -> {
-                val week = input.week.toIntOrNull()
+                val week = input.week.trim().toIntOrNull()
                     ?: return PregnancyProfileParseResult.InvalidWeek
-                val day = input.day.toIntOrNull()
+                val day = input.day.trim().toIntOrNull()
                     ?: return PregnancyProfileParseResult.InvalidDay
 
                 if (week !in 0..42) return PregnancyProfileParseResult.InvalidWeek
