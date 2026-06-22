@@ -118,12 +118,16 @@ private fun PregnancyProgressHeader(uiState: HomeUiState.Ready) {
         color = MaterialTheme.colorScheme.primary,
     )
     Text(
-        text = stringResource(
-            R.string.home_days_until_due_date,
-            uiState.progress.daysUntilDueDate,
-        ),
+        text = dueDateCountdownText(uiState.progress.daysUntilDueDate),
         style = MaterialTheme.typography.bodyLarge,
     )
+}
+
+@Composable
+private fun dueDateCountdownText(daysUntilDueDate: Long): String = when {
+    daysUntilDueDate > 0 -> stringResource(R.string.home_days_until_due_date, daysUntilDueDate)
+    daysUntilDueDate == 0L -> stringResource(R.string.home_due_date_today)
+    else -> stringResource(R.string.home_days_past_due_date, -daysUntilDueDate)
 }
 
 @Composable

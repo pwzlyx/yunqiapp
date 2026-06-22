@@ -9,6 +9,8 @@
     <string name="home_today">今天</string>
     <string name="home_gestational_age">%1$d 周 %2$d 天</string>
     <string name="home_days_until_due_date">距离预产期还有 %1$d 天</string>
+    <string name="home_due_date_today">今天是预产期，请以医生判断为准。</string>
+    <string name="home_days_past_due_date">已过预产期 %1$d 天，请以医生判断为准。</string>
     <string name="home_profile_missing_title">先设置孕期档案</string>
     <string name="home_profile_missing_body">设置末次月经、预产期或当前孕周后，首页会展示你的孕周、每日提醒、饮食重点和运动建议。</string>
     <string name="home_profile_missing_action">去设置</string>
