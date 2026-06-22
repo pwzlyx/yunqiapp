@@ -2,6 +2,7 @@ package com.yunqi.app.feature.settings
 
 import android.Manifest
 import android.content.ActivityNotFoundException
+import android.content.ClipData
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -551,6 +552,9 @@ private fun Context.shareCsvExport(uri: android.net.Uri) {
         .setType("text/csv")
         .putExtra(Intent.EXTRA_STREAM, uri)
         .addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        .apply {
+            clipData = ClipData.newUri(contentResolver, getString(R.string.settings_export_records_csv), uri)
+        }
     try {
         startActivity(
             Intent.createChooser(

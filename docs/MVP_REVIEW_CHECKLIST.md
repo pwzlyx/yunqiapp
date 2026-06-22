@@ -53,6 +53,7 @@ Current result: passing.
 - Settings can edit pregnancy profile, manage appointment reminders, and clear all local pregnancy data.
 - Settings can delete only the pregnancy profile after confirmation, while preserving calendar records and disabling local reminders.
 - Settings can export local calendar records as a CSV file through the Android share sheet.
+- CSV exports grant read access through both `EXTRA_STREAM` and `ClipData` for broad Android share target compatibility.
 - Settings shows local-data privacy guidance, the medical disclaimer, and urgent medical-attention reminder.
 - CSV export protects user-entered cells from being interpreted as spreadsheet formulas.
 - Clearing local data also removes cached CSV export files.
