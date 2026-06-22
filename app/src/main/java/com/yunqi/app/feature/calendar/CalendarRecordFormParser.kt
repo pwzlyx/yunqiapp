@@ -6,6 +6,10 @@ import java.time.LocalDate
 import java.time.LocalTime
 import java.util.UUID
 
+private const val MAX_WEIGHT_KG = 300.0
+private const val MAX_FETAL_MOVEMENT_COUNT = 1_000
+private const val MAX_EXERCISE_MINUTES_PER_DAY = 24 * 60
+
 class CalendarRecordFormParser(
     private val idProvider: () -> String = { UUID.randomUUID().toString() },
     private val nowProvider: () -> Long = System::currentTimeMillis,
@@ -20,13 +24,13 @@ class CalendarRecordFormParser(
         val fetalMovementCount = input.fetalMovementCount.takeIf { it.isNotBlank() }?.toIntOrNull()
         val exerciseMinutes = input.exerciseMinutes.takeIf { it.isNotBlank() }?.toIntOrNull()
 
-        if (input.type == CalendarRecordType.Weight && (weightKg == null || weightKg <= 0.0)) {
+        if (input.type == CalendarRecordType.Weight && !weightKg.isValidWeightKg()) {
             return CalendarRecordParseResult.InvalidWeight
         }
-        if (input.type == CalendarRecordType.FetalMovement && (fetalMovementCount == null || fetalMovementCount < 0)) {
+        if (input.type == CalendarRecordType.FetalMovement && !fetalMovementCount.isValidFetalMovementCount()) {
             return CalendarRecordParseResult.InvalidFetalMovement
         }
-        if (input.type == CalendarRecordType.Exercise && (exerciseMinutes == null || exerciseMinutes <= 0)) {
+        if (input.type == CalendarRecordType.Exercise && !exerciseMinutes.isValidExerciseMinutes()) {
             return CalendarRecordParseResult.InvalidExerciseMinutes
         }
         if (
@@ -97,6 +101,15 @@ class CalendarRecordFormParser(
     private fun String.parseTime(): LocalTime? = runCatching {
         LocalTime.parse(trim())
     }.getOrNull()
+
+    private fun Double?.isValidWeightKg(): Boolean =
+        this != null && this > 0.0 && this <= MAX_WEIGHT_KG
+
+    private fun Int?.isValidFetalMovementCount(): Boolean =
+        this != null && this in 0..MAX_FETAL_MOVEMENT_COUNT
+
+    private fun Int?.isValidExerciseMinutes(): Boolean =
+        this != null && this in 1..MAX_EXERCISE_MINUTES_PER_DAY
 }
 
 data class CalendarRecordInput(

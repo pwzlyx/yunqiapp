@@ -117,6 +117,23 @@ class CalendarRecordFormParserTest {
     }
 
     @Test
+    fun `rejects unrealistic weight`() {
+        val result = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.Weight,
+                note = "",
+                weightKg = "301",
+                fetalMovementCount = "",
+                appointmentTime = "",
+                appointmentLocation = "",
+            ),
+        )
+
+        assertEquals(CalendarRecordParseResult.InvalidWeight, result)
+    }
+
+    @Test
     fun `parses fetal movement record`() {
         val result = parser.parse(
             CalendarRecordInput(
@@ -147,6 +164,23 @@ class CalendarRecordFormParserTest {
                 note = "",
                 weightKg = "",
                 fetalMovementCount = "-1",
+                appointmentTime = "",
+                appointmentLocation = "",
+            ),
+        )
+
+        assertEquals(CalendarRecordParseResult.InvalidFetalMovement, result)
+    }
+
+    @Test
+    fun `rejects unrealistic fetal movement count`() {
+        val result = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.FetalMovement,
+                note = "",
+                weightKg = "",
+                fetalMovementCount = "1001",
                 appointmentTime = "",
                 appointmentLocation = "",
             ),
@@ -233,6 +267,24 @@ class CalendarRecordFormParserTest {
                 appointmentTime = "",
                 appointmentLocation = "",
                 exerciseMinutes = "0",
+            ),
+        )
+
+        assertEquals(CalendarRecordParseResult.InvalidExerciseMinutes, result)
+    }
+
+    @Test
+    fun `rejects exercise minutes longer than a day`() {
+        val result = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.Exercise,
+                note = "",
+                weightKg = "",
+                fetalMovementCount = "",
+                appointmentTime = "",
+                appointmentLocation = "",
+                exerciseMinutes = "1441",
             ),
         )
 
