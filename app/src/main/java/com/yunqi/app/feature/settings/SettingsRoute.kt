@@ -53,6 +53,7 @@ import com.yunqi.app.data.local.DailyReminderPreference
 import com.yunqi.app.domain.reminder.DailyReminderType
 import com.yunqi.app.notification.canPostYunqiNotifications
 import com.yunqi.app.notification.hasYunqiNotificationRuntimePermission
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.launch
 
 @Composable
@@ -176,8 +177,22 @@ fun SettingsRoute(
         },
         onExportRecords = {
             coroutineScope.launch {
-                val uri = viewModel.exportCalendarRecordsCsv()
-                context.shareCsvExport(uri)
+                val exportUri = try {
+                    viewModel.exportCalendarRecordsCsv()
+                } catch (cancellation: CancellationException) {
+                    throw cancellation
+                } catch (_: Exception) {
+                    null
+                }
+                when (csvExportResultAction(exportUri != null)) {
+                    CsvExportResultAction.ShareExport -> {
+                        context.shareCsvExport(requireNotNull(exportUri))
+                    }
+
+                    CsvExportResultAction.ShowExportFailure -> {
+                        Toast.makeText(context, R.string.settings_export_records_failed, Toast.LENGTH_SHORT).show()
+                    }
+                }
             }
         },
         onClearPregnancyProfile = viewModel::clearPregnancyProfileAndReminders,
@@ -220,6 +235,21 @@ internal fun appointmentReminderAvailabilityAction(
         AppointmentReminderAvailabilityAction.SyncScheduledAppointmentWork
     } else {
         AppointmentReminderAvailabilityAction.PreserveAppointmentReminderPreference
+    }
+
+internal enum class CsvExportResultAction {
+    ShareExport,
+    ShowExportFailure,
+}
+
+/**
+ * Converts the storage/share preparation result into a UI action without exposing local health data in errors.
+ */
+internal fun csvExportResultAction(exportSucceeded: Boolean): CsvExportResultAction =
+    if (exportSucceeded) {
+        CsvExportResultAction.ShareExport
+    } else {
+        CsvExportResultAction.ShowExportFailure
     }
 
 @Composable

@@ -52,4 +52,20 @@ class SettingsNotificationPolicyTest {
             ),
         )
     }
+
+    @Test
+    fun `shares exported CSV after a successful export`() {
+        assertEquals(
+            CsvExportResultAction.ShareExport,
+            csvExportResultAction(exportSucceeded = true),
+        )
+    }
+
+    @Test
+    fun `shows generic export failure when CSV export preparation fails`() {
+        assertEquals(
+            CsvExportResultAction.ShowExportFailure,
+            csvExportResultAction(exportSucceeded = false),
+        )
+    }
 }
