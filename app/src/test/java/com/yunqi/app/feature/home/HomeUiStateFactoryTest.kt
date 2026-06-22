@@ -169,6 +169,32 @@ class HomeUiStateFactoryTest {
         assertEquals(emptyList<HomeReminderItem>(), state.reminderItems)
     }
 
+    @Test
+    fun `ready state includes custom reminder message in home detail`() {
+        val factory = HomeUiStateFactory(
+            todayProvider = { LocalDate.of(2026, 6, 21) },
+        )
+        val reminderSettings = ReminderSettings(
+            appointmentRemindersEnabled = false,
+            dailyReminders = listOf(
+                DailyReminderPreference(
+                    type = DailyReminderType.Custom,
+                    enabled = true,
+                    time = "20:00",
+                    customMessage = "  Pack hospital bag  ",
+                ),
+            ),
+        )
+
+        val state = factory.create(
+            profile = pregnancyProfile(),
+            reminderSettings = reminderSettings,
+        ) as HomeUiState.Ready
+
+        assertEquals(R.string.settings_daily_reminder_custom, state.reminderItems.single().titleResId)
+        assertEquals("20:00 - Pack hospital bag", state.reminderItems.single().detail)
+    }
+
     private fun pregnancyProfile(): PregnancyProfile = PregnancyProfile(
         calculationMethod = PregnancyCalculationMethod.LastMenstrualPeriod,
         lmpDate = LocalDate.of(2026, 3, 1),

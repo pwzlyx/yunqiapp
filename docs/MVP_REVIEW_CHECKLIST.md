@@ -21,6 +21,7 @@ Current result: passing.
 - Home avoids negative due-date countdowns and shows a doctor-judgment reminder on or after the due date.
 - Home reads the local pregnancy profile and displays current gestational age, due date countdown, reminders, quick record entry points for weight, fetal movement, symptoms, notes, and appointments, diet guidance, antenatal care guidance, exercise guidance, safety guidance, source names, source URLs, and review dates.
 - Home shows today's reminder list from local daily reminder settings and today's appointment records.
+- Home shows the user-entered custom reminder message in today's reminder list.
 - Diet guidance cards can be marked as read or favorited with local-only state.
 - Exercise guidance can be hidden and restored with local-only state.
 - Calendar supports month view, date markers, day detail list, create, edit, and delete with confirmation.

@@ -3,6 +3,7 @@ package com.yunqi.app.feature.home
 import com.yunqi.app.R
 import com.yunqi.app.data.content.PregnancyContentRepository
 import com.yunqi.app.data.local.ContentStatus
+import com.yunqi.app.data.local.DailyReminderPreference
 import com.yunqi.app.data.local.ReminderSettings
 import com.yunqi.app.domain.calendar.CalendarRecord
 import com.yunqi.app.domain.calendar.CalendarRecordType
@@ -75,7 +76,7 @@ class HomeUiStateFactory(
                 HomeReminderItem(
                     id = "daily_${reminder.type.name}",
                     titleResId = reminder.type.homeTitleResId(),
-                    detail = reminder.time,
+                    detail = reminder.homeDetail(),
                     actionRecordType = reminder.type.actionRecordType(),
                 )
             }
@@ -83,6 +84,13 @@ class HomeUiStateFactory(
         return appointmentItems + dailyItems
     }
 }
+
+private fun DailyReminderPreference.homeDetail(): String =
+    if (type == DailyReminderType.Custom && customMessage.isNotBlank()) {
+        listOf(time, customMessage.trim()).joinToString(" - ")
+    } else {
+        time
+    }
 
 private fun DailyReminderType.homeTitleResId(): Int = when (this) {
     DailyReminderType.Weight -> R.string.settings_daily_reminder_weight
