@@ -122,12 +122,13 @@ enum class TrendRange(val days: Long?) {
 
 object TrendRecordFilter {
     /**
-     * Keeps records inside the selected inclusive trend range.
+     * Keeps metric records inside the selected inclusive trend range up to today.
      */
     fun filter(records: List<CalendarRecord>, range: TrendRange, today: LocalDate): List<CalendarRecord> {
-        val days = range.days ?: return records
+        val recordsUntilToday = records.filter { record -> record.date <= today }
+        val days = range.days ?: return recordsUntilToday
         val startDate = today.minusDays(days - 1)
-        return records.filter { record -> record.date in startDate..today }
+        return recordsUntilToday.filter { record -> record.date in startDate..today }
     }
 }
 

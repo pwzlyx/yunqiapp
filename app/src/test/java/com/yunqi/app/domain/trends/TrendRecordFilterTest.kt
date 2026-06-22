@@ -13,6 +13,7 @@ class TrendRecordFilterTest {
             record(id = "old", date = LocalDate.of(2026, 6, 14)),
             record(id = "start", date = LocalDate.of(2026, 6, 15)),
             record(id = "today", date = LocalDate.of(2026, 6, 21)),
+            record(id = "future", date = LocalDate.of(2026, 6, 22)),
         )
 
         val filtered = TrendRecordFilter.filter(
@@ -25,10 +26,11 @@ class TrendRecordFilterTest {
     }
 
     @Test
-    fun `all range keeps every record`() {
+    fun `all range excludes future records`() {
         val records = listOf(
             record(id = "old", date = LocalDate.of(2026, 1, 1)),
             record(id = "today", date = LocalDate.of(2026, 6, 21)),
+            record(id = "future", date = LocalDate.of(2026, 6, 22)),
         )
 
         val filtered = TrendRecordFilter.filter(
@@ -37,7 +39,7 @@ class TrendRecordFilterTest {
             today = LocalDate.of(2026, 6, 21),
         )
 
-        assertEquals(records, filtered)
+        assertEquals(listOf("old", "today"), filtered.map(CalendarRecord::id))
     }
 
     private fun record(id: String, date: LocalDate) = CalendarRecord(
