@@ -61,7 +61,7 @@ class CalendarRecordCsvExporter {
                 )
             }
         }
-        return rows.joinToString(separator = "\n", postfix = "\n") { row ->
+        return UTF_8_BOM + rows.joinToString(separator = "\n", postfix = "\n") { row ->
             row.joinToString(separator = ",", transform = ::escape)
         }
     }
@@ -85,6 +85,8 @@ class CalendarRecordCsvExporter {
     }
 
     private companion object {
+        // Keeps Chinese CSV text readable in spreadsheet apps that infer legacy encodings.
+        const val UTF_8_BOM = "\uFEFF"
         val formulaPrefixCharacters = setOf('=', '+', '-', '@')
     }
 }

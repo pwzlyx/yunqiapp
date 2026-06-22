@@ -14,7 +14,7 @@ class CalendarRecordCsvExporterTest {
         val csv = exporter.export(emptyList())
 
         assertEquals(
-            "id,date,type,weightKg,fetalMovementCount,fetalMovementPeriod,fetalMovementFeeling," +
+            "\uFEFFid,date,type,weightKg,fetalMovementCount,fetalMovementPeriod,fetalMovementFeeling," +
                 "symptomType,symptomSeverity,exerciseType,exerciseMinutes,exerciseIntensity,dietMeal,dietContent,appointmentTime," +
                 "appointmentLocation,appointmentDoctor,appointmentItems,appointmentResult,note,createdAtEpochMillis\n",
             csv,
@@ -52,7 +52,7 @@ class CalendarRecordCsvExporterTest {
         )
 
         assertEquals(
-            "id,date,type,weightKg,fetalMovementCount,fetalMovementPeriod,fetalMovementFeeling," +
+            "\uFEFFid,date,type,weightKg,fetalMovementCount,fetalMovementPeriod,fetalMovementFeeling," +
                 "symptomType,symptomSeverity,exerciseType,exerciseMinutes,exerciseIntensity,dietMeal,dietContent,appointmentTime," +
                 "appointmentLocation,appointmentDoctor,appointmentItems,appointmentResult,note,createdAtEpochMillis\n" +
                 "record-1,2026-06-21,Appointment,,,,,,,,,,,,09:30,\"Clinic, Room 2\",Dr Chen,Blood test,Normal," +
@@ -92,7 +92,7 @@ class CalendarRecordCsvExporterTest {
         )
 
         assertEquals(
-            "id,date,type,weightKg,fetalMovementCount,fetalMovementPeriod,fetalMovementFeeling," +
+            "\uFEFFid,date,type,weightKg,fetalMovementCount,fetalMovementPeriod,fetalMovementFeeling," +
                 "symptomType,symptomSeverity,exerciseType,exerciseMinutes,exerciseIntensity,dietMeal,dietContent,appointmentTime," +
                 "appointmentLocation,appointmentDoctor,appointmentItems,appointmentResult,note,createdAtEpochMillis\n" +
                 "record-1,2026-06-21,Note,,,,,,,,,,,,,,,'+sensitive lab result,," +
