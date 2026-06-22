@@ -318,7 +318,8 @@ private fun PreviewCard(parseResult: PregnancyProfileParseResult) {
             )
 
             if (parseResult is PregnancyProfileParseResult.Success) {
-                val progress = parseResult.profile.calculateProgress(today = LocalDate.now())
+                val today = LocalDate.now()
+                val progress = parseResult.profile.calculateProgress(today = today)
                 Text(
                     text = stringResource(
                         R.string.setup_preview_gestational_age,
@@ -338,6 +339,15 @@ private fun PreviewCard(parseResult: PregnancyProfileParseResult) {
                         progress.trimester.toDisplayText(),
                     ),
                 )
+                when (parseResult.previewWarningFor(today = today)) {
+                    PregnancySetupPreviewWarning.ConfirmPastDueDate -> Text(
+                        text = stringResource(R.string.setup_preview_confirm_past_due_date),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.error,
+                    )
+
+                    null -> Unit
+                }
             } else {
                 Text(
                     text = stringResource(R.string.setup_preview_waiting),

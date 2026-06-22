@@ -16,6 +16,7 @@ Current result: passing.
 - Pregnancy setup supports optional height, pre-pregnancy weight, and singleton or twin profile details.
 - Pregnancy setup pre-fills the saved local profile when editing from Settings, including current gestational age recalculated for the edit date.
 - Pregnancy setup supports marking doctor-restricted exercise; Home suppresses default exercise suggestions when enabled.
+- Pregnancy setup preview warns users to confirm dates when the calculation is already beyond 42 weeks.
 - Home avoids negative due-date countdowns and shows a doctor-judgment reminder on or after the due date.
 - Home reads the local pregnancy profile and displays current gestational age, due date countdown, reminders, quick record entry points for weight, fetal movement, symptoms, notes, and appointments, diet guidance, antenatal care guidance, exercise guidance, safety guidance, source names, source URLs, and review dates.
 - Home shows today's reminder list from local daily reminder settings and today's appointment records.
