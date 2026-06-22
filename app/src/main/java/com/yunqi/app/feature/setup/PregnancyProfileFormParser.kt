@@ -16,11 +16,17 @@ class PregnancyProfileFormParser(
 ) {
     fun parse(input: PregnancySetupInput): PregnancyProfileParseResult {
         val setupDate = todayProvider()
-        val heightCm = input.heightCm.parseOptionalPositiveDouble()
+        val heightCm = input.heightCm.parseOptionalDoubleInRange(
+            minInclusive = MIN_HEIGHT_CM,
+            maxInclusive = MAX_HEIGHT_CM,
+        )
         if (input.heightCm.isNotBlank() && heightCm == null) {
             return PregnancyProfileParseResult.InvalidHeight
         }
-        val prePregnancyWeightKg = input.prePregnancyWeightKg.parseOptionalPositiveDouble()
+        val prePregnancyWeightKg = input.prePregnancyWeightKg.parseOptionalDoubleInRange(
+            minInclusive = MIN_PRE_PREGNANCY_WEIGHT_KG,
+            maxInclusive = MAX_PRE_PREGNANCY_WEIGHT_KG,
+        )
         if (input.prePregnancyWeightKg.isNotBlank() && prePregnancyWeightKg == null) {
             return PregnancyProfileParseResult.InvalidPrePregnancyWeight
         }
@@ -121,14 +127,21 @@ class PregnancyProfileFormParser(
         LocalDate.parse(trim())
     }.getOrNull()
 
-    private fun String.parseOptionalPositiveDouble(): Double? {
+    private fun String.parseOptionalDoubleInRange(
+        minInclusive: Double,
+        maxInclusive: Double,
+    ): Double? {
         if (isBlank()) return null
-        val value = toDoubleOrNull() ?: return null
-        return value.takeIf { it > 0.0 }
+        val value = trim().toDoubleOrNull() ?: return null
+        return value.takeIf { it in minInclusive..maxInclusive }
     }
 
     private companion object {
         const val MAX_GESTATIONAL_WEEK = 42
+        const val MIN_HEIGHT_CM = 100.0
+        const val MAX_HEIGHT_CM = 250.0
+        const val MIN_PRE_PREGNANCY_WEIGHT_KG = 25.0
+        const val MAX_PRE_PREGNANCY_WEIGHT_KG = 300.0
     }
 }
 

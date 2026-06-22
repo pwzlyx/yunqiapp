@@ -228,6 +228,23 @@ class PregnancyProfileFormParserTest {
     }
 
     @Test
+    fun `rejects unrealistic optional height`() {
+        val result = parser.parse(
+            PregnancySetupInput(
+                method = SetupMethod.LastMenstrualPeriod,
+                lmpDate = "2026-01-01",
+                dueDate = "",
+                conceptionDate = "",
+                week = "",
+                day = "",
+                heightCm = "251",
+            ),
+        )
+
+        assertEquals(PregnancyProfileParseResult.InvalidHeight, result)
+    }
+
+    @Test
     fun `rejects invalid optional pre pregnancy weight`() {
         val result = parser.parse(
             PregnancySetupInput(
@@ -238,6 +255,23 @@ class PregnancyProfileFormParserTest {
                 week = "",
                 day = "",
                 prePregnancyWeightKg = "abc",
+            ),
+        )
+
+        assertEquals(PregnancyProfileParseResult.InvalidPrePregnancyWeight, result)
+    }
+
+    @Test
+    fun `rejects unrealistic optional pre pregnancy weight`() {
+        val result = parser.parse(
+            PregnancySetupInput(
+                method = SetupMethod.LastMenstrualPeriod,
+                lmpDate = "2026-01-01",
+                dueDate = "",
+                conceptionDate = "",
+                week = "",
+                day = "",
+                prePregnancyWeightKg = "301",
             ),
         )
 
