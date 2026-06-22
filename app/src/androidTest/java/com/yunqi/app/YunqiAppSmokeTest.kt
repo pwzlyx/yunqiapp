@@ -4,6 +4,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.performScrollTo
 import org.junit.Rule
 import org.junit.Test
 
@@ -26,5 +27,11 @@ class YunqiAppSmokeTest {
 
         composeRule.onNodeWithText(activity.getString(R.string.nav_settings)).performClick()
         composeRule.onNodeWithText(activity.getString(R.string.settings_title)).assertIsDisplayed()
+        composeRule.onNodeWithText(activity.getString(R.string.medical_disclaimer))
+            .performScrollTo()
+            .assertIsDisplayed()
+        composeRule.onNodeWithText(activity.getString(R.string.emergency_attention_notice))
+            .performScrollTo()
+            .assertIsDisplayed()
     }
 }

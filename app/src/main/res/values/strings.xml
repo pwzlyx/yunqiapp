@@ -43,6 +43,7 @@
     <string name="home_exercise_hidden_body">运动建议已关闭，可随时恢复。</string>
     <string name="home_exercise_restore">恢复运动建议</string>
     <string name="medical_disclaimer">本 App 用于记录与健康管理提醒，不能替代医生诊断或治疗建议。</string>
+    <string name="emergency_attention_notice">如出现胎动明显减少或模式改变、阴道出血、剧烈腹痛、严重头痛、视物模糊、持续发热、破水或规律宫缩异常，请立即联系医生、产科单位或当地急救服务。</string>
 
     <string name="calendar_title">日历</string>
     <string name="calendar_selected_date">查看日期</string>
