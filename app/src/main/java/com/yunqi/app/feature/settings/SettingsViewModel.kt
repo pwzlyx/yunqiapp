@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.core.content.FileProvider
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.yunqi.app.data.export.CalendarRecordExportStore
 import com.yunqi.app.data.export.CalendarRecordCsvExporter
 import com.yunqi.app.data.local.ContentStatusRepository
 import com.yunqi.app.data.local.DailyReminderPreference
@@ -14,7 +15,6 @@ import com.yunqi.app.data.local.record.CalendarRecordRepository
 import com.yunqi.app.domain.reminder.DailyReminderType
 import com.yunqi.app.notification.AppointmentReminderScheduler
 import com.yunqi.app.notification.DailyReminderScheduler
-import java.io.File
 import java.time.LocalDate
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
@@ -32,6 +32,7 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     private val reminderScheduler = AppointmentReminderScheduler(application.applicationContext)
     private val dailyReminderScheduler = DailyReminderScheduler(application.applicationContext)
     private val csvExporter = CalendarRecordCsvExporter()
+    private val exportStore = CalendarRecordExportStore()
 
     val uiState: StateFlow<SettingsUiState> = reminderSettingsRepository
         .reminderSettingsFlow
@@ -126,15 +127,14 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             pregnancyProfileRepository.clearProfile()
             reminderSettingsRepository.clearSettings()
             contentStatusRepository.clearStatus()
+            exportStore.clear(getApplication<Application>().applicationContext.cacheDir)
         }
     }
 
     suspend fun exportCalendarRecordsCsv(): Uri = withContext(Dispatchers.IO) {
         val context = getApplication<Application>().applicationContext
-        val exportsDir = File(context.cacheDir, "exports").apply { mkdirs() }
-        val exportFile = File(exportsDir, "yunqi-calendar-records.csv")
         val csv = csvExporter.export(calendarRecordRepository.allRecordsSnapshot())
-        exportFile.writeText(csv, Charsets.UTF_8)
+        val exportFile = exportStore.write(context.cacheDir, csv)
         FileProvider.getUriForFile(
             context,
             "${context.packageName}.fileprovider",
