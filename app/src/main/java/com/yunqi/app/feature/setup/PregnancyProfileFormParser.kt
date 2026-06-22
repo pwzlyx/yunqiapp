@@ -35,6 +35,9 @@ class PregnancyProfileFormParser(
             SetupMethod.LastMenstrualPeriod -> {
                 val lmpDate = input.lmpDate.parseIsoDate()
                     ?: return PregnancyProfileParseResult.InvalidDate
+                if (lmpDate.isAfter(setupDate)) {
+                    return PregnancyProfileParseResult.InvalidPregnancyDate
+                }
                 PregnancyProfileParseResult.Success(
                     PregnancyProfile(
                         calculationMethod = PregnancyCalculationMethod.LastMenstrualPeriod,
@@ -55,6 +58,9 @@ class PregnancyProfileFormParser(
             SetupMethod.DueDate -> {
                 val dueDate = input.dueDate.parseIsoDate()
                     ?: return PregnancyProfileParseResult.InvalidDate
+                if (dueDate.minusDays(FULL_TERM_DAYS).isAfter(setupDate)) {
+                    return PregnancyProfileParseResult.InvalidPregnancyDate
+                }
                 PregnancyProfileParseResult.Success(
                     PregnancyProfile(
                         calculationMethod = PregnancyCalculationMethod.DueDate,
@@ -75,6 +81,9 @@ class PregnancyProfileFormParser(
             SetupMethod.ConceptionDate -> {
                 val conceptionDate = input.conceptionDate.parseIsoDate()
                     ?: return PregnancyProfileParseResult.InvalidDate
+                if (conceptionDate.isAfter(setupDate)) {
+                    return PregnancyProfileParseResult.InvalidPregnancyDate
+                }
                 PregnancyProfileParseResult.Success(
                     PregnancyProfile(
                         calculationMethod = PregnancyCalculationMethod.ConceptionDate,
@@ -137,6 +146,7 @@ class PregnancyProfileFormParser(
     }
 
     private companion object {
+        const val FULL_TERM_DAYS = 280L
         const val MAX_GESTATIONAL_WEEK = 42
         const val MIN_HEIGHT_CM = 100.0
         const val MAX_HEIGHT_CM = 250.0
@@ -161,6 +171,7 @@ data class PregnancySetupInput(
 sealed interface PregnancyProfileParseResult {
     data class Success(val profile: PregnancyProfile) : PregnancyProfileParseResult
     data object InvalidDate : PregnancyProfileParseResult
+    data object InvalidPregnancyDate : PregnancyProfileParseResult
     data object InvalidWeek : PregnancyProfileParseResult
     data object InvalidDay : PregnancyProfileParseResult
     data object InvalidHeight : PregnancyProfileParseResult

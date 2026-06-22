@@ -15,6 +15,7 @@ Current result: passing.
 - Pregnancy setup supports last menstrual period, due date, conception date, and current gestational age.
 - Pregnancy setup supports optional height, pre-pregnancy weight, and singleton or twin profile details.
 - Pregnancy setup pre-fills the saved local profile when editing from Settings, including current gestational age recalculated for the edit date.
+- Pregnancy setup rejects future last menstrual period or conception dates, and due dates that imply a future last menstrual period.
 - Pregnancy setup rejects current gestational age entries beyond 42 weeks.
 - Pregnancy setup rejects unrealistic height and pre-pregnancy weight values before they can distort BMI guidance.
 - Pregnancy setup trims numeric gestational age inputs before validation.

@@ -165,6 +165,54 @@ class PregnancyProfileFormParserTest {
     }
 
     @Test
+    fun `rejects future last menstrual period date`() {
+        val result = parser.parse(
+            PregnancySetupInput(
+                method = SetupMethod.LastMenstrualPeriod,
+                lmpDate = "2026-06-22",
+                dueDate = "",
+                conceptionDate = "",
+                week = "",
+                day = "",
+            ),
+        )
+
+        assertEquals(PregnancyProfileParseResult.InvalidPregnancyDate, result)
+    }
+
+    @Test
+    fun `rejects due date that implies a future last menstrual period`() {
+        val result = parser.parse(
+            PregnancySetupInput(
+                method = SetupMethod.DueDate,
+                lmpDate = "",
+                dueDate = "2027-03-29",
+                conceptionDate = "",
+                week = "",
+                day = "",
+            ),
+        )
+
+        assertEquals(PregnancyProfileParseResult.InvalidPregnancyDate, result)
+    }
+
+    @Test
+    fun `rejects future conception date`() {
+        val result = parser.parse(
+            PregnancySetupInput(
+                method = SetupMethod.ConceptionDate,
+                lmpDate = "",
+                dueDate = "",
+                conceptionDate = "2026-06-22",
+                week = "",
+                day = "",
+            ),
+        )
+
+        assertEquals(PregnancyProfileParseResult.InvalidPregnancyDate, result)
+    }
+
+    @Test
     fun `rejects out of range gestational week`() {
         val result = parser.parse(
             PregnancySetupInput(

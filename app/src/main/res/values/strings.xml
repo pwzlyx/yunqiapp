@@ -189,6 +189,7 @@
     <string name="trimester_third">孕晚期</string>
     <string name="trimester_post_due">可能已过预产期</string>
     <string name="setup_error_invalid_date">请输入有效日期，格式为 YYYY-MM-DD。</string>
+    <string name="setup_error_invalid_pregnancy_date">请确认日期：末次月经和受孕日期不能晚于今天，预产期不能超过 40 周推算范围。</string>
     <string name="setup_error_invalid_week">孕周必须是 0 到 42 之间的数字。</string>
     <string name="setup_error_invalid_day">孕天必须是 0 到 6 之间的数字。</string>
     <string name="setup_error_invalid_height">请输入有效身高。</string>

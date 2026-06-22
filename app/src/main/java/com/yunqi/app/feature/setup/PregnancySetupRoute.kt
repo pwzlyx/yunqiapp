@@ -421,6 +421,7 @@ private fun Trimester.toDisplayText(): String = when (this) {
 private fun SaveProfileResult.toErrorMessageResId(): Int? = when (this) {
     SaveProfileResult.Success -> null
     SaveProfileResult.InvalidDate -> R.string.setup_error_invalid_date
+    SaveProfileResult.InvalidPregnancyDate -> R.string.setup_error_invalid_pregnancy_date
     SaveProfileResult.InvalidWeek -> R.string.setup_error_invalid_week
     SaveProfileResult.InvalidDay -> R.string.setup_error_invalid_day
     SaveProfileResult.InvalidHeight -> R.string.setup_error_invalid_height
