@@ -2,11 +2,25 @@ package com.yunqi.app.feature.setup
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
+import androidx.lifecycle.viewModelScope
 import com.yunqi.app.data.local.PregnancyProfileRepository
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.stateIn
+import java.time.LocalDate
 
 class PregnancySetupViewModel(application: Application) : AndroidViewModel(application) {
     private val repository = PregnancyProfileRepository(application.applicationContext)
     private val parser = PregnancyProfileFormParser()
+
+    val savedInput: StateFlow<PregnancySetupInput?> = repository.profileFlow
+        .map { profile -> profile?.toPregnancySetupInput(today = LocalDate.now()) }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = null,
+        )
 
     /**
      * Validates the setup form and persists the profile locally when valid.

@@ -20,6 +20,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,6 +30,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.yunqi.app.R
 import com.yunqi.app.domain.pregnancy.PregnancyBabyCount
@@ -43,6 +45,7 @@ fun PregnancySetupRoute(
     onProfileSaved: () -> Unit,
     viewModel: PregnancySetupViewModel = viewModel(),
 ) {
+    val savedInput by viewModel.savedInput.collectAsStateWithLifecycle()
     var selectedMethod by remember { mutableStateOf(SetupMethod.LastMenstrualPeriod) }
     var lmpDate by remember { mutableStateOf("") }
     var dueDate by remember { mutableStateOf("") }
@@ -54,8 +57,27 @@ fun PregnancySetupRoute(
     var prePregnancyWeightKg by remember { mutableStateOf("") }
     var babyCount by remember { mutableStateOf(PregnancyBabyCount.Singleton) }
     var errorMessageResId by remember { mutableStateOf<Int?>(null) }
+    var initializedFromSavedProfile by remember { mutableStateOf(false) }
     val parser = remember { PregnancyProfileFormParser() }
     val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(savedInput) {
+        val profileInput = savedInput ?: return@LaunchedEffect
+        if (initializedFromSavedProfile) return@LaunchedEffect
+
+        selectedMethod = profileInput.method
+        lmpDate = profileInput.lmpDate
+        dueDate = profileInput.dueDate
+        conceptionDate = profileInput.conceptionDate
+        week = profileInput.week
+        day = profileInput.day
+        exerciseRestricted = profileInput.exerciseRestricted
+        heightCm = profileInput.heightCm
+        prePregnancyWeightKg = profileInput.prePregnancyWeightKg
+        babyCount = profileInput.babyCount
+        initializedFromSavedProfile = true
+    }
+
     val input = PregnancySetupInput(
         method = selectedMethod,
         lmpDate = lmpDate,
