@@ -82,7 +82,7 @@
     <string name="calendar_delete_cancel_action">取消</string>
     <string name="calendar_error_invalid_date">请输入有效日期，格式为 YYYY-MM-DD。</string>
     <string name="calendar_error_invalid_weight">请输入有效体重。</string>
-    <string name="calendar_error_invalid_fetal_movement">请输入有效胎动次数。</string>
+    <string name="calendar_error_invalid_fetal_movement">请输入有效胎动次数，或填写胎动感受。</string>
     <string name="calendar_error_invalid_appointment_time">请输入有效产检时间，格式为 HH:mm。</string>
     <string name="calendar_medical_attention_notice">如胎动明显减少、模式改变、出血、剧烈腹痛或严重不适，请及时联系医生、助产士或产科单位。</string>
     <string name="calendar_record_weight_value">体重：%1$.1f kg</string>

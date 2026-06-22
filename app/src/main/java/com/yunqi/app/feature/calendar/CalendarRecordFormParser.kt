@@ -27,7 +27,10 @@ class CalendarRecordFormParser(
         if (input.type == CalendarRecordType.Weight && !weightKg.isValidWeightKg()) {
             return CalendarRecordParseResult.InvalidWeight
         }
-        if (input.type == CalendarRecordType.FetalMovement && !fetalMovementCount.isValidFetalMovementCount()) {
+        if (
+            input.type == CalendarRecordType.FetalMovement &&
+            !input.hasValidFetalMovementInput(fetalMovementCount)
+        ) {
             return CalendarRecordParseResult.InvalidFetalMovement
         }
         if (input.type == CalendarRecordType.Exercise && !exerciseMinutes.isValidExerciseMinutes()) {
@@ -113,6 +116,13 @@ class CalendarRecordFormParser(
 
     private fun Int?.isValidFetalMovementCount(): Boolean =
         this != null && this in 0..MAX_FETAL_MOVEMENT_COUNT
+
+    private fun CalendarRecordInput.hasValidFetalMovementInput(count: Int?): Boolean {
+        if (fetalMovementCount.isNotBlank()) {
+            return count.isValidFetalMovementCount()
+        }
+        return fetalMovementFeeling.isNotBlank()
+    }
 
     private fun Int?.isValidExerciseMinutes(): Boolean =
         this != null && this in 1..MAX_EXERCISE_MINUTES_PER_DAY

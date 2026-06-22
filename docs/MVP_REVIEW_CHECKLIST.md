@@ -38,7 +38,7 @@ Current result: passing.
 - Calendar rejects unrealistic weight, fetal movement count, and exercise duration values before they can distort local trends.
 - Calendar trims numeric weight, fetal movement, and exercise inputs before validation.
 - Calendar date input uses an ISO-date keyboard that supports entering hyphens.
-- Fetal movement records include count, time period, feeling, and note.
+- Fetal movement records include count, time period, feeling, and note, and can be saved with either a count or a feeling.
 - Symptom, exercise, and diet records include PRD-specific structured fields in addition to notes.
 - Calendar shows a medical-attention notice when recording and reviewing fetal movement or symptom records.
 - Appointment records include time, hospital or location, doctor, check items, result, and note.

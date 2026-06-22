@@ -198,6 +198,47 @@ class CalendarRecordFormParserTest {
     }
 
     @Test
+    fun `parses fetal movement record with feeling and no count`() {
+        val result = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.FetalMovement,
+                note = "Will discuss during checkup",
+                weightKg = "",
+                fetalMovementCount = "",
+                fetalMovementPeriod = "morning",
+                fetalMovementFeeling = "  Quieter than usual  ",
+                appointmentTime = "",
+                appointmentLocation = "",
+            ),
+        )
+
+        val record = (result as CalendarRecordParseResult.Success).record
+        assertNull(record.fetalMovementCount)
+        assertEquals("morning", record.fetalMovementPeriod)
+        assertEquals("Quieter than usual", record.fetalMovementFeeling)
+        assertEquals("Will discuss during checkup", record.note)
+    }
+
+    @Test
+    fun `rejects fetal movement record without count or feeling`() {
+        val result = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.FetalMovement,
+                note = "Only a note",
+                weightKg = "",
+                fetalMovementCount = "",
+                fetalMovementFeeling = "",
+                appointmentTime = "",
+                appointmentLocation = "",
+            ),
+        )
+
+        assertEquals(CalendarRecordParseResult.InvalidFetalMovement, result)
+    }
+
+    @Test
     fun `rejects invalid fetal movement count`() {
         val result = parser.parse(
             CalendarRecordInput(
