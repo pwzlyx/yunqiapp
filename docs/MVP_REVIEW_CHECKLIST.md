@@ -79,6 +79,7 @@ Current result: passing.
 - Reminder restore failures use sanitized logs that omit exception details which could contain local health records.
 - Sensitive data stays local: cloud backup and device transfer extraction are disabled.
 - Compose instrumentation smoke tests cover core tab navigation, medical notices, and pregnancy setup due-date preview.
+- Compose instrumentation smoke tests reset local pregnancy data before each run to avoid device-state leakage.
 
 ## Manual Smoke Test
 

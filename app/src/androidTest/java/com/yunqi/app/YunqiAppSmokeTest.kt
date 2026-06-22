@@ -2,17 +2,44 @@ package com.yunqi.app
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
 import androidx.compose.ui.test.performTextInput
 import androidx.compose.ui.test.performScrollTo
+import com.yunqi.app.data.export.CalendarRecordExportStore
+import com.yunqi.app.data.local.ContentStatusRepository
+import com.yunqi.app.data.local.PregnancyProfileRepository
+import com.yunqi.app.data.local.ReminderSettingsRepository
+import com.yunqi.app.data.local.record.CalendarRecordRepository
+import kotlinx.coroutines.runBlocking
+import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
 class YunqiAppSmokeTest {
     @get:Rule
     val composeRule = createAndroidComposeRule<MainActivity>()
+
+    @Before
+    fun clearLocalPregnancyData() {
+        val context = composeRule.activity.applicationContext
+
+        runBlocking {
+            CalendarRecordRepository(context).deleteAll()
+            PregnancyProfileRepository(context).clearProfile()
+            ReminderSettingsRepository(context).clearSettings()
+            ContentStatusRepository(context).clearStatus()
+        }
+        CalendarRecordExportStore().clear(context.cacheDir)
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            composeRule
+                .onAllNodesWithText(composeRule.activity.getString(R.string.home_profile_missing_title))
+                .fetchSemanticsNodes()
+                .isNotEmpty()
+        }
+    }
 
     @Test
     fun bottomNavigationOpensCoreScreens() {
