@@ -6,6 +6,7 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
+import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class AppointmentReminderSchedulerTest {
@@ -161,6 +162,12 @@ class AppointmentReminderSchedulerTest {
         )
 
         assertNull(plan)
+    }
+
+    @Test
+    fun `normalizes appointment notification ids to non negative values`() {
+        assertEquals(0, Int.MIN_VALUE.toNonNegativeNotificationId())
+        assertTrue(appointmentReminderNotificationId("appointment-1") >= 0)
     }
 
     private fun appointmentRecord(

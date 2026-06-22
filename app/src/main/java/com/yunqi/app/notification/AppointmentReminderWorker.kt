@@ -6,7 +6,6 @@ import androidx.core.app.NotificationCompat
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.yunqi.app.R
-import kotlin.math.absoluteValue
 
 class AppointmentReminderWorker(
     private val context: Context,
@@ -30,7 +29,7 @@ class AppointmentReminderWorker(
             .build()
 
         context.getSystemService(NotificationManager::class.java)
-            .notify(recordId.hashCode().absoluteValue, notification)
+            .notify(appointmentReminderNotificationId(recordId), notification)
         return Result.success()
     }
 
@@ -39,3 +38,11 @@ class AppointmentReminderWorker(
         const val KEY_APPOINTMENT_LABEL = "appointment_label"
     }
 }
+
+/**
+ * Normalizes record IDs into stable non-negative notification IDs, including the Int.MIN_VALUE hash edge case.
+ */
+internal fun appointmentReminderNotificationId(recordId: String): Int =
+    recordId.hashCode().toNonNegativeNotificationId()
+
+internal fun Int.toNonNegativeNotificationId(): Int = this and Int.MAX_VALUE
