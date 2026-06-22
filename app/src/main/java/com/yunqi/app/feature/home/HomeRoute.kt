@@ -42,6 +42,7 @@ fun HomeRoute(
         onQuickRecordClick = onQuickRecordClick,
         onToggleContentRead = viewModel::toggleContentRead,
         onToggleContentFavorite = viewModel::toggleContentFavorite,
+        onToggleContentHidden = viewModel::toggleContentHidden,
     )
 }
 
@@ -53,6 +54,7 @@ private fun HomeScreen(
     onQuickRecordClick: (CalendarRecordType) -> Unit,
     onToggleContentRead: (String) -> Unit,
     onToggleContentFavorite: (String) -> Unit,
+    onToggleContentHidden: (String) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier
@@ -82,6 +84,7 @@ private fun HomeScreen(
                         exerciseRestricted = uiState.exerciseRestricted,
                         onToggleContentRead = onToggleContentRead,
                         onToggleContentFavorite = onToggleContentFavorite,
+                        onToggleContentHidden = onToggleContentHidden,
                     )
                 }
             }
@@ -196,8 +199,11 @@ private fun PlanningCard(
     exerciseRestricted: Boolean,
     onToggleContentRead: (String) -> Unit,
     onToggleContentFavorite: (String) -> Unit,
+    onToggleContentHidden: (String) -> Unit,
 ) {
     val cardsByCategory = contentCards.groupBy { it.category }
+    val exerciseCards = cardsByCategory[PregnancyContentCategory.Exercise].orEmpty()
+    val visibleExerciseCards = exerciseCards.filterNot { it.id in contentStatus.hiddenContentIds }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         ContentSection(
@@ -220,10 +226,28 @@ private fun PlanningCard(
                 )
             }
         } else {
-            ContentSection(
-                title = stringResource(R.string.home_section_exercise),
-                cards = cardsByCategory[PregnancyContentCategory.Exercise].orEmpty(),
-            )
+            if (visibleExerciseCards.isEmpty() && exerciseCards.isNotEmpty()) {
+                SectionCard(title = stringResource(R.string.home_section_exercise)) {
+                    Text(
+                        text = stringResource(R.string.home_exercise_hidden_body),
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    )
+                    AssistChip(
+                        onClick = {
+                            exerciseCards
+                                .filter { it.id in contentStatus.hiddenContentIds }
+                                .forEach { onToggleContentHidden(it.id) }
+                        },
+                        label = { Text(stringResource(R.string.home_exercise_restore)) },
+                    )
+                }
+            } else {
+                ContentSection(
+                    title = stringResource(R.string.home_section_exercise),
+                    cards = visibleExerciseCards,
+                    onToggleHidden = onToggleContentHidden,
+                )
+            }
         }
         ContentSection(
             title = stringResource(R.string.home_section_safety),
@@ -240,6 +264,7 @@ private fun ContentSection(
     favoriteContentIds: Set<String> = emptySet(),
     onToggleRead: ((String) -> Unit)? = null,
     onToggleFavorite: ((String) -> Unit)? = null,
+    onToggleHidden: ((String) -> Unit)? = null,
 ) {
     SectionCard(title = title) {
         cards.forEach { card ->
@@ -249,7 +274,7 @@ private fun ContentSection(
                 text = stringResource(card.titleResId),
                 style = MaterialTheme.typography.titleSmall,
             )
-            if (onToggleRead != null || onToggleFavorite != null) {
+            if (onToggleRead != null || onToggleFavorite != null || onToggleHidden != null) {
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
@@ -283,6 +308,12 @@ private fun ContentSection(
                                     ),
                                 )
                             },
+                        )
+                    }
+                    onToggleHidden?.let { toggleHidden ->
+                        AssistChip(
+                            onClick = { toggleHidden(card.id) },
+                            label = { Text(stringResource(R.string.home_content_hide)) },
                         )
                     }
                 }

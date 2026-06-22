@@ -84,6 +84,7 @@ class HomeUiStateFactoryTest {
         val contentStatus = ContentStatus(
             readContentIds = setOf("diet_second_trimester_fish"),
             favoriteContentIds = setOf("diet_second_trimester_fish"),
+            hiddenContentIds = setOf("exercise_second_trimester_routine"),
         )
 
         val state = factory.create(profile, contentStatus) as HomeUiState.Ready

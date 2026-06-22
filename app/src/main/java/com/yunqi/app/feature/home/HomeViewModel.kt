@@ -41,4 +41,10 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
             contentStatusRepository.toggleFavorite(contentId)
         }
     }
+
+    fun toggleContentHidden(contentId: String) {
+        viewModelScope.launch {
+            contentStatusRepository.toggleHidden(contentId)
+        }
+    }
 }

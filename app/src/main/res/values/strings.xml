@@ -32,7 +32,10 @@
     <string name="home_content_mark_unread">取消已读</string>
     <string name="home_content_add_favorite">收藏</string>
     <string name="home_content_remove_favorite">取消收藏</string>
+    <string name="home_content_hide">关闭</string>
     <string name="home_exercise_restricted_body">你已标记医生限制运动。请以医生或产科单位的具体建议为准，暂不展示默认运动建议。</string>
+    <string name="home_exercise_hidden_body">运动建议已关闭，可随时恢复。</string>
+    <string name="home_exercise_restore">恢复运动建议</string>
     <string name="medical_disclaimer">本 App 用于记录与健康管理提醒，不能替代医生诊断或治疗建议。</string>
 
     <string name="calendar_title">日历</string>

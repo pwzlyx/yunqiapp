@@ -18,6 +18,7 @@ class ContentStatusRepository(
         ContentStatus(
             readContentIds = preferences[Keys.readContentIds].orEmpty(),
             favoriteContentIds = preferences[Keys.favoriteContentIds].orEmpty(),
+            hiddenContentIds = preferences[Keys.hiddenContentIds].orEmpty(),
         )
     }
 
@@ -37,6 +38,14 @@ class ContentStatusRepository(
         }
     }
 
+    suspend fun toggleHidden(contentId: String) {
+        context.contentStatusDataStore.edit { preferences ->
+            preferences[Keys.hiddenContentIds] = preferences[Keys.hiddenContentIds]
+                .orEmpty()
+                .toggle(contentId)
+        }
+    }
+
     suspend fun clearStatus() {
         context.contentStatusDataStore.edit { preferences ->
             preferences.clear()
@@ -46,12 +55,14 @@ class ContentStatusRepository(
     private object Keys {
         val readContentIds = stringSetPreferencesKey("read_content_ids")
         val favoriteContentIds = stringSetPreferencesKey("favorite_content_ids")
+        val hiddenContentIds = stringSetPreferencesKey("hidden_content_ids")
     }
 }
 
 data class ContentStatus(
     val readContentIds: Set<String> = emptySet(),
     val favoriteContentIds: Set<String> = emptySet(),
+    val hiddenContentIds: Set<String> = emptySet(),
 )
 
 private fun Set<String>.toggle(value: String): Set<String> =
