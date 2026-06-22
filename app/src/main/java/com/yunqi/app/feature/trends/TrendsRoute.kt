@@ -33,6 +33,8 @@ import com.yunqi.app.domain.trends.TrendRange
 import com.yunqi.app.domain.trends.TrendChartPolicy
 import com.yunqi.app.domain.trends.TrendPoint
 import com.yunqi.app.domain.trends.TrendSummary
+import com.yunqi.app.domain.trends.PrePregnancyBmiCategory
+import com.yunqi.app.domain.trends.WeightGainGuidance
 import kotlin.math.max
 
 @Composable
@@ -47,6 +49,7 @@ fun TrendsRoute(
         contentPadding = contentPadding,
         selectedRange = uiState.selectedRange,
         summary = uiState.summary,
+        weightGainGuidance = uiState.weightGainGuidance,
         onRangeSelected = viewModel::selectRange,
         onRecordClick = onRecordClick,
     )
@@ -57,6 +60,7 @@ private fun TrendsScreen(
     contentPadding: PaddingValues,
     selectedRange: TrendRange,
     summary: TrendSummary,
+    weightGainGuidance: WeightGainGuidance?,
     onRangeSelected: (TrendRange) -> Unit,
     onRecordClick: (CalendarRecordType) -> Unit,
 ) {
@@ -83,6 +87,9 @@ private fun TrendsScreen(
             emptyActionResId = R.string.trends_record_weight,
             recordType = CalendarRecordType.Weight,
             onRecordClick = onRecordClick,
+            extraContent = {
+                WeightGainGuidanceContent(guidance = weightGainGuidance)
+            },
         )
         TrendCard(
             titleResId = R.string.trends_fetal_movement_title,
@@ -112,6 +119,35 @@ private fun TrendsScreen(
             onRecordClick = { onRecordClick(CalendarRecordType.Appointment) },
         )
     }
+}
+
+@Composable
+private fun WeightGainGuidanceContent(guidance: WeightGainGuidance?) {
+    if (guidance == null) {
+        Text(
+            text = stringResource(R.string.trends_weight_guidance_missing),
+            style = MaterialTheme.typography.bodySmall,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+        )
+        return
+    }
+
+    Text(
+        text = stringResource(
+            R.string.trends_weight_guidance,
+            guidance.bmi,
+            guidance.category.toDisplayText(),
+            guidance.minGainKg,
+            guidance.maxGainKg,
+        ),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
+    Text(
+        text = stringResource(R.string.trends_weight_guidance_source),
+        style = MaterialTheme.typography.bodySmall,
+        color = MaterialTheme.colorScheme.onSurfaceVariant,
+    )
 }
 
 @Composable
@@ -250,6 +286,7 @@ private fun TrendCard(
     @StringRes emptyActionResId: Int,
     recordType: CalendarRecordType,
     onRecordClick: (CalendarRecordType) -> Unit,
+    extraContent: (@Composable () -> Unit)? = null,
 ) {
     Card(modifier = Modifier.fillMaxWidth()) {
         Column(
@@ -264,6 +301,7 @@ private fun TrendCard(
                 text = body,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
+            extraContent?.invoke()
             if (TrendChartPolicy.shouldShowChart(points)) {
                 TrendLineChart(points = points)
             } else {
@@ -273,6 +311,14 @@ private fun TrendCard(
             }
         }
     }
+}
+
+@Composable
+private fun PrePregnancyBmiCategory.toDisplayText(): String = when (this) {
+    PrePregnancyBmiCategory.Underweight -> stringResource(R.string.trends_bmi_underweight)
+    PrePregnancyBmiCategory.Normal -> stringResource(R.string.trends_bmi_normal)
+    PrePregnancyBmiCategory.Overweight -> stringResource(R.string.trends_bmi_overweight)
+    PrePregnancyBmiCategory.Obese -> stringResource(R.string.trends_bmi_obese)
 }
 
 @Composable

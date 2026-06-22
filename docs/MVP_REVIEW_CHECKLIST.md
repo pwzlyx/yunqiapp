@@ -30,6 +30,7 @@ Current result: passing.
 - Appointment reminders use local WorkManager jobs, Android notifications, a notification channel, notification permission handling, and a settings toggle.
 - Daily reminders support weight, fetal movement, folic acid or vitamin, water, exercise, and custom reminder types with independent local WorkManager jobs, Android notifications, notification permission handling, toggles, and configurable preset times.
 - Trends show weight, fetal movement, and exercise charts from local Room records.
+- Trends show CDC-sourced pregnancy weight-gain guidance when the local profile includes height, pre-pregnancy weight, and singleton or twin status.
 - Trends show charts only when a metric has at least two comparable records.
 - Trends show locally recorded appointment plans with date, time, location, doctor, and check items.
 - Trends support 7-day, 30-day, and all-time ranges.

@@ -119,6 +119,13 @@
     <string name="trends_weight_title">体重趋势</string>
     <string name="trends_weight_body">记录两次以上体重后展示变化曲线。</string>
     <string name="trends_weight_summary">已记录 %1$d 次，最近体重 %2$.1f kg。</string>
+    <string name="trends_weight_guidance">孕前 BMI 约 %1$.1f（%2$s），CDC 参考总增重范围约 %3$.1f-%4$.1f kg。</string>
+    <string name="trends_weight_guidance_missing">填写身高和孕前体重后，可显示按孕前 BMI 推算的体重增长参考。</string>
+    <string name="trends_weight_guidance_source">来源：CDC 孕期体重增长建议，https://www.cdc.gov/maternal-infant-health/pregnancy-weight/index.html；更新：2026-06-22；请结合产检和医生建议判断。</string>
+    <string name="trends_bmi_underweight">偏低</string>
+    <string name="trends_bmi_normal">正常</string>
+    <string name="trends_bmi_overweight">超重</string>
+    <string name="trends_bmi_obese">肥胖</string>
     <string name="trends_fetal_movement_title">胎动趋势</string>
     <string name="trends_fetal_movement_body">记录胎动后帮助回看日常模式。</string>
     <string name="trends_fetal_movement_summary">已记录 %1$d 次，最近胎动 %2$d 次。</string>
