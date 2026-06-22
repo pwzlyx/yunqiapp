@@ -22,6 +22,7 @@ class PregnancyContentRepository {
             sourceNameResId = R.string.source_cdc_folic_acid,
             sourceUrl = "https://www.cdc.gov/folic-acid/about/index.html",
             reviewedAt = "2026-06-21",
+            riskLevel = PregnancyContentRiskLevel.Normal,
         ),
         PregnancyContentCard(
             id = "exercise_first_trimester_moderate",
@@ -33,6 +34,7 @@ class PregnancyContentRepository {
             sourceNameResId = R.string.source_cdc_physical_activity,
             sourceUrl = "https://www.cdc.gov/physical-activity-basics/guidelines/healthy-pregnant-or-postpartum-women.html",
             reviewedAt = "2026-06-21",
+            riskLevel = PregnancyContentRiskLevel.Caution,
         ),
         PregnancyContentCard(
             id = "antenatal_first_trimester_first_visit",
@@ -44,6 +46,7 @@ class PregnancyContentRepository {
             sourceNameResId = R.string.source_who_antenatal_care,
             sourceUrl = "https://www.who.int/publications/i/item/9789241549912",
             reviewedAt = "2026-06-21",
+            riskLevel = PregnancyContentRiskLevel.Normal,
         ),
         PregnancyContentCard(
             id = "safety_first_trimester_warning_signs",
@@ -55,6 +58,7 @@ class PregnancyContentRepository {
             sourceNameResId = R.string.source_who_antenatal_care,
             sourceUrl = "https://www.who.int/publications/i/item/9789241549912",
             reviewedAt = "2026-06-21",
+            riskLevel = PregnancyContentRiskLevel.Urgent,
         ),
         PregnancyContentCard(
             id = "diet_second_trimester_fish",
@@ -66,6 +70,7 @@ class PregnancyContentRepository {
             sourceNameResId = R.string.source_fda_fish,
             sourceUrl = "https://www.fda.gov/food/consumers/advice-about-eating-fish",
             reviewedAt = "2026-06-21",
+            riskLevel = PregnancyContentRiskLevel.Caution,
         ),
         PregnancyContentCard(
             id = "exercise_second_trimester_walk",
@@ -77,6 +82,7 @@ class PregnancyContentRepository {
             sourceNameResId = R.string.source_cdc_physical_activity,
             sourceUrl = "https://www.cdc.gov/physical-activity-basics/guidelines/healthy-pregnant-or-postpartum-women.html",
             reviewedAt = "2026-06-21",
+            riskLevel = PregnancyContentRiskLevel.Caution,
         ),
         PregnancyContentCard(
             id = "antenatal_second_trimester_regular_visits",
@@ -88,6 +94,7 @@ class PregnancyContentRepository {
             sourceNameResId = R.string.source_who_antenatal_care,
             sourceUrl = "https://www.who.int/publications/i/item/9789241549912",
             reviewedAt = "2026-06-21",
+            riskLevel = PregnancyContentRiskLevel.Normal,
         ),
         PregnancyContentCard(
             id = "safety_second_trimester_movement_pattern",
@@ -99,6 +106,7 @@ class PregnancyContentRepository {
             sourceNameResId = R.string.source_nhs_baby_movements,
             sourceUrl = "https://www.nhs.uk/pregnancy/keeping-well/your-babys-movements/",
             reviewedAt = "2026-06-21",
+            riskLevel = PregnancyContentRiskLevel.Caution,
         ),
         PregnancyContentCard(
             id = "diet_third_trimester_regular_meals",
@@ -110,6 +118,7 @@ class PregnancyContentRepository {
             sourceNameResId = R.string.source_who_antenatal_care,
             sourceUrl = "https://www.who.int/publications/i/item/9789241549912",
             reviewedAt = "2026-06-21",
+            riskLevel = PregnancyContentRiskLevel.Normal,
         ),
         PregnancyContentCard(
             id = "exercise_third_trimester_comfort",
@@ -121,6 +130,7 @@ class PregnancyContentRepository {
             sourceNameResId = R.string.source_cdc_physical_activity,
             sourceUrl = "https://www.cdc.gov/physical-activity-basics/guidelines/healthy-pregnant-or-postpartum-women.html",
             reviewedAt = "2026-06-21",
+            riskLevel = PregnancyContentRiskLevel.Caution,
         ),
         PregnancyContentCard(
             id = "antenatal_third_trimester_birth_plan",
@@ -132,6 +142,7 @@ class PregnancyContentRepository {
             sourceNameResId = R.string.source_who_antenatal_care,
             sourceUrl = "https://www.who.int/publications/i/item/9789241549912",
             reviewedAt = "2026-06-21",
+            riskLevel = PregnancyContentRiskLevel.Normal,
         ),
         PregnancyContentCard(
             id = "safety_third_trimester_reduced_movement",
@@ -143,6 +154,7 @@ class PregnancyContentRepository {
             sourceNameResId = R.string.source_nhs_baby_movements,
             sourceUrl = "https://www.nhs.uk/pregnancy/keeping-well/your-babys-movements/",
             reviewedAt = "2026-06-21",
+            riskLevel = PregnancyContentRiskLevel.Urgent,
         ),
     )
 }

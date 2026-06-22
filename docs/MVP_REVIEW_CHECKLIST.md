@@ -26,6 +26,7 @@ Current result: passing.
 - Home shows today's reminder list from local daily reminder settings and today's appointment records.
 - Home keeps today's appointment records visible even when system appointment notifications are disabled.
 - Home shows the user-entered custom reminder message in today's reminder list.
+- Local content cards include traceable source URLs, review dates, risk levels, and locale metadata.
 - Diet guidance cards can be marked as read or favorited with local-only state.
 - Exercise guidance can be hidden and restored with local-only state.
 - Calendar supports month view, date markers, day detail list, create, edit, and delete with confirmation.

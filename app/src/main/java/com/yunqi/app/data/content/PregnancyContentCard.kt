@@ -9,6 +9,12 @@ enum class PregnancyContentCategory {
     Safety,
 }
 
+enum class PregnancyContentRiskLevel {
+    Normal,
+    Caution,
+    Urgent,
+}
+
 data class PregnancyContentCard(
     val id: String,
     val category: PregnancyContentCategory,
@@ -19,4 +25,6 @@ data class PregnancyContentCard(
     @StringRes val sourceNameResId: Int,
     val sourceUrl: String,
     val reviewedAt: String,
+    val riskLevel: PregnancyContentRiskLevel,
+    val locale: String = "zh-CN",
 )
