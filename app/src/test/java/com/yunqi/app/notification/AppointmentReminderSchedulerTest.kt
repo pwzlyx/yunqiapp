@@ -26,7 +26,7 @@ class AppointmentReminderSchedulerTest {
     }
 
     @Test
-    fun `ignores appointment when reminder time has passed`() {
+    fun `uses immediate reminder when appointment is still future but lead time has passed`() {
         val record = appointmentRecord(
             date = LocalDate.of(2026, 7, 1),
             time = "14:30",
@@ -34,6 +34,20 @@ class AppointmentReminderSchedulerTest {
 
         val plan = record.toAppointmentReminderPlan(
             now = LocalDateTime.of(2026, 7, 1, 14, 0),
+        )
+
+        assertEquals(0L, plan?.delayMillis)
+    }
+
+    @Test
+    fun `ignores appointment when appointment time has passed`() {
+        val record = appointmentRecord(
+            date = LocalDate.of(2026, 7, 1),
+            time = "14:30",
+        )
+
+        val plan = record.toAppointmentReminderPlan(
+            now = LocalDateTime.of(2026, 7, 1, 14, 30),
         )
 
         assertNull(plan)

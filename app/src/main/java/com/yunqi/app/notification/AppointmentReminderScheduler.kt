@@ -69,9 +69,10 @@ internal fun CalendarRecord.toAppointmentReminderPlan(now: LocalDateTime): Appoi
 
     val appointmentTime = appointmentTime?.toLocalTimeOrNull() ?: return null
     val appointmentDateTime = LocalDateTime.of(date, appointmentTime)
+    if (!appointmentDateTime.isAfter(now)) return null
+
     val reminderDateTime = appointmentDateTime.minusMinutes(REMINDER_LEAD_MINUTES)
-    val delayMillis = Duration.between(now, reminderDateTime).toMillis()
-    if (delayMillis <= 0) return null
+    val delayMillis = Duration.between(now, reminderDateTime).toMillis().coerceAtLeast(0L)
 
     val label = listOfNotNull(
         this.appointmentTime,
