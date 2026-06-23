@@ -33,33 +33,39 @@ class CalendarRecordCsvExporter {
                     "createdAtEpochMillis",
                 ),
             )
-            records.forEach { record ->
-                add(
-                    listOf(
-                        record.id,
-                        record.date.toString(),
-                        record.type.name,
-                        record.weightKg?.toString().orEmpty(),
-                        record.fetalMovementCount?.toString().orEmpty(),
-                        record.fetalMovementPeriod.orEmpty(),
-                        record.fetalMovementFeeling.orEmpty(),
-                        record.symptomType.orEmpty(),
-                        record.symptomSeverity.orEmpty(),
-                        record.exerciseType.orEmpty(),
-                        record.exerciseMinutes?.toString().orEmpty(),
-                        record.exerciseIntensity.orEmpty(),
-                        record.dietMeal.orEmpty(),
-                        record.dietContent.orEmpty(),
-                        record.appointmentTime.orEmpty(),
-                        record.appointmentLocation.orEmpty(),
-                        record.appointmentDoctor.orEmpty(),
-                        record.appointmentItems.orEmpty(),
-                        record.appointmentResult.orEmpty(),
-                        record.note,
-                        record.createdAtEpochMillis.toString(),
-                    ),
+            records
+                .sortedWith(
+                    compareBy<CalendarRecord> { it.date }
+                        .thenBy { it.createdAtEpochMillis }
+                        .thenBy { it.id },
                 )
-            }
+                .forEach { record ->
+                    add(
+                        listOf(
+                            record.id,
+                            record.date.toString(),
+                            record.type.name,
+                            record.weightKg?.toString().orEmpty(),
+                            record.fetalMovementCount?.toString().orEmpty(),
+                            record.fetalMovementPeriod.orEmpty(),
+                            record.fetalMovementFeeling.orEmpty(),
+                            record.symptomType.orEmpty(),
+                            record.symptomSeverity.orEmpty(),
+                            record.exerciseType.orEmpty(),
+                            record.exerciseMinutes?.toString().orEmpty(),
+                            record.exerciseIntensity.orEmpty(),
+                            record.dietMeal.orEmpty(),
+                            record.dietContent.orEmpty(),
+                            record.appointmentTime.orEmpty(),
+                            record.appointmentLocation.orEmpty(),
+                            record.appointmentDoctor.orEmpty(),
+                            record.appointmentItems.orEmpty(),
+                            record.appointmentResult.orEmpty(),
+                            record.note,
+                            record.createdAtEpochMillis.toString(),
+                        ),
+                    )
+                }
         }
         return UTF_8_BOM + rows.joinToString(separator = "\n", postfix = "\n") { row ->
             row.joinToString(separator = ",", transform = ::escape)

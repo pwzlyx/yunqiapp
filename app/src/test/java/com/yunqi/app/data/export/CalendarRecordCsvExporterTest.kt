@@ -100,4 +100,56 @@ class CalendarRecordCsvExporterTest {
             csv,
         )
     }
+
+    @Test
+    fun `exports records in stable chronological order`() {
+        val csv = exporter.export(
+            listOf(
+                record(id = "later-date", date = LocalDate.of(2026, 6, 22), createdAtEpochMillis = 1L),
+                record(id = "same-date-later", date = LocalDate.of(2026, 6, 21), createdAtEpochMillis = 2L),
+                record(id = "same-date-earlier", date = LocalDate.of(2026, 6, 21), createdAtEpochMillis = 1L),
+                record(id = "same-date-same-time-a", date = LocalDate.of(2026, 6, 21), createdAtEpochMillis = 1L),
+            ),
+        )
+
+        val exportedIds = csv
+            .lineSequence()
+            .drop(1)
+            .filter(String::isNotBlank)
+            .map { line -> line.substringBefore(",") }
+            .toList()
+
+        assertEquals(
+            listOf("same-date-earlier", "same-date-same-time-a", "same-date-later", "later-date"),
+            exportedIds,
+        )
+    }
+
+    private fun record(
+        id: String,
+        date: LocalDate,
+        createdAtEpochMillis: Long,
+    ): CalendarRecord = CalendarRecord(
+        id = id,
+        date = date,
+        type = CalendarRecordType.Note,
+        note = "note",
+        weightKg = null,
+        fetalMovementCount = null,
+        fetalMovementPeriod = null,
+        fetalMovementFeeling = null,
+        symptomType = null,
+        symptomSeverity = null,
+        exerciseType = null,
+        exerciseMinutes = null,
+        exerciseIntensity = null,
+        dietMeal = null,
+        dietContent = null,
+        appointmentTime = null,
+        appointmentLocation = null,
+        appointmentDoctor = null,
+        appointmentItems = null,
+        appointmentResult = null,
+        createdAtEpochMillis = createdAtEpochMillis,
+    )
 }
