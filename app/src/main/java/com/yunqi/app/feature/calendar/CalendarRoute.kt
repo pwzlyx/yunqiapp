@@ -31,6 +31,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowRight
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -108,8 +109,37 @@ private fun CalendarScreen(
     var recordFilter by remember { mutableStateOf<CalendarRecordType?>(null) }
     var errorMessageResId by remember { mutableStateOf<Int?>(null) }
     val coroutineScope = rememberCoroutineScope()
+    val clearForm = {
+        clearRecordForm(
+            onNoteChange = { note = it },
+            onWeightKgChange = { weightKg = it },
+            onFetalMovementCountChange = { fetalMovementCount = it },
+            onFetalMovementPeriodChange = { fetalMovementPeriod = it },
+            onFetalMovementFeelingChange = { fetalMovementFeeling = it },
+            onSymptomTypeChange = { symptomType = it },
+            onSymptomSeverityChange = { symptomSeverity = it },
+            onExerciseTypeChange = { exerciseType = it },
+            onExerciseMinutesChange = { exerciseMinutes = it },
+            onExerciseIntensityChange = { exerciseIntensity = it },
+            onDietMealChange = { dietMeal = it },
+            onDietContentChange = { dietContent = it },
+            onAppointmentTimeChange = { appointmentTime = it },
+            onAppointmentLocationChange = { appointmentLocation = it },
+            onAppointmentDoctorChange = { appointmentDoctor = it },
+            onAppointmentItemsChange = { appointmentItems = it },
+            onAppointmentResultChange = { appointmentResult = it },
+        )
+    }
     val filteredRecords = remember(uiState.records, recordFilter) {
         recordFilter?.let { type -> uiState.records.filter { it.type == type } } ?: uiState.records
+    }
+
+    LaunchedEffect(initialRecordType) {
+        val quickRecordType = initialRecordType ?: return@LaunchedEffect
+        recordType = quickRecordType
+        editingRecord = null
+        errorMessageResId = null
+        clearForm()
     }
 
     Column(
@@ -181,25 +211,7 @@ private fun CalendarScreen(
             editing = editingRecord != null,
             onCancelEdit = {
                 editingRecord = null
-                clearRecordForm(
-                    onNoteChange = { note = it },
-                    onWeightKgChange = { weightKg = it },
-                    onFetalMovementCountChange = { fetalMovementCount = it },
-                    onFetalMovementPeriodChange = { fetalMovementPeriod = it },
-                    onFetalMovementFeelingChange = { fetalMovementFeeling = it },
-                    onSymptomTypeChange = { symptomType = it },
-                    onSymptomSeverityChange = { symptomSeverity = it },
-                    onExerciseTypeChange = { exerciseType = it },
-                    onExerciseMinutesChange = { exerciseMinutes = it },
-                    onExerciseIntensityChange = { exerciseIntensity = it },
-                    onDietMealChange = { dietMeal = it },
-                    onDietContentChange = { dietContent = it },
-                    onAppointmentTimeChange = { appointmentTime = it },
-                    onAppointmentLocationChange = { appointmentLocation = it },
-                    onAppointmentDoctorChange = { appointmentDoctor = it },
-                    onAppointmentItemsChange = { appointmentItems = it },
-                    onAppointmentResultChange = { appointmentResult = it },
-                )
+                clearForm()
             },
             onSave = {
                 coroutineScope.launch {
@@ -231,25 +243,7 @@ private fun CalendarScreen(
                     errorMessageResId = result.toErrorMessageResId()
                     if (result == CalendarRecordActionResult.Success) {
                         editingRecord = null
-                        clearRecordForm(
-                            onNoteChange = { note = it },
-                            onWeightKgChange = { weightKg = it },
-                            onFetalMovementCountChange = { fetalMovementCount = it },
-                            onFetalMovementPeriodChange = { fetalMovementPeriod = it },
-                            onFetalMovementFeelingChange = { fetalMovementFeeling = it },
-                            onSymptomTypeChange = { symptomType = it },
-                            onSymptomSeverityChange = { symptomSeverity = it },
-                            onExerciseTypeChange = { exerciseType = it },
-                            onExerciseMinutesChange = { exerciseMinutes = it },
-                            onExerciseIntensityChange = { exerciseIntensity = it },
-                            onDietMealChange = { dietMeal = it },
-                            onDietContentChange = { dietContent = it },
-                            onAppointmentTimeChange = { appointmentTime = it },
-                            onAppointmentLocationChange = { appointmentLocation = it },
-                            onAppointmentDoctorChange = { appointmentDoctor = it },
-                            onAppointmentItemsChange = { appointmentItems = it },
-                            onAppointmentResultChange = { appointmentResult = it },
-                        )
+                        clearForm()
                     }
                 }
             },

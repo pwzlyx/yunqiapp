@@ -34,6 +34,7 @@ Current result: passing.
 - Diet guidance cards can be marked as read or favorited with local-only state.
 - Exercise guidance can be hidden and restored with local-only state.
 - Calendar supports month view, date markers, day detail list, create, edit, and delete with confirmation.
+- Calendar quick-record navigation starts a fresh form for the requested record type instead of carrying stale draft or edit state across entry points.
 - Calendar record types include appointment, weight, fetal movement, symptom, exercise, diet, and note.
 - Calendar record database mapping preserves all structured appointment, fetal movement, symptom, exercise, and diet fields.
 - Calendar record database migration SQL is covered by JVM tests for all structured fields added after version 1.
