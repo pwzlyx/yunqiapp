@@ -47,13 +47,15 @@ class AppointmentReminderSchedulerTest {
             date = LocalDate.of(2026, 7, 1),
             time = " 14:30 ",
             location = "  City Hospital  ",
+            doctor = " Dr Chen ",
+            items = " Ultrasound ",
         )
 
         val plan = record.toAppointmentReminderPlan(
             now = LocalDateTime.of(2026, 7, 1, 12, 30),
         )
 
-        assertEquals("14:30 City Hospital", plan?.appointmentLabel)
+        assertEquals("14:30 City Hospital Dr Chen Ultrasound", plan?.appointmentLabel)
     }
 
     @Test
@@ -174,6 +176,8 @@ class AppointmentReminderSchedulerTest {
         date: LocalDate,
         time: String,
         location: String? = null,
+        doctor: String? = null,
+        items: String? = null,
     ) = CalendarRecord(
         id = "appointment-1",
         date = date,
@@ -186,8 +190,8 @@ class AppointmentReminderSchedulerTest {
         exerciseMinutes = null,
         appointmentTime = time,
         appointmentLocation = location,
-        appointmentDoctor = null,
-        appointmentItems = null,
+        appointmentDoctor = doctor,
+        appointmentItems = items,
         appointmentResult = null,
         createdAtEpochMillis = 0L,
     )

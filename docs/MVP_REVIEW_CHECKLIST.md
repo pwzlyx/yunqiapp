@@ -56,6 +56,7 @@ Current result: passing.
 - Appointment reminders support configurable lead times of 1 hour, 6 hours, or 1 day, and changing the lead time rebuilds future appointment reminder work.
 - Appointment reminder lead times are normalized to the supported 1 hour, 6 hours, or 1 day options before Home display or WorkManager sync.
 - Appointment reminder notifications open the app when tapped.
+- Appointment reminder notification labels include trimmed appointment time, location, doctor, and check items when available.
 - Appointment reminder notification IDs are stable and non-negative, including the `Int.MIN_VALUE` hash edge case.
 - Future appointments inside the configured lead window schedule an immediate local reminder instead of silently dropping the notification.
 - Editing an appointment so it no longer has a valid future reminder cancels stale scheduled reminder work for that record.

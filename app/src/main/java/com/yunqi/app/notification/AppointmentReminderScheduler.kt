@@ -110,6 +110,8 @@ internal fun CalendarRecord.toAppointmentReminderPlan(
     val label = listOfNotNull(
         this.appointmentTime,
         appointmentLocation,
+        appointmentDoctor,
+        appointmentItems,
     )
         .map(String::trim)
         .filter(String::isNotBlank)
