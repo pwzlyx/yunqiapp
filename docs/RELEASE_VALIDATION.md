@@ -7,14 +7,12 @@ This document records the repeatable MVP validation flow for Yunqi before sharin
 Run from `android-app`:
 
 ```powershell
-$env:JAVA_HOME=(Resolve-Path .\..\tools\jdk\jdk-17* | Select-Object -First 1).Path
-$env:ANDROID_HOME=(Resolve-Path .\..\tools\android-sdk).Path
-$env:ANDROID_SDK_ROOT=$env:ANDROID_HOME
-$env:Path="$env:JAVA_HOME\bin;$env:ANDROID_HOME\platform-tools;$env:ANDROID_HOME\cmdline-tools\latest\bin;$env:Path"
-.\gradlew.bat :app:assembleDebug :app:assembleDebugAndroidTest :app:testDebugUnitTest :app:lintDebug --stacktrace
+.\scripts\validate_mvp.ps1
 ```
 
-The gate must pass before the APK is considered ready for manual smoke testing.
+The validation script configures the local JDK and Android SDK paths, runs the debug build, androidTest APK build, JVM tests, and lint, verifies that both APK artifacts exist, and reports whether `adb` has a connected device.
+
+The Gradle gate must pass before the APK is considered ready for manual smoke testing.
 
 Generated artifacts:
 
@@ -50,7 +48,7 @@ adb shell monkey -p com.yunqi.app 1
 Run connected Compose instrumentation tests when a device is available:
 
 ```powershell
-.\gradlew.bat :app:connectedDebugAndroidTest --stacktrace
+.\scripts\validate_mvp.ps1 -RunConnectedTests
 ```
 
 ## Manual MVP Checklist

@@ -53,10 +53,12 @@ Let Android Studio sync Gradle, then run the `app` configuration on a physical A
 Run from `android-app`:
 
 ```powershell
-$env:JAVA_HOME=(Resolve-Path .\..\tools\jdk\jdk-17* | Select-Object -First 1).Path
-$env:ANDROID_HOME=(Resolve-Path .\..\tools\android-sdk).Path
-$env:ANDROID_SDK_ROOT=$env:ANDROID_HOME
-$env:Path="$env:JAVA_HOME\bin;$env:ANDROID_HOME\platform-tools;$env:ANDROID_HOME\cmdline-tools\latest\bin;$env:Path"
+.\scripts\validate_mvp.ps1
+```
+
+The script configures the local JDK and Android SDK paths, then runs:
+
+```powershell
 .\gradlew.bat :app:assembleDebug :app:assembleDebugAndroidTest :app:testDebugUnitTest :app:lintDebug --stacktrace
 ```
 
