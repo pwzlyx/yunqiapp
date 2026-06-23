@@ -52,6 +52,7 @@ Current result: passing.
 - Appointment records include time, hospital or location, doctor, check items, result, and note.
 - Calendar rejects empty appointment records before they can clutter local history or produce unusable reminders.
 - Appointment time input is validated as `HH:mm` before reminder scheduling.
+- Appointment and daily reminder scheduling reject ISO times with seconds so every reminder path uses strict `HH:mm`.
 - Appointment reminders use local WorkManager jobs, Android notifications, a notification channel, notification permission handling, and a settings toggle.
 - Appointment reminders support configurable lead times of 1 hour, 6 hours, or 1 day, and changing the lead time rebuilds future appointment reminder work.
 - Appointment reminder lead times are normalized to the supported 1 hour, 6 hours, or 1 day options before Home display or WorkManager sync.

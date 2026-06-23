@@ -101,6 +101,20 @@ class AppointmentReminderSchedulerTest {
     }
 
     @Test
+    fun `ignores appointment time with seconds`() {
+        val record = appointmentRecord(
+            date = LocalDate.of(2026, 7, 1),
+            time = "14:30:00",
+        )
+
+        val plan = record.toAppointmentReminderPlan(
+            now = LocalDateTime.of(2026, 7, 1, 12, 0),
+        )
+
+        assertNull(plan)
+    }
+
+    @Test
     fun `ignores appointment without time`() {
         val record = appointmentRecord(
             date = LocalDate.of(2026, 7, 1),

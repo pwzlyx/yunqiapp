@@ -39,6 +39,16 @@ class DailyReminderSchedulerTest {
     }
 
     @Test
+    fun `ignores reminder time with seconds`() {
+        val delayMillis = calculateDailyReminderInitialDelay(
+            time = "13:00:00",
+            now = LocalDateTime.of(2026, 6, 21, 10, 0),
+        )
+
+        assertNull(delayMillis)
+    }
+
+    @Test
     fun `uses distinct work names for reminder types`() {
         assertNotEquals(
             dailyReminderWorkName(DailyReminderType.Weight),

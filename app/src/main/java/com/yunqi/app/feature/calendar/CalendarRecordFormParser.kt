@@ -3,7 +3,6 @@ package com.yunqi.app.feature.calendar
 import com.yunqi.app.domain.calendar.CalendarRecord
 import com.yunqi.app.domain.calendar.CalendarRecordType
 import java.time.LocalDate
-import java.time.LocalTime
 import java.util.UUID
 
 private const val MAX_WEIGHT_KG = 300.0
@@ -39,7 +38,7 @@ class CalendarRecordFormParser(
         if (
             input.type == CalendarRecordType.Appointment &&
             input.appointmentTime.isNotBlank() &&
-            input.appointmentTime.parseTime() == null
+            !input.appointmentTime.trim().isHourMinute()
         ) {
             return CalendarRecordParseResult.InvalidAppointmentTime
         }
@@ -104,10 +103,6 @@ class CalendarRecordFormParser(
         LocalDate.parse(trim())
     }.getOrNull()
 
-    private fun String.parseTime(): LocalTime? = runCatching {
-        LocalTime.parse(trim())
-    }.getOrNull()
-
     private fun String.parseOptionalDouble(): Double? =
         trim().takeIf(String::isNotEmpty)?.toDoubleOrNull()
 
@@ -148,6 +143,13 @@ class CalendarRecordFormParser(
     private fun Int?.isValidExerciseMinutes(): Boolean =
         this != null && this in 1..MAX_EXERCISE_MINUTES_PER_DAY
 }
+
+private fun String.isHourMinute(): Boolean =
+    length == 5 && this[2] == ':' &&
+        this[0].isDigit() && this[1].isDigit() &&
+        this[3].isDigit() && this[4].isDigit() &&
+        substring(0, 2).toInt() in 0..23 &&
+        substring(3, 5).toInt() in 0..59
 
 data class CalendarRecordInput(
     val id: String? = null,

@@ -37,6 +37,14 @@ class ReminderSettingsRepositoryTest {
     }
 
     @Test
+    fun `falls back to type default time when stored daily reminder time includes seconds`() {
+        assertEquals(
+            DailyReminderType.Water.defaultTime,
+            "13:00:00".toValidDailyReminderTimeOrDefault(DailyReminderType.Water),
+        )
+    }
+
+    @Test
     fun `uses valid legacy time for legacy daily reminder types`() {
         assertEquals(
             "18:30",

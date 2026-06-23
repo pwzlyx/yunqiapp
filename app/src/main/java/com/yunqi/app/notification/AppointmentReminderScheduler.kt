@@ -122,6 +122,18 @@ internal fun CalendarRecord.toAppointmentReminderPlan(
     )
 }
 
-private fun String.toLocalTimeOrNull(): LocalTime? = runCatching {
-    LocalTime.parse(trim())
-}.getOrNull()
+private fun String.toLocalTimeOrNull(): LocalTime? {
+    val normalized = trim()
+    if (!normalized.isHourMinute()) return null
+    return LocalTime.of(
+        normalized.substring(0, 2).toInt(),
+        normalized.substring(3, 5).toInt(),
+    )
+}
+
+private fun String.isHourMinute(): Boolean =
+    length == 5 && this[2] == ':' &&
+        this[0].isDigit() && this[1].isDigit() &&
+        this[3].isDigit() && this[4].isDigit() &&
+        substring(0, 2).toInt() in 0..23 &&
+        substring(3, 5).toInt() in 0..59

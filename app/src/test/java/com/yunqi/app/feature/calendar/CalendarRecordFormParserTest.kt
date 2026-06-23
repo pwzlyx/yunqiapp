@@ -99,6 +99,23 @@ class CalendarRecordFormParserTest {
     }
 
     @Test
+    fun `rejects appointment time with seconds`() {
+        val result = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.Appointment,
+                note = "",
+                weightKg = "",
+                fetalMovementCount = "",
+                appointmentTime = "09:30:00",
+                appointmentLocation = "Clinic",
+            ),
+        )
+
+        assertEquals(CalendarRecordParseResult.InvalidAppointmentTime, result)
+    }
+
+    @Test
     fun `parses weight record`() {
         val result = parser.parse(
             CalendarRecordInput(

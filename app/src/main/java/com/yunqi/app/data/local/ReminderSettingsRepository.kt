@@ -7,7 +7,6 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.yunqi.app.domain.reminder.DailyReminderType
-import java.time.LocalTime
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -135,7 +134,11 @@ internal fun String?.toValidDailyReminderTimeOrDefault(
 }
 
 private fun String.isValidHourMinute(): Boolean =
-    runCatching { LocalTime.parse(this) }.isSuccess
+    length == 5 && this[2] == ':' &&
+        this[0].isDigit() && this[1].isDigit() &&
+        this[3].isDigit() && this[4].isDigit() &&
+        substring(0, 2).toInt() in 0..23 &&
+        substring(3, 5).toInt() in 0..59
 
 internal fun Long?.toSupportedAppointmentReminderLeadMinutes(): Long =
     this?.takeIf { it in supportedAppointmentReminderLeadMinutes }
