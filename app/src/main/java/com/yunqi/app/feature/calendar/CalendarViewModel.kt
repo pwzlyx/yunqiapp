@@ -42,7 +42,7 @@ class CalendarViewModel(application: Application) : AndroidViewModel(application
                     selectedDate = date,
                     displayedMonth = displayedMonth,
                     monthDays = monthBuilder.build(displayedMonth, monthRecords),
-                    records = records,
+                    records = CalendarRecordListSorter.sort(records),
                 )
             }
         }
