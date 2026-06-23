@@ -4,8 +4,10 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.yunqi.app.data.local.DailyReminderPreference
 import com.yunqi.app.data.local.ReminderSettingsRepository
 import com.yunqi.app.data.local.record.CalendarRecordRepository
+import com.yunqi.app.domain.reminder.DailyReminderType
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -49,6 +51,22 @@ class ReminderRestoreReceiver : BroadcastReceiver() {
 internal fun reminderRestoreFailureLogMessage(error: Throwable): String =
     "Unable to restore local reminders. Cause=${error::class.java.simpleName}"
 
+internal data class DailyReminderRestorePlan(
+    val cancelLegacyWork: Boolean,
+    val remindersToSchedule: List<DailyReminderPreference>,
+    val reminderTypesToCancel: List<DailyReminderType>,
+)
+
+/**
+ * Describes how local daily reminder work should be rebuilt after boot or app upgrade.
+ */
+internal fun dailyReminderRestorePlan(reminders: List<DailyReminderPreference>): DailyReminderRestorePlan =
+    DailyReminderRestorePlan(
+        cancelLegacyWork = true,
+        remindersToSchedule = reminders.filter { it.enabled },
+        reminderTypesToCancel = reminders.filterNot { it.enabled }.map { it.type },
+    )
+
 internal class ReminderRestorer(
     context: Context,
     private val todayProvider: () -> LocalDate = { LocalDate.now() },
@@ -63,17 +81,20 @@ internal class ReminderRestorer(
      */
     suspend fun restore() {
         val settings = reminderSettingsRepository.reminderSettingsFlow.first()
+        val dailyPlan = dailyReminderRestorePlan(settings.dailyReminders)
 
-        settings.dailyReminders.forEach { reminder ->
-            if (reminder.enabled) {
-                dailyReminderScheduler.schedule(
-                    type = reminder.type,
-                    time = reminder.time,
-                    customMessage = reminder.customMessage,
-                )
-            } else {
-                dailyReminderScheduler.cancel(reminder.type)
-            }
+        if (dailyPlan.cancelLegacyWork) {
+            dailyReminderScheduler.cancelLegacy()
+        }
+        dailyPlan.remindersToSchedule.forEach { reminder ->
+            dailyReminderScheduler.schedule(
+                type = reminder.type,
+                time = reminder.time,
+                customMessage = reminder.customMessage,
+            )
+        }
+        dailyPlan.reminderTypesToCancel.forEach { type ->
+            dailyReminderScheduler.cancel(type)
         }
 
         if (settings.appointmentRemindersEnabled) {
