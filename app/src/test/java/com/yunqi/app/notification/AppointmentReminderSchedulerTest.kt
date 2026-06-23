@@ -1,5 +1,6 @@
 package com.yunqi.app.notification
 
+import com.yunqi.app.R
 import com.yunqi.app.domain.calendar.CalendarRecord
 import com.yunqi.app.domain.calendar.CalendarRecordType
 import java.time.LocalDate
@@ -184,6 +185,22 @@ class AppointmentReminderSchedulerTest {
     fun `normalizes appointment notification ids to non negative values`() {
         assertEquals(0, Int.MIN_VALUE.toNonNegativeNotificationId())
         assertTrue(appointmentReminderNotificationId("appointment-1") >= 0)
+    }
+
+    @Test
+    fun `appointment notification content trims non blank label`() {
+        val content = appointmentReminderNotificationContent(" 14:30 City Hospital ")
+
+        assertEquals(R.string.notification_appointment_body, content.bodyResId)
+        assertEquals("14:30 City Hospital", content.label)
+    }
+
+    @Test
+    fun `appointment notification content falls back when label is blank`() {
+        val content = appointmentReminderNotificationContent("   ")
+
+        assertEquals(R.string.notification_appointment_body_without_label, content.bodyResId)
+        assertNull(content.label)
     }
 
     private fun appointmentRecord(
