@@ -103,6 +103,18 @@ class PregnancyContentRepositoryTest {
         }
     }
 
+    @Test
+    fun `exercise body copy includes weekly goal and pre activity self check`() {
+        val exerciseBodyStrings = contentStringValues()
+            .filterKeys { name -> name.startsWith("content_exercise_") && name.endsWith("_body") }
+
+        assertTrue(exerciseBodyStrings.isNotEmpty())
+        exerciseBodyStrings.forEach { (name, value) ->
+            assertTrue("$name should include weekly activity goal", "每周" in value && "150" in value)
+            assertTrue("$name should ask users to check their condition", "运动前确认身体状态" in value)
+        }
+    }
+
     private fun representativeCards(): List<PregnancyContentCard> =
         listOf(8L, 20L, 34L).flatMap(repository::cardsForWeek)
 

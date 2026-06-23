@@ -37,6 +37,7 @@ Current result: passing.
 - Diet guidance cards can be marked as read or favorited with local-only state.
 - Exercise guidance can be hidden and restored with local-only state.
 - Second and third trimester exercise guidance is tested to avoid supine-position recommendations.
+- Exercise guidance body copy includes a weekly activity goal and a pre-activity self-check reminder.
 - Local content read, favorite, and hidden status ignores blank content IDs before persisting state.
 - Exercise guidance visibility is covered with real local content IDs so hidden cards stay restorable.
 - Calendar supports month view, date markers, day detail list, create, edit, and delete with confirmation.
