@@ -2,6 +2,7 @@ package com.yunqi.app.feature.calendar
 
 import com.yunqi.app.domain.calendar.CalendarRecord
 import com.yunqi.app.domain.calendar.CalendarRecordType
+import com.yunqi.app.core.time.isStrictHourMinute
 import java.time.LocalDate
 import java.util.UUID
 
@@ -38,7 +39,7 @@ class CalendarRecordFormParser(
         if (
             input.type == CalendarRecordType.Appointment &&
             input.appointmentTime.isNotBlank() &&
-            !input.appointmentTime.trim().isHourMinute()
+            !input.appointmentTime.isStrictHourMinute()
         ) {
             return CalendarRecordParseResult.InvalidAppointmentTime
         }
@@ -143,13 +144,6 @@ class CalendarRecordFormParser(
     private fun Int?.isValidExerciseMinutes(): Boolean =
         this != null && this in 1..MAX_EXERCISE_MINUTES_PER_DAY
 }
-
-private fun String.isHourMinute(): Boolean =
-    length == 5 && this[2] == ':' &&
-        this[0].isDigit() && this[1].isDigit() &&
-        this[3].isDigit() && this[4].isDigit() &&
-        substring(0, 2).toInt() in 0..23 &&
-        substring(3, 5).toInt() in 0..59
 
 data class CalendarRecordInput(
     val id: String? = null,

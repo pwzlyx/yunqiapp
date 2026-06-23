@@ -5,11 +5,11 @@ import androidx.work.Data
 import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
+import com.yunqi.app.core.time.toStrictHourMinuteOrNull
 import com.yunqi.app.domain.calendar.CalendarRecord
 import com.yunqi.app.domain.calendar.CalendarRecordType
 import java.time.Duration
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 
 private const val DEFAULT_REMINDER_LEAD_MINUTES = 60L
@@ -122,18 +122,4 @@ internal fun CalendarRecord.toAppointmentReminderPlan(
     )
 }
 
-private fun String.toLocalTimeOrNull(): LocalTime? {
-    val normalized = trim()
-    if (!normalized.isHourMinute()) return null
-    return LocalTime.of(
-        normalized.substring(0, 2).toInt(),
-        normalized.substring(3, 5).toInt(),
-    )
-}
-
-private fun String.isHourMinute(): Boolean =
-    length == 5 && this[2] == ':' &&
-        this[0].isDigit() && this[1].isDigit() &&
-        this[3].isDigit() && this[4].isDigit() &&
-        substring(0, 2).toInt() in 0..23 &&
-        substring(3, 5).toInt() in 0..59
+private fun String.toLocalTimeOrNull() = toStrictHourMinuteOrNull()

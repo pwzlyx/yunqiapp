@@ -5,10 +5,10 @@ import androidx.work.Data
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
+import com.yunqi.app.core.time.toStrictHourMinuteOrNull
 import com.yunqi.app.domain.reminder.DailyReminderType
 import java.time.Duration
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.util.concurrent.TimeUnit
 
 private const val LEGACY_DAILY_REMINDER_WORK_NAME = "daily-record-reminder"
@@ -96,25 +96,10 @@ internal fun dailyReminderScheduleDecision(
 }
 
 internal fun calculateDailyReminderInitialDelay(time: String, now: LocalDateTime): Long? {
-    val reminderTime = time.trim().toHourMinuteOrNull() ?: return null
+    val reminderTime = time.toStrictHourMinuteOrNull() ?: return null
     var nextReminderAt = LocalDateTime.of(now.toLocalDate(), reminderTime)
     if (!nextReminderAt.isAfter(now)) {
         nextReminderAt = nextReminderAt.plusDays(1)
     }
     return Duration.between(now, nextReminderAt).toMillis()
 }
-
-private fun String.toHourMinuteOrNull(): LocalTime? {
-    if (!isHourMinute()) return null
-    return LocalTime.of(
-        substring(0, 2).toInt(),
-        substring(3, 5).toInt(),
-    )
-}
-
-private fun String.isHourMinute(): Boolean =
-    length == 5 && this[2] == ':' &&
-        this[0].isDigit() && this[1].isDigit() &&
-        this[3].isDigit() && this[4].isDigit() &&
-        substring(0, 2).toInt() in 0..23 &&
-        substring(3, 5).toInt() in 0..59
