@@ -60,6 +60,22 @@ class AppointmentReminderSchedulerTest {
     }
 
     @Test
+    fun `caps appointment label before scheduling notification work`() {
+        val longLocation = "x".repeat(MAX_APPOINTMENT_REMINDER_LABEL_LENGTH + 20)
+        val record = appointmentRecord(
+            date = LocalDate.of(2026, 7, 1),
+            time = "14:30",
+            location = longLocation,
+        )
+
+        val plan = record.toAppointmentReminderPlan(
+            now = LocalDateTime.of(2026, 7, 1, 12, 30),
+        )
+
+        assertEquals(MAX_APPOINTMENT_REMINDER_LABEL_LENGTH, plan?.appointmentLabel?.length)
+    }
+
+    @Test
     fun `uses immediate reminder when appointment is still future but lead time has passed`() {
         val record = appointmentRecord(
             date = LocalDate.of(2026, 7, 1),
@@ -193,6 +209,16 @@ class AppointmentReminderSchedulerTest {
 
         assertEquals(R.string.notification_appointment_body, content.bodyResId)
         assertEquals("14:30 City Hospital", content.label)
+    }
+
+    @Test
+    fun `appointment notification content caps legacy long label`() {
+        val content = appointmentReminderNotificationContent(
+            "x".repeat(MAX_APPOINTMENT_REMINDER_LABEL_LENGTH + 20),
+        )
+
+        assertEquals(R.string.notification_appointment_body, content.bodyResId)
+        assertEquals(MAX_APPOINTMENT_REMINDER_LABEL_LENGTH, content.label?.length)
     }
 
     @Test

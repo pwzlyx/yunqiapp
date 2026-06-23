@@ -61,7 +61,7 @@ internal data class AppointmentReminderNotificationContent(
 internal fun appointmentReminderNotificationContent(
     appointmentLabel: String,
 ): AppointmentReminderNotificationContent {
-    val trimmedLabel = appointmentLabel.trim()
+    val trimmedLabel = appointmentLabel.toAppointmentReminderLabel()
     return if (trimmedLabel.isBlank()) {
         AppointmentReminderNotificationContent(
             bodyResId = R.string.notification_appointment_body_without_label,
@@ -74,3 +74,11 @@ internal fun appointmentReminderNotificationContent(
         )
     }
 }
+
+internal const val MAX_APPOINTMENT_REMINDER_LABEL_LENGTH = 160
+
+/**
+ * Keeps appointment notification labels concise for WorkManager input data and system notification text.
+ */
+internal fun String.toAppointmentReminderLabel(): String =
+    trim().take(MAX_APPOINTMENT_REMINDER_LABEL_LENGTH)

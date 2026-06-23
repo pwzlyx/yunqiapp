@@ -118,7 +118,7 @@ internal fun CalendarRecord.toAppointmentReminderPlan(
         .joinToString(" ")
     return AppointmentReminderPlan(
         delayMillis = delayMillis,
-        appointmentLabel = label,
+        appointmentLabel = label.toAppointmentReminderLabel(),
     )
 }
 
