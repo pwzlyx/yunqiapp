@@ -62,6 +62,26 @@ class CalendarRecordFormParserTest {
     }
 
     @Test
+    fun `rejects empty appointment record`() {
+        val result = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.Appointment,
+                note = "   ",
+                weightKg = "",
+                fetalMovementCount = "",
+                appointmentTime = "",
+                appointmentLocation = "   ",
+                appointmentDoctor = "",
+                appointmentItems = "",
+                appointmentResult = "",
+            ),
+        )
+
+        assertEquals(CalendarRecordParseResult.InvalidRecordContent, result)
+    }
+
+    @Test
     fun `rejects invalid appointment time`() {
         val result = parser.parse(
             CalendarRecordInput(

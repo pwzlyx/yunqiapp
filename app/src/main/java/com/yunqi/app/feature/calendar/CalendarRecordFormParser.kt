@@ -128,6 +128,14 @@ class CalendarRecordFormParser(
     }
 
     private fun CalendarRecordInput.hasRequiredContent(): Boolean = when (type) {
+        CalendarRecordType.Appointment -> anyNonBlank(
+            appointmentTime,
+            appointmentLocation,
+            appointmentDoctor,
+            appointmentItems,
+            appointmentResult,
+            note,
+        )
         CalendarRecordType.Symptom -> anyNonBlank(symptomType, symptomSeverity, note)
         CalendarRecordType.Diet -> anyNonBlank(dietMeal, dietContent, note)
         CalendarRecordType.Note -> note.isNotBlank()

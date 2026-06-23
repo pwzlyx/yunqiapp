@@ -47,6 +47,7 @@ Current result: passing.
 - Symptom, exercise, and diet records include PRD-specific structured fields in addition to notes.
 - Calendar shows a medical-attention notice when recording and reviewing fetal movement or symptom records.
 - Appointment records include time, hospital or location, doctor, check items, result, and note.
+- Calendar rejects empty appointment records before they can clutter local history or produce unusable reminders.
 - Appointment time input is validated as `HH:mm` before reminder scheduling.
 - Appointment reminders use local WorkManager jobs, Android notifications, a notification channel, notification permission handling, and a settings toggle.
 - Appointment reminders support configurable lead times of 1 hour, 6 hours, or 1 day, and changing the lead time rebuilds future appointment reminder work.
