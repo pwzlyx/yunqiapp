@@ -49,7 +49,9 @@ class ReminderSettingsRepository(
                                 legacyEnabled = legacyDailyReminderEnabled,
                                 legacyTime = legacyDailyReminderTime,
                             ),
-                        customMessage = preferences[Keys.dailyReminderCustomMessage(type)].orEmpty(),
+                        customMessage = preferences[Keys.dailyReminderCustomMessage(type)]
+                            .orEmpty()
+                            .sanitizeDailyReminderCustomMessage(),
                     )
                 },
             )
