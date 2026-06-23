@@ -1,62 +1,70 @@
-# Android App Workspace
+# Yunqi Pregnancy Android App
 
-This workspace is reserved for the Android app project.
+Yunqi is a local-first Android MVP for pregnancy planning and daily tracking. It helps pregnant users calculate gestational age, view week-aware guidance, record calendar events, manage reminders, and review local trends without sending health data to a cloud service.
 
-## Project Status
+## Current Status
 
-- Workspace created: 2026-06-21
-- Git installed: `tools/git` portable Git for Windows
-- Git initialized: yes, branch `main`
-- GitHub remote: `https://github.com/pwzlyx/yunqiapp.git`
-- Product requirements: `docs/PRD_PREGNANCY_APP.md`
-- Development plan: `docs/DEVELOPMENT_PLAN.md`
-- Android project scaffold: Compose app skeleton on `feature/android-scaffold`
-- Data policy: local-only MVP storage, Android backup disabled
+- Branch: `feature/android-scaffold`
+- Remote: `https://github.com/pwzlyx/yunqiapp.git`
+- Android app: Kotlin, Jetpack Compose, Material 3, Room, DataStore, WorkManager
+- Storage policy: local-only MVP storage; Android cloud backup and device-transfer extraction are disabled
+- Automated gates: debug APK build, androidTest APK build, JVM tests, and Android lint are passing
+- Runtime gap: physical-device/emulator notification delivery still needs verification on a device that can run the APK
 
-## Documents
+## Product Documents
 
 - [Pregnancy App PRD](docs/PRD_PREGNANCY_APP.md)
 - [Development Plan](docs/DEVELOPMENT_PLAN.md)
+- [Android Environment Setup](docs/ANDROID_ENV_SETUP.md)
+- [MVP Review Checklist](docs/MVP_REVIEW_CHECKLIST.md)
+- [Release Validation](docs/RELEASE_VALIDATION.md)
 - [GitHub Setup](docs/GITHUB_SETUP.md)
 
-## Recommended Next Steps
+## Implemented MVP
 
-1. Configure Git identity.
-2. Create or provide a GitHub repository URL.
-3. Connect this folder to GitHub.
-4. Install Android Studio.
-5. Scaffold the Android app project inside this folder.
+- Pregnancy setup from last menstrual period, due date, conception date, or current gestational age
+- Home dashboard with current gestational age, due-date countdown, local reminders, diet, exercise, antenatal care, and safety guidance
+- Calendar month view with local records for appointments, weight, fetal movement, symptoms, exercise, diet, and notes
+- Edit, delete, validation, and confirmation flows for local calendar records
+- Appointment reminders and daily reminders through local WorkManager jobs and Android notifications
+- Trends for weight, fetal movement, exercise, and upcoming appointment plans
+- Settings for pregnancy profile editing, reminder preferences, notification permission guidance, CSV export, profile deletion, and full local data clearing
+- Traceable local guidance content with source URLs, review dates, risk levels, and locale metadata
+- Unit and instrumentation test coverage for core calculations, database migrations, reminders, export safety, content coverage, and key Compose navigation flows
 
-## Planned Structure
+## Open In Android Studio
+
+Android Studio is installed locally at:
 
 ```text
-android-app/
-  app/                 Android application module
-  docs/                Project notes and setup docs
-  README.md            Project overview
-  .gitignore           Git ignore rules
+C:\Users\zengzeng\Documents\Codex\AndroidStudio\android-studio\bin\studio64.exe
 ```
 
-## Android Scaffold
-
-The current scaffold includes:
-
-- Kotlin Android app module
-- Jetpack Compose and Material 3
-- Bottom navigation: Home, Calendar, Trends, Settings
-- Initial Yunqi theme
-- Pregnancy date calculation domain class
-- Unit test skeleton for pregnancy calculation
-- Local-only privacy defaults for pregnancy records
-
-Open this folder in Android Studio:
+Open this project folder:
 
 ```text
 C:\Users\zengzeng\Documents\Codex\2026-06-21\w\android-app
 ```
 
-Build command after JDK 17+ and Android SDK are installed:
+Let Android Studio sync Gradle, then run the `app` configuration on a physical Android device or a working emulator.
+
+## Command-Line Build
+
+Run from `android-app`:
 
 ```powershell
-.\gradlew.bat :app:assembleDebug
+$env:JAVA_HOME=(Resolve-Path .\..\tools\jdk\jdk-17* | Select-Object -First 1).Path
+$env:ANDROID_HOME=(Resolve-Path .\..\tools\android-sdk).Path
+$env:ANDROID_SDK_ROOT=$env:ANDROID_HOME
+$env:Path="$env:JAVA_HOME\bin;$env:ANDROID_HOME\platform-tools;$env:ANDROID_HOME\cmdline-tools\latest\bin;$env:Path"
+.\gradlew.bat :app:assembleDebug :app:assembleDebugAndroidTest :app:testDebugUnitTest :app:lintDebug --stacktrace
 ```
+
+Generated APKs:
+
+```text
+app\build\outputs\apk\debug\app-debug.apk
+app\build\outputs\apk\androidTest\debug\app-debug-androidTest.apk
+```
+
+See [Release Validation](docs/RELEASE_VALIDATION.md) for manual smoke-test steps and the current emulator verification blocker.
