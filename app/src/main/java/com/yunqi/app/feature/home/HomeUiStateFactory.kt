@@ -1,6 +1,7 @@
 package com.yunqi.app.feature.home
 
 import com.yunqi.app.R
+import com.yunqi.app.core.time.isStrictHourMinute
 import com.yunqi.app.data.content.PregnancyContentRepository
 import com.yunqi.app.data.local.ContentStatus
 import com.yunqi.app.data.local.DailyReminderPreference
@@ -55,34 +56,57 @@ class HomeUiStateFactory(
     ): List<HomeReminderItem> {
         val appointmentItems = calendarRecords
             .filter { it.date == today && it.type == CalendarRecordType.Appointment }
-            .sortedWith(compareBy<CalendarRecord> { it.appointmentTime.orEmpty().trim() }.thenBy { it.createdAtEpochMillis })
             .map { record ->
-                HomeReminderItem(
-                    id = "appointment_${record.id}",
-                    titleResId = R.string.home_today_appointment_reminder,
-                    detail = listOfNotNull(record.appointmentTime, record.appointmentLocation)
-                        .map(String::trim)
-                        .filter(String::isNotBlank)
-                        .joinToString(" - ")
-                        .ifBlank { null },
-                    actionRecordType = CalendarRecordType.Appointment,
+                TimedHomeReminderItem(
+                    time = record.appointmentTime.toReminderSortTime(),
+                    createdAtEpochMillis = record.createdAtEpochMillis,
+                    item = HomeReminderItem(
+                        id = "appointment_${record.id}",
+                        titleResId = R.string.home_today_appointment_reminder,
+                        detail = listOfNotNull(record.appointmentTime, record.appointmentLocation)
+                            .map(String::trim)
+                            .filter(String::isNotBlank)
+                            .joinToString(" - ")
+                            .ifBlank { null },
+                        actionRecordType = CalendarRecordType.Appointment,
+                    ),
                 )
             }
 
         val dailyItems = reminderSettings.dailyReminders
             .filter { it.enabled }
             .map { reminder ->
-                HomeReminderItem(
-                    id = "daily_${reminder.type.name}",
-                    titleResId = reminder.type.homeTitleResId(),
-                    detail = reminder.homeDetail(),
-                    actionRecordType = reminder.type.actionRecordType(),
+                TimedHomeReminderItem(
+                    time = reminder.time.toReminderSortTime(),
+                    createdAtEpochMillis = 0L,
+                    item = HomeReminderItem(
+                        id = "daily_${reminder.type.name}",
+                        titleResId = reminder.type.homeTitleResId(),
+                        detail = reminder.homeDetail(),
+                        actionRecordType = reminder.type.actionRecordType(),
+                    ),
                 )
             }
 
-        return appointmentItems + dailyItems
+        return (appointmentItems + dailyItems)
+            .sortedWith(
+                compareBy<TimedHomeReminderItem> { it.time ?: LAST_REMINDER_SORT_TIME }
+                    .thenBy { it.createdAtEpochMillis },
+            )
+            .map(TimedHomeReminderItem::item)
     }
 }
+
+private const val LAST_REMINDER_SORT_TIME = "99:99"
+
+private data class TimedHomeReminderItem(
+    val time: String?,
+    val createdAtEpochMillis: Long,
+    val item: HomeReminderItem,
+)
+
+private fun String?.toReminderSortTime(): String? =
+    this?.trim()?.takeIf(String::isStrictHourMinute)
 
 private fun DailyReminderPreference.homeDetail(): String =
     if (type == DailyReminderType.Custom && customMessage.isNotBlank()) {

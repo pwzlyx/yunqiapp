@@ -99,7 +99,7 @@ class HomeUiStateFactoryTest {
     }
 
     @Test
-    fun `ready state includes enabled daily reminders and today's appointments`() {
+    fun `ready state includes enabled daily reminders and today's appointments sorted by time`() {
         val factory = HomeUiStateFactory(
             todayProvider = { LocalDate.of(2026, 6, 21) },
         )
@@ -134,11 +134,11 @@ class HomeUiStateFactoryTest {
         ) as HomeUiState.Ready
 
         assertEquals(3, state.reminderItems.size)
-        assertEquals(R.string.home_today_appointment_reminder, state.reminderItems[0].titleResId)
-        assertEquals("10:30 - City Hospital", state.reminderItems[0].detail)
-        assertEquals(CalendarRecordType.Appointment, state.reminderItems[0].actionRecordType)
-        assertEquals(R.string.settings_daily_reminder_weight, state.reminderItems[1].titleResId)
-        assertEquals(CalendarRecordType.Weight, state.reminderItems[1].actionRecordType)
+        assertEquals(R.string.settings_daily_reminder_weight, state.reminderItems[0].titleResId)
+        assertEquals(CalendarRecordType.Weight, state.reminderItems[0].actionRecordType)
+        assertEquals(R.string.home_today_appointment_reminder, state.reminderItems[1].titleResId)
+        assertEquals("10:30 - City Hospital", state.reminderItems[1].detail)
+        assertEquals(CalendarRecordType.Appointment, state.reminderItems[1].actionRecordType)
         assertEquals(R.string.settings_daily_reminder_water, state.reminderItems[2].titleResId)
         assertEquals(null, state.reminderItems[2].actionRecordType)
     }
@@ -218,6 +218,36 @@ class HomeUiStateFactoryTest {
         ) as HomeUiState.Ready
 
         assertEquals("09:00 - Clinic A", state.reminderItems.first().detail)
+    }
+
+    @Test
+    fun `ready state puts untimed appointments after timed reminders`() {
+        val factory = HomeUiStateFactory(
+            todayProvider = { LocalDate.of(2026, 6, 21) },
+        )
+        val reminderSettings = ReminderSettings(
+            appointmentRemindersEnabled = true,
+            dailyReminders = listOf(
+                DailyReminderPreference(DailyReminderType.Water, enabled = true, time = "13:00"),
+            ),
+        )
+
+        val state = factory.create(
+            profile = pregnancyProfile(),
+            reminderSettings = reminderSettings,
+            calendarRecords = listOf(
+                appointmentRecord(
+                    id = "untimed",
+                    date = LocalDate.of(2026, 6, 21),
+                    time = "",
+                    location = "City Hospital",
+                ),
+            ),
+        ) as HomeUiState.Ready
+
+        assertEquals(R.string.settings_daily_reminder_water, state.reminderItems.first().titleResId)
+        assertEquals(R.string.home_today_appointment_reminder, state.reminderItems.last().titleResId)
+        assertEquals("City Hospital", state.reminderItems.last().detail)
     }
 
     @Test
