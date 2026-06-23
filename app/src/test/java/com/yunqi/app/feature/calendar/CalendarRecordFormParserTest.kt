@@ -544,4 +544,32 @@ class CalendarRecordFormParserTest {
         assertEquals(42L, record.createdAtEpochMillis)
         assertEquals("Updated note", record.note)
     }
+
+    @Test
+    fun `trims and caps free text fields before saving`() {
+        val longText = "  " + "x".repeat(MAX_CALENDAR_RECORD_TEXT_LENGTH + 20) + "  "
+
+        val result = parser.parse(
+            CalendarRecordInput(
+                date = "2026-06-21",
+                type = CalendarRecordType.Appointment,
+                note = longText,
+                weightKg = "",
+                fetalMovementCount = "",
+                appointmentTime = "",
+                appointmentLocation = longText,
+                appointmentDoctor = longText,
+                appointmentItems = longText,
+                appointmentResult = longText,
+            ),
+        )
+
+        val record = (result as CalendarRecordParseResult.Success).record
+        val expected = "x".repeat(MAX_CALENDAR_RECORD_TEXT_LENGTH)
+        assertEquals(expected, record.note)
+        assertEquals(expected, record.appointmentLocation)
+        assertEquals(expected, record.appointmentDoctor)
+        assertEquals(expected, record.appointmentItems)
+        assertEquals(expected, record.appointmentResult)
+    }
 }

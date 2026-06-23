@@ -9,6 +9,7 @@ import java.util.UUID
 private const val MAX_WEIGHT_KG = 300.0
 private const val MAX_FETAL_MOVEMENT_COUNT = 1_000
 private const val MAX_EXERCISE_MINUTES_PER_DAY = 24 * 60
+internal const val MAX_CALENDAR_RECORD_TEXT_LENGTH = 500
 
 class CalendarRecordFormParser(
     private val idProvider: () -> String = { UUID.randomUUID().toString() },
@@ -52,49 +53,37 @@ class CalendarRecordFormParser(
                 id = input.id ?: idProvider(),
                 date = date,
                 type = input.type,
-                note = input.note.trim(),
+                note = input.note.toStoredRecordText(),
                 weightKg = if (input.type == CalendarRecordType.Weight) weightKg else null,
                 fetalMovementCount = if (input.type == CalendarRecordType.FetalMovement) fetalMovementCount else null,
-                fetalMovementPeriod = input.fetalMovementPeriod.trim().takeIf {
-                    input.type == CalendarRecordType.FetalMovement && it.isNotBlank()
-                },
-                fetalMovementFeeling = input.fetalMovementFeeling.trim().takeIf {
-                    input.type == CalendarRecordType.FetalMovement && it.isNotBlank()
-                },
-                symptomType = input.symptomType.trim().takeIf {
-                    input.type == CalendarRecordType.Symptom && it.isNotBlank()
-                },
-                symptomSeverity = input.symptomSeverity.trim().takeIf {
-                    input.type == CalendarRecordType.Symptom && it.isNotBlank()
-                },
-                exerciseType = input.exerciseType.trim().takeIf {
-                    input.type == CalendarRecordType.Exercise && it.isNotBlank()
-                },
+                fetalMovementPeriod = input.fetalMovementPeriod.toOptionalStoredRecordText()
+                    .takeIf { input.type == CalendarRecordType.FetalMovement },
+                fetalMovementFeeling = input.fetalMovementFeeling.toOptionalStoredRecordText()
+                    .takeIf { input.type == CalendarRecordType.FetalMovement },
+                symptomType = input.symptomType.toOptionalStoredRecordText()
+                    .takeIf { input.type == CalendarRecordType.Symptom },
+                symptomSeverity = input.symptomSeverity.toOptionalStoredRecordText()
+                    .takeIf { input.type == CalendarRecordType.Symptom },
+                exerciseType = input.exerciseType.toOptionalStoredRecordText()
+                    .takeIf { input.type == CalendarRecordType.Exercise },
                 exerciseMinutes = if (input.type == CalendarRecordType.Exercise) exerciseMinutes else null,
-                exerciseIntensity = input.exerciseIntensity.trim().takeIf {
-                    input.type == CalendarRecordType.Exercise && it.isNotBlank()
-                },
-                dietMeal = input.dietMeal.trim().takeIf {
-                    input.type == CalendarRecordType.Diet && it.isNotBlank()
-                },
-                dietContent = input.dietContent.trim().takeIf {
-                    input.type == CalendarRecordType.Diet && it.isNotBlank()
-                },
+                exerciseIntensity = input.exerciseIntensity.toOptionalStoredRecordText()
+                    .takeIf { input.type == CalendarRecordType.Exercise },
+                dietMeal = input.dietMeal.toOptionalStoredRecordText()
+                    .takeIf { input.type == CalendarRecordType.Diet },
+                dietContent = input.dietContent.toOptionalStoredRecordText()
+                    .takeIf { input.type == CalendarRecordType.Diet },
                 appointmentTime = input.appointmentTime.trim().takeIf {
                     input.type == CalendarRecordType.Appointment && it.isNotBlank()
                 },
-                appointmentLocation = input.appointmentLocation.trim().takeIf {
-                    input.type == CalendarRecordType.Appointment && it.isNotBlank()
-                },
-                appointmentDoctor = input.appointmentDoctor.trim().takeIf {
-                    input.type == CalendarRecordType.Appointment && it.isNotBlank()
-                },
-                appointmentItems = input.appointmentItems.trim().takeIf {
-                    input.type == CalendarRecordType.Appointment && it.isNotBlank()
-                },
-                appointmentResult = input.appointmentResult.trim().takeIf {
-                    input.type == CalendarRecordType.Appointment && it.isNotBlank()
-                },
+                appointmentLocation = input.appointmentLocation.toOptionalStoredRecordText()
+                    .takeIf { input.type == CalendarRecordType.Appointment },
+                appointmentDoctor = input.appointmentDoctor.toOptionalStoredRecordText()
+                    .takeIf { input.type == CalendarRecordType.Appointment },
+                appointmentItems = input.appointmentItems.toOptionalStoredRecordText()
+                    .takeIf { input.type == CalendarRecordType.Appointment },
+                appointmentResult = input.appointmentResult.toOptionalStoredRecordText()
+                    .takeIf { input.type == CalendarRecordType.Appointment },
                 createdAtEpochMillis = input.createdAtEpochMillis ?: nowProvider(),
             ),
         )
@@ -143,6 +132,12 @@ class CalendarRecordFormParser(
 
     private fun Int?.isValidExerciseMinutes(): Boolean =
         this != null && this in 1..MAX_EXERCISE_MINUTES_PER_DAY
+
+    private fun String.toStoredRecordText(): String =
+        trim().take(MAX_CALENDAR_RECORD_TEXT_LENGTH)
+
+    private fun String.toOptionalStoredRecordText(): String? =
+        toStoredRecordText().takeIf(String::isNotBlank)
 }
 
 data class CalendarRecordInput(
