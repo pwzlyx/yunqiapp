@@ -36,7 +36,7 @@ class ReminderSettingsRepository(
             ReminderSettings(
                 appointmentRemindersEnabled = preferences[Keys.appointmentRemindersEnabled] ?: false,
                 appointmentReminderLeadMinutes = preferences[Keys.appointmentReminderLeadMinutes]
-                    ?: DEFAULT_APPOINTMENT_REMINDER_LEAD_MINUTES,
+                    .toSupportedAppointmentReminderLeadMinutes(),
                 dailyReminders = DailyReminderType.entries.map { type ->
                     DailyReminderPreference(
                         type = type,
@@ -65,7 +65,7 @@ class ReminderSettingsRepository(
 
     suspend fun setAppointmentReminderLeadMinutes(leadMinutes: Long) {
         context.reminderSettingsDataStore.edit { preferences ->
-            preferences[Keys.appointmentReminderLeadMinutes] = leadMinutes
+            preferences[Keys.appointmentReminderLeadMinutes] = leadMinutes.toSupportedAppointmentReminderLeadMinutes()
         }
     }
 
@@ -137,8 +137,18 @@ internal fun String?.toValidDailyReminderTimeOrDefault(
 private fun String.isValidHourMinute(): Boolean =
     runCatching { LocalTime.parse(this) }.isSuccess
 
+internal fun Long?.toSupportedAppointmentReminderLeadMinutes(): Long =
+    this?.takeIf { it in supportedAppointmentReminderLeadMinutes }
+        ?: DEFAULT_APPOINTMENT_REMINDER_LEAD_MINUTES
+
 private val legacyReminderTypes = setOf(
     DailyReminderType.Weight,
     DailyReminderType.FetalMovement,
     DailyReminderType.Exercise,
+)
+
+private val supportedAppointmentReminderLeadMinutes = setOf(
+    DEFAULT_APPOINTMENT_REMINDER_LEAD_MINUTES,
+    6L * 60L,
+    24L * 60L,
 )

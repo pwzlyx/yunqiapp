@@ -54,6 +54,7 @@ Current result: passing.
 - Appointment time input is validated as `HH:mm` before reminder scheduling.
 - Appointment reminders use local WorkManager jobs, Android notifications, a notification channel, notification permission handling, and a settings toggle.
 - Appointment reminders support configurable lead times of 1 hour, 6 hours, or 1 day, and changing the lead time rebuilds future appointment reminder work.
+- Appointment reminder lead times are normalized to the supported 1 hour, 6 hours, or 1 day options before Home display or WorkManager sync.
 - Appointment reminder notifications open the app when tapped.
 - Appointment reminder notification IDs are stable and non-negative, including the `Int.MIN_VALUE` hash edge case.
 - Future appointments inside the configured lead window schedule an immediate local reminder instead of silently dropping the notification.

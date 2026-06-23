@@ -6,6 +6,21 @@ import org.junit.Test
 
 class ReminderSettingsRepositoryTest {
     @Test
+    fun `keeps supported appointment reminder lead minutes`() {
+        assertEquals(60L, 60L.toSupportedAppointmentReminderLeadMinutes())
+        assertEquals(360L, 360L.toSupportedAppointmentReminderLeadMinutes())
+        assertEquals(1440L, 1440L.toSupportedAppointmentReminderLeadMinutes())
+    }
+
+    @Test
+    fun `falls back to default appointment reminder lead minutes for unsupported values`() {
+        assertEquals(DEFAULT_APPOINTMENT_REMINDER_LEAD_MINUTES, null.toSupportedAppointmentReminderLeadMinutes())
+        assertEquals(DEFAULT_APPOINTMENT_REMINDER_LEAD_MINUTES, 0L.toSupportedAppointmentReminderLeadMinutes())
+        assertEquals(DEFAULT_APPOINTMENT_REMINDER_LEAD_MINUTES, (-1L).toSupportedAppointmentReminderLeadMinutes())
+        assertEquals(DEFAULT_APPOINTMENT_REMINDER_LEAD_MINUTES, 99999L.toSupportedAppointmentReminderLeadMinutes())
+    }
+
+    @Test
     fun `keeps valid daily reminder time and trims whitespace`() {
         assertEquals(
             "20:00",
