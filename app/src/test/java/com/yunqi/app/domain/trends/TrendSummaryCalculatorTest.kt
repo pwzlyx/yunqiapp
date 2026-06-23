@@ -197,52 +197,66 @@ class TrendSummaryCalculatorTest {
         val summary = TrendSummaryCalculator.calculate(
             records = listOf(
                 record(
+                    id = "weight-yesterday",
+                    date = LocalDate.of(2026, 6, 20),
+                    type = CalendarRecordType.Weight,
+                    weightKg = 55.0,
+                    createdAtEpochMillis = 1L,
+                ),
+                record(
                     id = "weight-morning",
                     date = LocalDate.of(2026, 6, 21),
                     type = CalendarRecordType.Weight,
                     weightKg = 56.0,
-                    createdAtEpochMillis = 1L,
+                    createdAtEpochMillis = 2L,
                 ),
                 record(
                     id = "weight-evening",
                     date = LocalDate.of(2026, 6, 21),
                     type = CalendarRecordType.Weight,
                     weightKg = 56.4,
-                    createdAtEpochMillis = 2L,
+                    createdAtEpochMillis = 3L,
                 ),
                 record(
                     id = "movement-morning",
                     date = LocalDate.of(2026, 6, 21),
                     type = CalendarRecordType.FetalMovement,
                     fetalMovementCount = 8,
-                    createdAtEpochMillis = 3L,
+                    createdAtEpochMillis = 4L,
                 ),
                 record(
                     id = "movement-evening",
                     date = LocalDate.of(2026, 6, 21),
                     type = CalendarRecordType.FetalMovement,
                     fetalMovementCount = 12,
-                    createdAtEpochMillis = 4L,
+                    createdAtEpochMillis = 5L,
                 ),
                 record(
                     id = "exercise-walk",
                     date = LocalDate.of(2026, 6, 21),
                     type = CalendarRecordType.Exercise,
                     exerciseMinutes = 20,
-                    createdAtEpochMillis = 5L,
+                    createdAtEpochMillis = 6L,
                 ),
                 record(
                     id = "exercise-swim",
                     date = LocalDate.of(2026, 6, 21),
                     type = CalendarRecordType.Exercise,
                     exerciseMinutes = 15,
-                    createdAtEpochMillis = 6L,
+                    createdAtEpochMillis = 7L,
                 ),
             ),
         )
 
-        assertEquals(2, summary.weightRecordCount)
-        assertEquals(listOf(TrendPoint(LocalDate.of(2026, 6, 21), 56.4)), summary.weightPoints)
+        assertEquals(3, summary.weightRecordCount)
+        assertEquals(
+            listOf(
+                TrendPoint(LocalDate.of(2026, 6, 20), 55.0),
+                TrendPoint(LocalDate.of(2026, 6, 21), 56.4),
+            ),
+            summary.weightPoints,
+        )
+        assertEquals(1.4, summary.weightChangeKg ?: 0.0, 0.001)
         assertEquals(2, summary.fetalMovementRecordCount)
         assertEquals(20, summary.latestFetalMovementCount)
         assertEquals(listOf(TrendPoint(LocalDate.of(2026, 6, 21), 20.0)), summary.fetalMovementPoints)
