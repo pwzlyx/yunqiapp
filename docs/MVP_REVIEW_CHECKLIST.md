@@ -37,6 +37,7 @@ Current result: passing.
 - Exercise guidance can be hidden and restored with local-only state.
 - Exercise guidance visibility is covered with real local content IDs so hidden cards stay restorable.
 - Calendar supports month view, date markers, day detail list, create, edit, and delete with confirmation.
+- Calendar supports filtering the selected day's records by record type while preserving the sorted list order.
 - Calendar quick-record navigation starts a fresh form for the requested record type instead of carrying stale draft or edit state across entry points.
 - Calendar record types include appointment, weight, fetal movement, symptom, exercise, diet, and note.
 - Calendar record database mapping preserves all structured appointment, fetal movement, symptom, exercise, and diet fields.

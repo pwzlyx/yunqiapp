@@ -131,7 +131,10 @@ private fun CalendarScreen(
         )
     }
     val filteredRecords = remember(uiState.records, recordFilter) {
-        recordFilter?.let { type -> uiState.records.filter { it.type == type } } ?: uiState.records
+        filterCalendarRecords(
+            records = uiState.records,
+            recordFilter = recordFilter,
+        )
     }
 
     LaunchedEffect(initialRecordType) {
