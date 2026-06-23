@@ -7,6 +7,7 @@ import androidx.datastore.preferences.core.longPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.yunqi.app.domain.reminder.DailyReminderType
+import java.time.LocalTime
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -42,7 +43,11 @@ class ReminderSettingsRepository(
                         enabled = preferences[Keys.dailyReminderEnabled(type)]
                             ?: type.usesLegacyDailyReminder(legacyDailyReminderEnabled),
                         time = preferences[Keys.dailyReminderTime(type)]
-                            ?: type.legacyOrDefaultTime(legacyDailyReminderEnabled, legacyDailyReminderTime),
+                            .toValidDailyReminderTimeOrDefault(
+                                type = type,
+                                legacyEnabled = legacyDailyReminderEnabled,
+                                legacyTime = legacyDailyReminderTime,
+                            ),
                         customMessage = preferences[Keys.dailyReminderCustomMessage(type)].orEmpty(),
                     )
                 },
@@ -67,7 +72,7 @@ class ReminderSettingsRepository(
     suspend fun setDailyReminder(type: DailyReminderType, enabled: Boolean, time: String) {
         context.reminderSettingsDataStore.edit { preferences ->
             preferences[Keys.dailyReminderEnabled(type)] = enabled
-            preferences[Keys.dailyReminderTime(type)] = time
+            preferences[Keys.dailyReminderTime(type)] = time.toValidDailyReminderTimeOrDefault(type)
         }
     }
 
@@ -118,6 +123,19 @@ private fun DailyReminderType.usesLegacyDailyReminder(legacyEnabled: Boolean): B
 
 private fun DailyReminderType.legacyOrDefaultTime(legacyEnabled: Boolean, legacyTime: String): String =
     if (usesLegacyDailyReminder(legacyEnabled)) legacyTime else defaultTime
+
+internal fun String?.toValidDailyReminderTimeOrDefault(
+    type: DailyReminderType,
+    legacyEnabled: Boolean = false,
+    legacyTime: String = DEFAULT_DAILY_REMINDER_TIME,
+): String {
+    val candidate = this ?: type.legacyOrDefaultTime(legacyEnabled, legacyTime)
+    val trimmed = candidate.trim()
+    return if (trimmed.isValidHourMinute()) trimmed else type.defaultTime
+}
+
+private fun String.isValidHourMinute(): Boolean =
+    runCatching { LocalTime.parse(this) }.isSuccess
 
 private val legacyReminderTypes = setOf(
     DailyReminderType.Weight,
