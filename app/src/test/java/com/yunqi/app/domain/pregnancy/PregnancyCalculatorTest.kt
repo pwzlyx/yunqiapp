@@ -54,4 +54,44 @@ class PregnancyCalculatorTest {
         assertEquals(10, result.week)
         assertEquals(2, result.day)
     }
+
+    @Test
+    fun `maps gestational age to trimester boundaries`() {
+        val lmpDate = LocalDate.of(2026, 1, 1)
+
+        assertEquals(
+            Trimester.First,
+            PregnancyCalculator.fromLastMenstrualPeriod(lmpDate, lmpDate.plusWeeks(13)).trimester,
+        )
+        assertEquals(
+            Trimester.Second,
+            PregnancyCalculator.fromLastMenstrualPeriod(lmpDate, lmpDate.plusWeeks(14)).trimester,
+        )
+        assertEquals(
+            Trimester.Second,
+            PregnancyCalculator.fromLastMenstrualPeriod(lmpDate, lmpDate.plusWeeks(27)).trimester,
+        )
+        assertEquals(
+            Trimester.Third,
+            PregnancyCalculator.fromLastMenstrualPeriod(lmpDate, lmpDate.plusWeeks(28)).trimester,
+        )
+        assertEquals(
+            Trimester.Third,
+            PregnancyCalculator.fromLastMenstrualPeriod(lmpDate, lmpDate.plusWeeks(42)).trimester,
+        )
+        assertEquals(
+            Trimester.PostDue,
+            PregnancyCalculator.fromLastMenstrualPeriod(lmpDate, lmpDate.plusWeeks(43)).trimester,
+        )
+    }
+
+    @Test
+    fun `keeps negative due date countdown after due date`() {
+        val result = PregnancyCalculator.fromLastMenstrualPeriod(
+            lmpDate = LocalDate.of(2026, 1, 1),
+            today = LocalDate.of(2026, 10, 10),
+        )
+
+        assertEquals(-2, result.daysUntilDueDate)
+    }
 }

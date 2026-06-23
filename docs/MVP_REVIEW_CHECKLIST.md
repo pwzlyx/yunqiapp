@@ -21,6 +21,7 @@ Current result: passing.
 - Pregnancy setup trims numeric gestational age inputs before validation.
 - Pregnancy setup date inputs use an ISO-date keyboard that supports entering hyphens.
 - Pregnancy setup supports marking doctor-restricted exercise; Home suppresses default exercise suggestions when enabled.
+- Pregnancy progress tests cover trimester boundary weeks and post-due countdown handling.
 - Pregnancy setup preview warns users to confirm dates when the calculation is already beyond 42 weeks.
 - Locally stored pregnancy profile dates are parsed defensively so corrupt stored values fall back to the missing-profile state instead of crashing Home or Trends.
 - Locally stored pregnancy profiles require method-specific calculation fields before Home or Trends can calculate progress, so partially corrupt stored profiles fall back to the missing-profile state.
