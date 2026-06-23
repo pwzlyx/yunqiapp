@@ -251,7 +251,10 @@ private fun PlanningCard(
 ) {
     val cardsByCategory = contentCards.groupBy { it.category }
     val exerciseCards = cardsByCategory[PregnancyContentCategory.Exercise].orEmpty()
-    val visibleExerciseCards = exerciseCards.filterNot { it.id in contentStatus.hiddenContentIds }
+    val visibleExerciseCards = HomeContentVisibility.visibleExerciseCards(
+        contentCards = contentCards,
+        hiddenContentIds = contentStatus.hiddenContentIds,
+    )
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         ContentSection(
@@ -282,9 +285,10 @@ private fun PlanningCard(
                     )
                     AssistChip(
                         onClick = {
-                            exerciseCards
-                                .filter { it.id in contentStatus.hiddenContentIds }
-                                .forEach { onToggleContentHidden(it.id) }
+                            HomeContentVisibility.hiddenExerciseCards(
+                                contentCards = contentCards,
+                                hiddenContentIds = contentStatus.hiddenContentIds,
+                            ).forEach { onToggleContentHidden(it.id) }
                         },
                         label = { Text(stringResource(R.string.home_exercise_restore)) },
                     )

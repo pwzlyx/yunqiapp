@@ -35,6 +35,7 @@ Current result: passing.
 - Local content coverage is tested for every supported pregnancy week from 0 through 42 across diet, exercise, antenatal care, and safety categories.
 - Diet guidance cards can be marked as read or favorited with local-only state.
 - Exercise guidance can be hidden and restored with local-only state.
+- Exercise guidance visibility is covered with real local content IDs so hidden cards stay restorable.
 - Calendar supports month view, date markers, day detail list, create, edit, and delete with confirmation.
 - Calendar quick-record navigation starts a fresh form for the requested record type instead of carrying stale draft or edit state across entry points.
 - Calendar record types include appointment, weight, fetal movement, symptom, exercise, diet, and note.
