@@ -86,6 +86,23 @@ class PregnancyContentRepositoryTest {
         }
     }
 
+    @Test
+    fun `second and third trimester exercise guidance avoids supine recommendations`() {
+        val forbiddenTerms = listOf("仰卧", "平躺", "supine")
+        val exerciseStrings = contentStringValues()
+            .filterKeys { name ->
+                name.startsWith("content_exercise_second_") ||
+                    name.startsWith("content_exercise_third_")
+            }
+
+        assertTrue(exerciseStrings.isNotEmpty())
+        exerciseStrings.forEach { (name, value) ->
+            forbiddenTerms.forEach { term ->
+                assertTrue("$name should not contain $term", !value.contains(term, ignoreCase = true))
+            }
+        }
+    }
+
     private fun representativeCards(): List<PregnancyContentCard> =
         listOf(8L, 20L, 34L).flatMap(repository::cardsForWeek)
 
