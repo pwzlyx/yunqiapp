@@ -839,50 +839,50 @@ private fun RecordCard(
             record.fetalMovementCount?.let {
                 Text(stringResource(R.string.calendar_record_fetal_movement_value, it))
             }
-            record.fetalMovementPeriod?.let {
+            CalendarRecordDisplayText.visibleOrNull(record.fetalMovementPeriod)?.let {
                 Text(stringResource(R.string.calendar_record_fetal_movement_period, it))
             }
-            record.fetalMovementFeeling?.let {
+            CalendarRecordDisplayText.visibleOrNull(record.fetalMovementFeeling)?.let {
                 Text(stringResource(R.string.calendar_record_fetal_movement_feeling, it))
             }
-            record.symptomType?.let {
+            CalendarRecordDisplayText.visibleOrNull(record.symptomType)?.let {
                 Text(stringResource(R.string.calendar_record_symptom_type, it))
             }
-            record.symptomSeverity?.let {
+            CalendarRecordDisplayText.visibleOrNull(record.symptomSeverity)?.let {
                 Text(stringResource(R.string.calendar_record_symptom_severity, it))
             }
-            record.exerciseType?.let {
+            CalendarRecordDisplayText.visibleOrNull(record.exerciseType)?.let {
                 Text(stringResource(R.string.calendar_record_exercise_type, it))
             }
             record.exerciseMinutes?.let {
                 Text(stringResource(R.string.calendar_record_exercise_value, it))
             }
-            record.exerciseIntensity?.let {
+            CalendarRecordDisplayText.visibleOrNull(record.exerciseIntensity)?.let {
                 Text(stringResource(R.string.calendar_record_exercise_intensity, it))
             }
-            record.dietMeal?.let {
+            CalendarRecordDisplayText.visibleOrNull(record.dietMeal)?.let {
                 Text(stringResource(R.string.calendar_record_diet_meal, it))
             }
-            record.dietContent?.let {
+            CalendarRecordDisplayText.visibleOrNull(record.dietContent)?.let {
                 Text(stringResource(R.string.calendar_record_diet_content, it))
             }
-            record.appointmentTime?.let {
+            CalendarRecordDisplayText.visibleOrNull(record.appointmentTime)?.let {
                 Text(stringResource(R.string.calendar_record_appointment_time, it))
             }
-            record.appointmentLocation?.let {
+            CalendarRecordDisplayText.visibleOrNull(record.appointmentLocation)?.let {
                 Text(stringResource(R.string.calendar_record_appointment_location, it))
             }
-            record.appointmentDoctor?.let {
+            CalendarRecordDisplayText.visibleOrNull(record.appointmentDoctor)?.let {
                 Text(stringResource(R.string.calendar_record_appointment_doctor, it))
             }
-            record.appointmentItems?.let {
+            CalendarRecordDisplayText.visibleOrNull(record.appointmentItems)?.let {
                 Text(stringResource(R.string.calendar_record_appointment_items, it))
             }
-            record.appointmentResult?.let {
+            CalendarRecordDisplayText.visibleOrNull(record.appointmentResult)?.let {
                 Text(stringResource(R.string.calendar_record_appointment_result, it))
             }
-            if (record.note.isNotBlank()) {
-                Text(record.note)
+            CalendarRecordDisplayText.visibleOrNull(record.note)?.let {
+                Text(it)
             }
             if (record.type.shouldShowMedicalAttentionNotice()) {
                 Text(
