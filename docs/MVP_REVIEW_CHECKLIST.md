@@ -81,6 +81,7 @@ Current result: passing.
 - Settings preserves saved reminder preferences when Android notifications are temporarily unavailable.
 - Settings rebuilds future appointment reminder work when Android notifications become available again and appointment reminders are still enabled.
 - Trends show weight, fetal movement, and exercise charts from local Room records.
+- Trends aggregate same-day metric records into daily chart points: latest weight, total fetal movement, and total exercise minutes.
 - Trends show CDC-sourced pregnancy weight-gain guidance when the local profile includes height, pre-pregnancy weight, and singleton or twin status.
 - Trends show charts only when a metric has at least two comparable records.
 - Trends keep upcoming appointment plans visible from all local records while metric charts follow the selected 7-day, 30-day, or all-time range.

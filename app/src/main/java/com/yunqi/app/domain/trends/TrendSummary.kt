@@ -69,51 +69,65 @@ object TrendSummaryCalculator {
                     items = record.appointmentItems.trimmedOrNull(),
                 )
             }
-        val weightPoints = weightRecords.map { record ->
-            TrendPoint(
-                date = record.date,
-                value = record.weightKg ?: 0.0,
-            )
+        val weightPoints = weightRecords.toLatestDailyPoints { record -> record.weightKg }
+        val fetalMovementPoints = fetalMovementRecords.toDailySumPoints { record ->
+            record.fetalMovementCount?.toDouble()
         }
-        val fetalMovementPoints = fetalMovementRecords.map { record ->
-            TrendPoint(
-                date = record.date,
-                value = (record.fetalMovementCount ?: 0).toDouble(),
-            )
-        }
-        val exercisePoints = exerciseRecords.map { record ->
-            TrendPoint(
-                date = record.date,
-                value = (record.exerciseMinutes ?: 0).toDouble(),
-            )
+        val exercisePoints = exerciseRecords.toDailySumPoints { record ->
+            record.exerciseMinutes?.toDouble()
         }
 
         return TrendSummary(
             weightRecordCount = weightRecords.size,
             latestWeightKg = weightRecords.lastOrNull()?.weightKg,
-            weightChangeKg = weightRecords.calculateWeightChange(),
+            weightChangeKg = weightPoints.calculateValueChange(),
             weightPoints = weightPoints,
             fetalMovementRecordCount = fetalMovementRecords.size,
-            latestFetalMovementCount = fetalMovementRecords.lastOrNull()?.fetalMovementCount,
-            averageFetalMovementCount = fetalMovementRecords
+            latestFetalMovementCount = fetalMovementPoints.lastOrNull()?.value?.toInt(),
+            averageFetalMovementCount = fetalMovementPoints
                 .takeIf { it.isNotEmpty() }
-                ?.mapNotNull(CalendarRecord::fetalMovementCount)
+                ?.map(TrendPoint::value)
                 ?.average(),
             fetalMovementPoints = fetalMovementPoints,
             exerciseRecordCount = exerciseRecords.size,
-            latestExerciseMinutes = exerciseRecords.lastOrNull()?.exerciseMinutes,
+            latestExerciseMinutes = exercisePoints.lastOrNull()?.value?.toInt(),
             totalExerciseMinutes = exerciseRecords.mapNotNull(CalendarRecord::exerciseMinutes).sum(),
             exercisePoints = exercisePoints,
             appointmentPlans = appointmentPlans,
         )
     }
 
-    private fun List<CalendarRecord>.calculateWeightChange(): Double? {
-        val first = firstOrNull()?.weightKg ?: return null
-        val latest = lastOrNull()?.weightKg ?: return null
+    private fun List<TrendPoint>.calculateValueChange(): Double? {
+        val first = firstOrNull()?.value ?: return null
+        val latest = lastOrNull()?.value ?: return null
         return latest - first
     }
 }
+
+/**
+ * Uses the latest record for each day so same-day weight corrections do not duplicate chart points.
+ */
+private fun List<CalendarRecord>.toLatestDailyPoints(valueProvider: (CalendarRecord) -> Double?): List<TrendPoint> =
+    groupBy(CalendarRecord::date)
+        .mapNotNull { (date, records) ->
+            records.asReversed().mapNotNull(valueProvider).firstOrNull()?.let { value ->
+                TrendPoint(date = date, value = value)
+            }
+        }
+        .sortedBy(TrendPoint::date)
+
+/**
+ * Sums same-day entries so repeated fetal movement or exercise sessions render as one daily point.
+ */
+private fun List<CalendarRecord>.toDailySumPoints(valueProvider: (CalendarRecord) -> Double?): List<TrendPoint> =
+    groupBy(CalendarRecord::date)
+        .mapNotNull { (date, records) ->
+            val values = records.mapNotNull(valueProvider)
+            values.takeIf { it.isNotEmpty() }?.let {
+                TrendPoint(date = date, value = it.sum())
+            }
+        }
+        .sortedBy(TrendPoint::date)
 
 private fun String?.trimmedOrNull(): String? = this
     ?.trim()

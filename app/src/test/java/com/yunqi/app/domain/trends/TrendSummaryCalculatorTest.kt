@@ -193,6 +193,67 @@ class TrendSummaryCalculatorTest {
     }
 
     @Test
+    fun `aggregates same day metric records into daily trend points`() {
+        val summary = TrendSummaryCalculator.calculate(
+            records = listOf(
+                record(
+                    id = "weight-morning",
+                    date = LocalDate.of(2026, 6, 21),
+                    type = CalendarRecordType.Weight,
+                    weightKg = 56.0,
+                    createdAtEpochMillis = 1L,
+                ),
+                record(
+                    id = "weight-evening",
+                    date = LocalDate.of(2026, 6, 21),
+                    type = CalendarRecordType.Weight,
+                    weightKg = 56.4,
+                    createdAtEpochMillis = 2L,
+                ),
+                record(
+                    id = "movement-morning",
+                    date = LocalDate.of(2026, 6, 21),
+                    type = CalendarRecordType.FetalMovement,
+                    fetalMovementCount = 8,
+                    createdAtEpochMillis = 3L,
+                ),
+                record(
+                    id = "movement-evening",
+                    date = LocalDate.of(2026, 6, 21),
+                    type = CalendarRecordType.FetalMovement,
+                    fetalMovementCount = 12,
+                    createdAtEpochMillis = 4L,
+                ),
+                record(
+                    id = "exercise-walk",
+                    date = LocalDate.of(2026, 6, 21),
+                    type = CalendarRecordType.Exercise,
+                    exerciseMinutes = 20,
+                    createdAtEpochMillis = 5L,
+                ),
+                record(
+                    id = "exercise-swim",
+                    date = LocalDate.of(2026, 6, 21),
+                    type = CalendarRecordType.Exercise,
+                    exerciseMinutes = 15,
+                    createdAtEpochMillis = 6L,
+                ),
+            ),
+        )
+
+        assertEquals(2, summary.weightRecordCount)
+        assertEquals(listOf(TrendPoint(LocalDate.of(2026, 6, 21), 56.4)), summary.weightPoints)
+        assertEquals(2, summary.fetalMovementRecordCount)
+        assertEquals(20, summary.latestFetalMovementCount)
+        assertEquals(listOf(TrendPoint(LocalDate.of(2026, 6, 21), 20.0)), summary.fetalMovementPoints)
+        assertEquals(20.0, summary.averageFetalMovementCount ?: 0.0, 0.001)
+        assertEquals(2, summary.exerciseRecordCount)
+        assertEquals(35, summary.latestExerciseMinutes)
+        assertEquals(listOf(TrendPoint(LocalDate.of(2026, 6, 21), 35.0)), summary.exercisePoints)
+        assertEquals(35, summary.totalExerciseMinutes)
+    }
+
+    @Test
     fun `trims appointment plan fields from stored records`() {
         val summary = TrendSummaryCalculator.calculate(
             records = listOf(
