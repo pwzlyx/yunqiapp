@@ -36,11 +36,25 @@ class PregnancyContentRepositoryTest {
     }
 
     @Test
+    fun `every supported pregnancy week exposes all MVP content categories`() {
+        val expectedCategories = PregnancyContentCategory.entries.toSet()
+
+        (0L..42L).forEach { week ->
+            val cards = repository.cardsForWeek(week)
+
+            assertEquals("week $week", expectedCategories, cards.map(PregnancyContentCard::category).toSet())
+            assertEquals("week $week", expectedCategories.size, cards.size)
+        }
+    }
+
+    @Test
     fun `content cards expose traceable medical metadata`() {
         val cards = representativeCards()
 
         assertTrue(cards.all { it.sourceUrl.startsWith("https://") })
+        assertTrue(cards.all { it.sourceUrl.isNotBlank() })
         assertTrue(cards.all { runCatching { LocalDate.parse(it.reviewedAt) }.isSuccess })
+        assertTrue(cards.all { it.reviewedAt.isNotBlank() })
         assertTrue(cards.all { it.locale == "zh-CN" })
         assertEquals(cards.size, cards.map(PregnancyContentCard::id).toSet().size)
         assertEquals(PregnancyContentRiskLevel.entries.toSet(), cards.map(PregnancyContentCard::riskLevel).toSet())
