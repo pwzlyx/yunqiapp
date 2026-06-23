@@ -73,27 +73,33 @@ fun SettingsRoute(
     var pendingNotificationRequest by remember { mutableStateOf<NotificationPermissionRequest?>(null) }
     val notificationPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestPermission(),
-    ) { granted ->
+    ) { _ ->
         val runtimePermissionGranted = context.hasNotificationRuntimePermission()
         val canPostNotifications = context.canPostNotifications()
         runtimeNotificationPermissionGranted = runtimePermissionGranted
         notificationsAllowed = canPostNotifications
-        when (pendingNotificationRequest) {
-            NotificationPermissionRequest.Appointment -> {
-                viewModel.setAppointmentRemindersEnabled(granted && canPostNotifications)
+        when (notificationPermissionResultAction(canPostNotifications)) {
+            NotificationPermissionResultAction.EnableRequestedReminder -> {
+                when (pendingNotificationRequest) {
+                    NotificationPermissionRequest.Appointment -> {
+                        viewModel.setAppointmentRemindersEnabled(true)
+                    }
+
+                    is NotificationPermissionRequest.Daily -> {
+                        val request = pendingNotificationRequest as NotificationPermissionRequest.Daily
+                        viewModel.setDailyReminderEnabled(
+                            type = request.type,
+                            enabled = true,
+                            time = request.time,
+                            customMessage = request.customMessage,
+                        )
+                    }
+
+                    null -> Unit
+                }
             }
 
-            is NotificationPermissionRequest.Daily -> {
-                val request = pendingNotificationRequest as NotificationPermissionRequest.Daily
-                viewModel.setDailyReminderEnabled(
-                    type = request.type,
-                    enabled = granted && canPostNotifications,
-                    time = request.time,
-                    customMessage = request.customMessage,
-                )
-            }
-
-            null -> Unit
+            NotificationPermissionResultAction.PreserveReminderPreference -> Unit
         }
         pendingNotificationRequest = null
     }
@@ -220,6 +226,23 @@ internal fun notificationAvailabilityAction(notificationsAllowed: Boolean): Noti
         NotificationAvailabilityAction.SyncScheduledReminderWork
     } else {
         NotificationAvailabilityAction.PreserveReminderPreferences
+    }
+
+internal enum class NotificationPermissionResultAction {
+    EnableRequestedReminder,
+    PreserveReminderPreference,
+}
+
+/**
+ * Enables the requested reminder only when Android reports notifications are actually postable.
+ */
+internal fun notificationPermissionResultAction(
+    notificationsAllowed: Boolean,
+): NotificationPermissionResultAction =
+    if (notificationsAllowed) {
+        NotificationPermissionResultAction.EnableRequestedReminder
+    } else {
+        NotificationPermissionResultAction.PreserveReminderPreference
     }
 
 internal enum class AppointmentReminderAvailabilityAction {

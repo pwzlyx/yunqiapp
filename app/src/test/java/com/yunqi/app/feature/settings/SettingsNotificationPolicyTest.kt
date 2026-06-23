@@ -21,6 +21,22 @@ class SettingsNotificationPolicyTest {
     }
 
     @Test
+    fun `enables requested reminder after permission result when notifications are postable`() {
+        assertEquals(
+            NotificationPermissionResultAction.EnableRequestedReminder,
+            notificationPermissionResultAction(notificationsAllowed = true),
+        )
+    }
+
+    @Test
+    fun `preserves reminder preference after permission result when notifications are unavailable`() {
+        assertEquals(
+            NotificationPermissionResultAction.PreserveReminderPreference,
+            notificationPermissionResultAction(notificationsAllowed = false),
+        )
+    }
+
+    @Test
     fun `preserves appointment reminder preference when notifications are unavailable`() {
         assertEquals(
             AppointmentReminderAvailabilityAction.PreserveAppointmentReminderPreference,
