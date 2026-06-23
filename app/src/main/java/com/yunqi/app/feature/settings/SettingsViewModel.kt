@@ -12,6 +12,8 @@ import com.yunqi.app.data.local.DailyReminderPreference
 import com.yunqi.app.data.local.DEFAULT_APPOINTMENT_REMINDER_LEAD_MINUTES
 import com.yunqi.app.data.local.PregnancyProfileRepository
 import com.yunqi.app.data.local.ReminderSettingsRepository
+import com.yunqi.app.data.local.toSupportedAppointmentReminderLeadMinutes
+import com.yunqi.app.data.local.toValidDailyReminderTimeOrDefault
 import com.yunqi.app.data.local.record.CalendarRecordRepository
 import com.yunqi.app.domain.reminder.DailyReminderType
 import com.yunqi.app.notification.AppointmentReminderScheduler
@@ -71,11 +73,12 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     fun setAppointmentReminderLeadMinutes(leadMinutes: Long) {
         viewModelScope.launch {
-            reminderSettingsRepository.setAppointmentReminderLeadMinutes(leadMinutes)
+            val normalizedLeadMinutes = leadMinutes.toSupportedAppointmentReminderLeadMinutes()
+            reminderSettingsRepository.setAppointmentReminderLeadMinutes(normalizedLeadMinutes)
             if (reminderSettingsRepository.appointmentRemindersEnabledFlow.first()) {
                 reminderScheduler.cancelAll()
                 calendarRecordRepository.futureAppointmentRecords(LocalDate.now())
-                    .forEach { record -> reminderScheduler.schedule(record, leadMinutes) }
+                    .forEach { record -> reminderScheduler.schedule(record, normalizedLeadMinutes) }
             }
         }
     }
@@ -87,9 +90,10 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         customMessage: String = "",
     ) {
         viewModelScope.launch {
-            reminderSettingsRepository.setDailyReminder(type, enabled, time)
+            val normalizedTime = time.toValidDailyReminderTimeOrDefault(type)
+            reminderSettingsRepository.setDailyReminder(type, enabled, normalizedTime)
             if (enabled) {
-                dailyReminderScheduler.schedule(type, time, customMessage)
+                dailyReminderScheduler.schedule(type, normalizedTime, customMessage)
             } else {
                 dailyReminderScheduler.cancel(type)
             }
@@ -98,8 +102,9 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     fun setDailyReminderTime(type: DailyReminderType, time: String, customMessage: String = "") {
         viewModelScope.launch {
-            reminderSettingsRepository.setDailyReminder(type = type, enabled = true, time = time)
-            dailyReminderScheduler.schedule(type, time, customMessage)
+            val normalizedTime = time.toValidDailyReminderTimeOrDefault(type)
+            reminderSettingsRepository.setDailyReminder(type = type, enabled = true, time = normalizedTime)
+            dailyReminderScheduler.schedule(type, normalizedTime, customMessage)
         }
     }
 
@@ -110,9 +115,10 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
         time: String,
     ) {
         viewModelScope.launch {
+            val normalizedTime = time.toValidDailyReminderTimeOrDefault(type)
             reminderSettingsRepository.setDailyReminderCustomMessage(type, message)
             if (enabled) {
-                dailyReminderScheduler.schedule(type, time, message)
+                dailyReminderScheduler.schedule(type, normalizedTime, message)
             }
         }
     }
