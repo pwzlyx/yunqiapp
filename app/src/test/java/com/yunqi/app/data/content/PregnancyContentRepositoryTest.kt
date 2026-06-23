@@ -1,9 +1,12 @@
 package com.yunqi.app.data.content
 
+import java.nio.file.Paths
 import java.time.LocalDate
+import javax.xml.parsers.DocumentBuilderFactory
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import org.w3c.dom.Element
 
 class PregnancyContentRepositoryTest {
     private val repository = PregnancyContentRepository()
@@ -69,6 +72,34 @@ class PregnancyContentRepositoryTest {
         assertTrue(safetyCards.none { it.riskLevel == PregnancyContentRiskLevel.Normal })
     }
 
+    @Test
+    fun `diet guidance body copy avoids medical promise terms`() {
+        val forbiddenTerms = listOf("保证", "治愈", "诊断")
+        val dietBodyStrings = contentStringValues()
+            .filterKeys { name -> name.startsWith("content_diet_") && name.endsWith("_body") }
+
+        assertTrue(dietBodyStrings.isNotEmpty())
+        dietBodyStrings.forEach { (name, value) ->
+            forbiddenTerms.forEach { term ->
+                assertTrue("$name should not contain $term", term !in value)
+            }
+        }
+    }
+
     private fun representativeCards(): List<PregnancyContentCard> =
         listOf(8L, 20L, 34L).flatMap(repository::cardsForWeek)
+
+    private fun contentStringValues(): Map<String, String> {
+        val stringsFile = Paths.get("src", "main", "res", "values", "strings.xml").toFile()
+        val document = DocumentBuilderFactory.newInstance()
+            .newDocumentBuilder()
+            .parse(stringsFile)
+        val nodes = document.getElementsByTagName("string")
+
+        return (0 until nodes.length)
+            .map { nodes.item(it) as Element }
+            .associate { element ->
+                element.getAttribute("name") to element.textContent
+            }
+    }
 }
