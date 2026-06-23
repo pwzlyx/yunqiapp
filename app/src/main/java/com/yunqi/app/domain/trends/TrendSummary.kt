@@ -1,5 +1,6 @@
 package com.yunqi.app.domain.trends
 
+import com.yunqi.app.core.time.isStrictHourMinute
 import com.yunqi.app.domain.calendar.CalendarRecord
 import com.yunqi.app.domain.calendar.CalendarRecordType
 import java.time.LocalDate
@@ -54,7 +55,11 @@ object TrendSummaryCalculator {
         val appointmentPlans = appointmentRecords
             .filter { it.type == CalendarRecordType.Appointment }
             .filter { record -> today == null || record.date >= today }
-            .sortedWith(compareBy<CalendarRecord> { it.date }.thenBy { it.appointmentTime.orEmpty().trim() })
+            .sortedWith(
+                compareBy<CalendarRecord> { it.date }
+                    .thenBy { it.appointmentTime.toAppointmentSortTime() ?: LAST_APPOINTMENT_SORT_TIME }
+                    .thenBy { it.createdAtEpochMillis },
+            )
             .map { record ->
                 AppointmentPlan(
                     date = record.date,
@@ -113,6 +118,11 @@ object TrendSummaryCalculator {
 private fun String?.trimmedOrNull(): String? = this
     ?.trim()
     ?.takeIf(String::isNotBlank)
+
+private const val LAST_APPOINTMENT_SORT_TIME = "99:99"
+
+private fun String?.toAppointmentSortTime(): String? =
+    this?.trim()?.takeIf(String::isStrictHourMinute)
 
 enum class TrendRange(val days: Long?) {
     Last7Days(days = 7),

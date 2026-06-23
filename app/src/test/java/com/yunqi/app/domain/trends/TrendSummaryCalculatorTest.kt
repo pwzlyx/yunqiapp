@@ -246,6 +246,33 @@ class TrendSummaryCalculatorTest {
         assertEquals("09:00", summary.appointmentPlans.first().time)
     }
 
+    @Test
+    fun `puts untimed appointment plans after timed plans on the same day`() {
+        val summary = TrendSummaryCalculator.calculate(
+            records = listOf(
+                record(
+                    id = "untimed",
+                    date = LocalDate.of(2026, 6, 30),
+                    type = CalendarRecordType.Appointment,
+                    appointmentTime = "",
+                    appointmentLocation = "Clinic B",
+                    createdAtEpochMillis = 1L,
+                ),
+                record(
+                    id = "timed",
+                    date = LocalDate.of(2026, 6, 30),
+                    type = CalendarRecordType.Appointment,
+                    appointmentTime = "09:00",
+                    appointmentLocation = "Clinic A",
+                    createdAtEpochMillis = 2L,
+                ),
+            ),
+        )
+
+        assertEquals("09:00", summary.appointmentPlans.first().time)
+        assertEquals("Clinic B", summary.appointmentPlans.last().location)
+    }
+
     private fun record(
         id: String,
         date: LocalDate,
@@ -257,6 +284,7 @@ class TrendSummaryCalculatorTest {
         appointmentLocation: String? = null,
         appointmentDoctor: String? = null,
         appointmentItems: String? = null,
+        createdAtEpochMillis: Long = 0L,
     ): CalendarRecord = CalendarRecord(
         id = id,
         date = date,
@@ -272,6 +300,6 @@ class TrendSummaryCalculatorTest {
         appointmentDoctor = appointmentDoctor,
         appointmentItems = appointmentItems,
         appointmentResult = null,
-        createdAtEpochMillis = 0L,
+        createdAtEpochMillis = createdAtEpochMillis,
     )
 }
