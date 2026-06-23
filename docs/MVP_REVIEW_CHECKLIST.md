@@ -49,6 +49,7 @@ Current result: passing.
 - Calendar record database mapping preserves all structured appointment, fetal movement, symptom, exercise, and diet fields.
 - Calendar record database migration SQL is covered by JVM tests for all structured fields added after version 1.
 - Calendar record reads skip corrupt stored dates or unknown legacy types instead of crashing local views, export, or reminder rebuilds.
+- Calendar record reads sanitize legacy free-text fields before they reach local views, export, or reminder rebuilds.
 - Calendar rejects unrealistic weight, fetal movement count, and exercise duration values before they can distort local trends.
 - Calendar rejects empty symptom, diet, and note records before they can clutter local history or CSV exports.
 - Calendar trims numeric weight, fetal movement, and exercise inputs before validation.

@@ -1,6 +1,7 @@
 package com.yunqi.app.data.local.record
 
 import com.yunqi.app.domain.calendar.CalendarRecord
+import com.yunqi.app.domain.calendar.MAX_CALENDAR_RECORD_TEXT_LENGTH
 import com.yunqi.app.domain.calendar.CalendarRecordType
 import java.time.LocalDate
 import org.junit.Assert.assertEquals
@@ -77,6 +78,43 @@ class CalendarRecordEntityTest {
         val entity = validEntity().copy(type = "LegacyAppointment")
 
         assertNull(entity.toDomainOrNull())
+    }
+
+    @Test
+    fun `calendar record entity safe conversion sanitizes legacy free text fields`() {
+        val longText = "  " + "x".repeat(MAX_CALENDAR_RECORD_TEXT_LENGTH + 20) + "  "
+        val entity = validEntity().copy(
+            note = longText,
+            fetalMovementPeriod = "   ",
+            fetalMovementFeeling = longText,
+            symptomType = longText,
+            symptomSeverity = longText,
+            exerciseType = longText,
+            exerciseIntensity = longText,
+            dietMeal = longText,
+            dietContent = longText,
+            appointmentLocation = longText,
+            appointmentDoctor = longText,
+            appointmentItems = longText,
+            appointmentResult = longText,
+        )
+
+        val record = entity.toDomainOrNull()
+        val expected = "x".repeat(MAX_CALENDAR_RECORD_TEXT_LENGTH)
+
+        assertEquals(expected, record?.note)
+        assertNull(record?.fetalMovementPeriod)
+        assertEquals(expected, record?.fetalMovementFeeling)
+        assertEquals(expected, record?.symptomType)
+        assertEquals(expected, record?.symptomSeverity)
+        assertEquals(expected, record?.exerciseType)
+        assertEquals(expected, record?.exerciseIntensity)
+        assertEquals(expected, record?.dietMeal)
+        assertEquals(expected, record?.dietContent)
+        assertEquals(expected, record?.appointmentLocation)
+        assertEquals(expected, record?.appointmentDoctor)
+        assertEquals(expected, record?.appointmentItems)
+        assertEquals(expected, record?.appointmentResult)
     }
 
     private fun validEntity(): CalendarRecordEntity = CalendarRecord(

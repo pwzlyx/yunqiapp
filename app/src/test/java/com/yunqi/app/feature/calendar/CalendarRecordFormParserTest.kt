@@ -1,5 +1,6 @@
 package com.yunqi.app.feature.calendar
 
+import com.yunqi.app.domain.calendar.MAX_CALENDAR_RECORD_TEXT_LENGTH
 import com.yunqi.app.domain.calendar.CalendarRecordType
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull

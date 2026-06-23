@@ -4,6 +4,8 @@ import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.yunqi.app.domain.calendar.CalendarRecord
 import com.yunqi.app.domain.calendar.CalendarRecordType
+import com.yunqi.app.domain.calendar.toOptionalStoredCalendarRecordText
+import com.yunqi.app.domain.calendar.toStoredCalendarRecordText
 import java.time.LocalDate
 
 @Entity(tableName = "calendar_records")
@@ -42,23 +44,23 @@ internal fun CalendarRecordEntity.toDomainOrNull(): CalendarRecord? {
         id = id,
         date = parsedDate,
         type = parsedType,
-        note = note,
+        note = note.toStoredCalendarRecordText(),
         weightKg = weightKg,
         fetalMovementCount = fetalMovementCount,
-        fetalMovementPeriod = fetalMovementPeriod,
-        fetalMovementFeeling = fetalMovementFeeling,
-        symptomType = symptomType,
-        symptomSeverity = symptomSeverity,
-        exerciseType = exerciseType,
+        fetalMovementPeriod = fetalMovementPeriod.toOptionalStoredCalendarRecordText(),
+        fetalMovementFeeling = fetalMovementFeeling.toOptionalStoredCalendarRecordText(),
+        symptomType = symptomType.toOptionalStoredCalendarRecordText(),
+        symptomSeverity = symptomSeverity.toOptionalStoredCalendarRecordText(),
+        exerciseType = exerciseType.toOptionalStoredCalendarRecordText(),
         exerciseMinutes = exerciseMinutes,
-        exerciseIntensity = exerciseIntensity,
-        dietMeal = dietMeal,
-        dietContent = dietContent,
+        exerciseIntensity = exerciseIntensity.toOptionalStoredCalendarRecordText(),
+        dietMeal = dietMeal.toOptionalStoredCalendarRecordText(),
+        dietContent = dietContent.toOptionalStoredCalendarRecordText(),
         appointmentTime = appointmentTime,
-        appointmentLocation = appointmentLocation,
-        appointmentDoctor = appointmentDoctor,
-        appointmentItems = appointmentItems,
-        appointmentResult = appointmentResult,
+        appointmentLocation = appointmentLocation.toOptionalStoredCalendarRecordText(),
+        appointmentDoctor = appointmentDoctor.toOptionalStoredCalendarRecordText(),
+        appointmentItems = appointmentItems.toOptionalStoredCalendarRecordText(),
+        appointmentResult = appointmentResult.toOptionalStoredCalendarRecordText(),
         createdAtEpochMillis = createdAtEpochMillis,
     )
 }
