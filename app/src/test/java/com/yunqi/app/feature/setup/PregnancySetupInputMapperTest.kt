@@ -49,4 +49,40 @@ class PregnancySetupInputMapperTest {
         assertEquals("13", input.week)
         assertEquals("2", input.day)
     }
+
+    @Test
+    fun `keeps current gestational age editable at exactly forty two weeks`() {
+        val input = PregnancyProfile(
+            calculationMethod = PregnancyCalculationMethod.CurrentGestationalAge,
+            lmpDate = null,
+            dueDate = null,
+            conceptionDate = null,
+            gestationalWeekAtSetup = 40,
+            gestationalDayAtSetup = 0,
+            setupDate = LocalDate.of(2026, 6, 1),
+        ).toPregnancySetupInput(today = LocalDate.of(2026, 6, 15))
+
+        assertEquals(SetupMethod.CurrentGestationalAge, input.method)
+        assertEquals("42", input.week)
+        assertEquals("0", input.day)
+        assertEquals("", input.dueDate)
+    }
+
+    @Test
+    fun `maps post due current gestational age profile to due date editing`() {
+        val input = PregnancyProfile(
+            calculationMethod = PregnancyCalculationMethod.CurrentGestationalAge,
+            lmpDate = null,
+            dueDate = null,
+            conceptionDate = null,
+            gestationalWeekAtSetup = 40,
+            gestationalDayAtSetup = 0,
+            setupDate = LocalDate.of(2026, 6, 1),
+        ).toPregnancySetupInput(today = LocalDate.of(2026, 6, 16))
+
+        assertEquals(SetupMethod.DueDate, input.method)
+        assertEquals("", input.week)
+        assertEquals("", input.day)
+        assertEquals("2026-06-01", input.dueDate)
+    }
 }
