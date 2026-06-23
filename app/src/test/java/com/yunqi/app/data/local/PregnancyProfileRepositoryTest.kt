@@ -106,6 +106,17 @@ class PregnancyProfileRepositoryTest {
         )
     }
 
+    @Test
+    fun `ignores stored profile measurements outside supported ranges`() {
+        assertEquals(168.0, 168.0.toSupportedStoredHeightCmOrNull() ?: 0.0, 0.001)
+        assertNull(99.9.toSupportedStoredHeightCmOrNull())
+        assertNull(250.1.toSupportedStoredHeightCmOrNull())
+
+        assertEquals(55.0, 55.0.toSupportedStoredPrePregnancyWeightKgOrNull() ?: 0.0, 0.001)
+        assertNull(24.9.toSupportedStoredPrePregnancyWeightKgOrNull())
+        assertNull(300.1.toSupportedStoredPrePregnancyWeightKgOrNull())
+    }
+
     private fun profile(
         method: PregnancyCalculationMethod,
         lmpDate: LocalDate? = null,

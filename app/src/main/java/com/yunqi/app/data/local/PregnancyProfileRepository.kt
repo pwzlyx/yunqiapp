@@ -39,8 +39,8 @@ class PregnancyProfileRepository(
             gestationalWeekAtSetup = preferences[Keys.gestationalWeekAtSetup],
             gestationalDayAtSetup = preferences[Keys.gestationalDayAtSetup],
             exerciseRestricted = preferences[Keys.exerciseRestricted] ?: false,
-            heightCm = preferences[Keys.heightCm],
-            prePregnancyWeightKg = preferences[Keys.prePregnancyWeightKg],
+            heightCm = preferences[Keys.heightCm].toSupportedStoredHeightCmOrNull(),
+            prePregnancyWeightKg = preferences[Keys.prePregnancyWeightKg].toSupportedStoredPrePregnancyWeightKgOrNull(),
             babyCount = preferences[Keys.babyCount]
                 ?.let { runCatching { PregnancyBabyCount.valueOf(it) }.getOrNull() }
                 ?: PregnancyBabyCount.Singleton,
@@ -106,6 +106,12 @@ internal fun String?.parseStoredLocalDateOrNull(): LocalDate? =
         ?.takeIf(String::isNotEmpty)
         ?.let { value -> runCatching { LocalDate.parse(value) }.getOrNull() }
 
+internal fun Double?.toSupportedStoredHeightCmOrNull(): Double? =
+    this?.takeIf { it in MIN_STORED_HEIGHT_CM..MAX_STORED_HEIGHT_CM }
+
+internal fun Double?.toSupportedStoredPrePregnancyWeightKgOrNull(): Double? =
+    this?.takeIf { it in MIN_STORED_PRE_PREGNANCY_WEIGHT_KG..MAX_STORED_PRE_PREGNANCY_WEIGHT_KG }
+
 internal fun PregnancyProfile.hasUsableCalculationFields(): Boolean = when (calculationMethod) {
     PregnancyCalculationMethod.LastMenstrualPeriod -> lmpDate != null
     PregnancyCalculationMethod.DueDate -> dueDate != null
@@ -121,3 +127,7 @@ internal fun PregnancyProfile.hasUsableCalculationFields(): Boolean = when (calc
 
 private const val MAX_STORED_GESTATIONAL_WEEK = 42
 private const val MAX_STORED_GESTATIONAL_DAY = 6
+private const val MIN_STORED_HEIGHT_CM = 100.0
+private const val MAX_STORED_HEIGHT_CM = 250.0
+private const val MIN_STORED_PRE_PREGNANCY_WEIGHT_KG = 25.0
+private const val MAX_STORED_PRE_PREGNANCY_WEIGHT_KG = 300.0
