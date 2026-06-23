@@ -8,6 +8,7 @@ import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.yunqi.app.core.time.isStrictHourMinute
 import com.yunqi.app.domain.reminder.DailyReminderType
+import com.yunqi.app.domain.reminder.sanitizeDailyReminderCustomMessage
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
@@ -78,7 +79,7 @@ class ReminderSettingsRepository(
 
     suspend fun setDailyReminderCustomMessage(type: DailyReminderType, message: String) {
         context.reminderSettingsDataStore.edit { preferences ->
-            preferences[Keys.dailyReminderCustomMessage(type)] = message.trim()
+            preferences[Keys.dailyReminderCustomMessage(type)] = message.sanitizeDailyReminderCustomMessage()
         }
     }
 

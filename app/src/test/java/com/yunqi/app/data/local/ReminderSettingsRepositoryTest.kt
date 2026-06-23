@@ -1,6 +1,8 @@
 package com.yunqi.app.data.local
 
 import com.yunqi.app.domain.reminder.DailyReminderType
+import com.yunqi.app.domain.reminder.MAX_DAILY_REMINDER_CUSTOM_MESSAGE_LENGTH
+import com.yunqi.app.domain.reminder.sanitizeDailyReminderCustomMessage
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
@@ -73,6 +75,16 @@ class ReminderSettingsRepositoryTest {
         assertEquals(
             DailyReminderType.FetalMovement.defaultTime,
             null.toValidDailyReminderTimeOrDefault(DailyReminderType.FetalMovement),
+        )
+    }
+
+    @Test
+    fun `sanitizes custom daily reminder message before persistence or scheduling`() {
+        val longMessage = "  " + "a".repeat(MAX_DAILY_REMINDER_CUSTOM_MESSAGE_LENGTH + 20) + "  "
+
+        assertEquals(
+            "a".repeat(MAX_DAILY_REMINDER_CUSTOM_MESSAGE_LENGTH),
+            longMessage.sanitizeDailyReminderCustomMessage(),
         )
     }
 }

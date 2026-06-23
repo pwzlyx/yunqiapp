@@ -7,6 +7,7 @@ import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import com.yunqi.app.R
 import com.yunqi.app.domain.reminder.DailyReminderType
+import com.yunqi.app.domain.reminder.sanitizeDailyReminderCustomMessage
 
 private const val DAILY_REMINDER_NOTIFICATION_ID_BASE = 20260621
 
@@ -82,6 +83,6 @@ internal fun DailyReminderType.notificationContent(
     DailyReminderType.Custom -> DailyReminderNotificationContent(
         titleResId = R.string.notification_daily_custom_title,
         bodyResId = R.string.notification_daily_custom_body,
-        bodyText = customMessage.trim().takeIf(String::isNotBlank),
+        bodyText = customMessage.sanitizeDailyReminderCustomMessage().takeIf(String::isNotBlank),
     )
 }

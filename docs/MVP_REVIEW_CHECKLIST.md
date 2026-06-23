@@ -72,6 +72,7 @@ Current result: passing.
 - Daily reminders support weight, fetal movement, folic acid or vitamin, water, exercise, and custom reminder types with independent local WorkManager jobs, Android notifications, notification permission handling, toggles, and configurable preset times.
 - Daily reminder notifications open the app when tapped.
 - Custom daily reminders support a user-entered local message that is delivered in the notification body.
+- Custom daily reminder messages are trimmed and length-capped before DataStore persistence, WorkManager scheduling, and notification display.
 - Daily reminders cancel stale scheduled work when a stored reminder time is invalid instead of leaving an old notification active.
 - Daily reminder settings normalize invalid or legacy stored reminder times back to valid per-type defaults before Home display or WorkManager sync.
 - Settings uses normalized daily reminder times and appointment lead times for immediate WorkManager scheduling, not only persisted preferences.

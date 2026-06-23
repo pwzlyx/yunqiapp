@@ -7,6 +7,7 @@ import androidx.work.PeriodicWorkRequestBuilder
 import androidx.work.WorkManager
 import com.yunqi.app.core.time.toStrictHourMinuteOrNull
 import com.yunqi.app.domain.reminder.DailyReminderType
+import com.yunqi.app.domain.reminder.sanitizeDailyReminderCustomMessage
 import java.time.Duration
 import java.time.LocalDateTime
 import java.util.concurrent.TimeUnit
@@ -91,7 +92,7 @@ internal fun dailyReminderScheduleDecision(
     return DailyReminderScheduleDecision.Schedule(
         type = type,
         delayMillis = delayMillis,
-        customMessage = customMessage.trim(),
+        customMessage = customMessage.sanitizeDailyReminderCustomMessage(),
     )
 }
 

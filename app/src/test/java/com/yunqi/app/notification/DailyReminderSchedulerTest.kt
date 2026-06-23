@@ -1,6 +1,7 @@
 package com.yunqi.app.notification
 
 import com.yunqi.app.domain.reminder.DailyReminderType
+import com.yunqi.app.domain.reminder.MAX_DAILY_REMINDER_CUSTOM_MESSAGE_LENGTH
 import java.time.LocalDateTime
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -77,6 +78,21 @@ class DailyReminderSchedulerTest {
     }
 
     @Test
+    fun `truncates long custom message before scheduling work data`() {
+        val decision = dailyReminderScheduleDecision(
+            type = DailyReminderType.Custom,
+            time = "20:00",
+            customMessage = "x".repeat(MAX_DAILY_REMINDER_CUSTOM_MESSAGE_LENGTH + 1),
+            now = LocalDateTime.of(2026, 6, 21, 19, 0),
+        )
+
+        assertEquals(
+            "x".repeat(MAX_DAILY_REMINDER_CUSTOM_MESSAGE_LENGTH),
+            (decision as DailyReminderScheduleDecision.Schedule).customMessage,
+        )
+    }
+
+    @Test
     fun `chooses cancel decision for invalid daily reminder time`() {
         val decision = dailyReminderScheduleDecision(
             type = DailyReminderType.Water,
@@ -93,6 +109,18 @@ class DailyReminderSchedulerTest {
         val content = DailyReminderType.Custom.notificationContent("Pack hospital bag")
 
         assertEquals("Pack hospital bag", content.bodyText)
+    }
+
+    @Test
+    fun `truncates long custom reminder notification body`() {
+        val content = DailyReminderType.Custom.notificationContent(
+            "x".repeat(MAX_DAILY_REMINDER_CUSTOM_MESSAGE_LENGTH + 1),
+        )
+
+        assertEquals(
+            "x".repeat(MAX_DAILY_REMINDER_CUSTOM_MESSAGE_LENGTH),
+            content.bodyText,
+        )
     }
 
     @Test
