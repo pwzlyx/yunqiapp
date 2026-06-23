@@ -26,7 +26,7 @@ class ContentStatusRepository(
         context.contentStatusDataStore.edit { preferences ->
             preferences[Keys.readContentIds] = preferences[Keys.readContentIds]
                 .orEmpty()
-                .toggle(contentId)
+                .toggleContentId(contentId)
         }
     }
 
@@ -34,7 +34,7 @@ class ContentStatusRepository(
         context.contentStatusDataStore.edit { preferences ->
             preferences[Keys.favoriteContentIds] = preferences[Keys.favoriteContentIds]
                 .orEmpty()
-                .toggle(contentId)
+                .toggleContentId(contentId)
         }
     }
 
@@ -42,7 +42,7 @@ class ContentStatusRepository(
         context.contentStatusDataStore.edit { preferences ->
             preferences[Keys.hiddenContentIds] = preferences[Keys.hiddenContentIds]
                 .orEmpty()
-                .toggle(contentId)
+                .toggleContentId(contentId)
         }
     }
 
@@ -65,5 +65,11 @@ data class ContentStatus(
     val hiddenContentIds: Set<String> = emptySet(),
 )
 
-private fun Set<String>.toggle(value: String): Set<String> =
-    if (value in this) this - value else this + value
+/**
+ * Toggles a normalized local content id and ignores blank values before they reach DataStore.
+ */
+internal fun Set<String>.toggleContentId(value: String): Set<String> {
+    val normalizedValue = value.trim()
+    if (normalizedValue.isBlank()) return this
+    return if (normalizedValue in this) this - normalizedValue else this + normalizedValue
+}
