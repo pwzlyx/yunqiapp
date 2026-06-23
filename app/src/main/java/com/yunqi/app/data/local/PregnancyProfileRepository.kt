@@ -45,7 +45,7 @@ class PregnancyProfileRepository(
                 ?.let { runCatching { PregnancyBabyCount.valueOf(it) }.getOrNull() }
                 ?: PregnancyBabyCount.Singleton,
             setupDate = setupDate,
-        )
+        ).takeIf(PregnancyProfile::hasUsableCalculationFields)
     }
 
     /**
@@ -105,3 +105,19 @@ internal fun String?.parseStoredLocalDateOrNull(): LocalDate? =
         ?.trim()
         ?.takeIf(String::isNotEmpty)
         ?.let { value -> runCatching { LocalDate.parse(value) }.getOrNull() }
+
+internal fun PregnancyProfile.hasUsableCalculationFields(): Boolean = when (calculationMethod) {
+    PregnancyCalculationMethod.LastMenstrualPeriod -> lmpDate != null
+    PregnancyCalculationMethod.DueDate -> dueDate != null
+    PregnancyCalculationMethod.ConceptionDate -> conceptionDate != null
+    PregnancyCalculationMethod.CurrentGestationalAge -> {
+        val week = gestationalWeekAtSetup ?: return false
+        val day = gestationalDayAtSetup ?: return false
+        week in 0..MAX_STORED_GESTATIONAL_WEEK &&
+            day in 0..MAX_STORED_GESTATIONAL_DAY &&
+            !(week == MAX_STORED_GESTATIONAL_WEEK && day > 0)
+    }
+}
+
+private const val MAX_STORED_GESTATIONAL_WEEK = 42
+private const val MAX_STORED_GESTATIONAL_DAY = 6
