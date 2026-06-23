@@ -22,6 +22,7 @@ Current result: passing.
 - Pregnancy setup date inputs use an ISO-date keyboard that supports entering hyphens.
 - Pregnancy setup supports marking doctor-restricted exercise; Home suppresses default exercise suggestions when enabled.
 - Pregnancy setup preview warns users to confirm dates when the calculation is already beyond 42 weeks.
+- Locally stored pregnancy profile dates are parsed defensively so corrupt stored values fall back to the missing-profile state instead of crashing Home or Trends.
 - Home avoids negative due-date countdowns and shows a doctor-judgment reminder on or after the due date.
 - Home reads the local pregnancy profile and displays current gestational age, due date countdown, reminders, quick record entry points for weight, fetal movement, symptoms, notes, and appointments, diet guidance, antenatal care guidance, exercise guidance, safety guidance, source names, source URLs, and review dates.
 - Home quick record entry points also cover diet and exercise so daily guidance can be recorded without first browsing Calendar record types.

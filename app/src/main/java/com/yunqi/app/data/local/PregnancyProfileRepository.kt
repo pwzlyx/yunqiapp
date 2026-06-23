@@ -28,14 +28,14 @@ class PregnancyProfileRepository(
         val method = preferences[Keys.method]
             ?.let { runCatching { PregnancyCalculationMethod.valueOf(it) }.getOrNull() }
             ?: return@map null
-        val setupDate = preferences[Keys.setupDate]?.let(LocalDate::parse)
+        val setupDate = preferences[Keys.setupDate].parseStoredLocalDateOrNull()
             ?: return@map null
 
         PregnancyProfile(
             calculationMethod = method,
-            lmpDate = preferences[Keys.lmpDate]?.let(LocalDate::parse),
-            dueDate = preferences[Keys.dueDate]?.let(LocalDate::parse),
-            conceptionDate = preferences[Keys.conceptionDate]?.let(LocalDate::parse),
+            lmpDate = preferences[Keys.lmpDate].parseStoredLocalDateOrNull(),
+            dueDate = preferences[Keys.dueDate].parseStoredLocalDateOrNull(),
+            conceptionDate = preferences[Keys.conceptionDate].parseStoredLocalDateOrNull(),
             gestationalWeekAtSetup = preferences[Keys.gestationalWeekAtSetup],
             gestationalDayAtSetup = preferences[Keys.gestationalDayAtSetup],
             exerciseRestricted = preferences[Keys.exerciseRestricted] ?: false,
@@ -99,3 +99,9 @@ class PregnancyProfileRepository(
         val setupDate = stringPreferencesKey("setup_date")
     }
 }
+
+internal fun String?.parseStoredLocalDateOrNull(): LocalDate? =
+    this
+        ?.trim()
+        ?.takeIf(String::isNotEmpty)
+        ?.let { value -> runCatching { LocalDate.parse(value) }.getOrNull() }
