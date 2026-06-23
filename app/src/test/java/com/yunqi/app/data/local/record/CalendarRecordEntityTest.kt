@@ -4,6 +4,7 @@ import com.yunqi.app.domain.calendar.CalendarRecord
 import com.yunqi.app.domain.calendar.CalendarRecordType
 import java.time.LocalDate
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertNull
 import org.junit.Test
 
 class CalendarRecordEntityTest {
@@ -63,4 +64,36 @@ class CalendarRecordEntityTest {
         assertEquals("2026-06-22", entity.date)
         assertEquals("FetalMovement", entity.type)
     }
+
+    @Test
+    fun `calendar record entity safe conversion skips corrupt stored date`() {
+        val entity = validEntity().copy(date = "2026/06/22")
+
+        assertNull(entity.toDomainOrNull())
+    }
+
+    @Test
+    fun `calendar record entity safe conversion skips unknown stored type`() {
+        val entity = validEntity().copy(type = "LegacyAppointment")
+
+        assertNull(entity.toDomainOrNull())
+    }
+
+    private fun validEntity(): CalendarRecordEntity = CalendarRecord(
+        id = "record-1",
+        date = LocalDate.of(2026, 6, 22),
+        type = CalendarRecordType.Appointment,
+        note = "",
+        weightKg = null,
+        fetalMovementCount = null,
+        fetalMovementPeriod = null,
+        fetalMovementFeeling = null,
+        exerciseMinutes = null,
+        appointmentTime = "09:30",
+        appointmentLocation = "City Hospital",
+        appointmentDoctor = null,
+        appointmentItems = null,
+        appointmentResult = null,
+        createdAtEpochMillis = 42L,
+    ).toEntity()
 }

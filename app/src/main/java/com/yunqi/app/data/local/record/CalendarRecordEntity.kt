@@ -31,29 +31,37 @@ data class CalendarRecordEntity(
     val createdAtEpochMillis: Long,
 )
 
-fun CalendarRecordEntity.toDomain(): CalendarRecord = CalendarRecord(
-    id = id,
-    date = LocalDate.parse(date),
-    type = CalendarRecordType.valueOf(type),
-    note = note,
-    weightKg = weightKg,
-    fetalMovementCount = fetalMovementCount,
-    fetalMovementPeriod = fetalMovementPeriod,
-    fetalMovementFeeling = fetalMovementFeeling,
-    symptomType = symptomType,
-    symptomSeverity = symptomSeverity,
-    exerciseType = exerciseType,
-    exerciseMinutes = exerciseMinutes,
-    exerciseIntensity = exerciseIntensity,
-    dietMeal = dietMeal,
-    dietContent = dietContent,
-    appointmentTime = appointmentTime,
-    appointmentLocation = appointmentLocation,
-    appointmentDoctor = appointmentDoctor,
-    appointmentItems = appointmentItems,
-    appointmentResult = appointmentResult,
-    createdAtEpochMillis = createdAtEpochMillis,
-)
+fun CalendarRecordEntity.toDomain(): CalendarRecord =
+    requireNotNull(toDomainOrNull()) { "Stored calendar record cannot be parsed." }
+
+internal fun CalendarRecordEntity.toDomainOrNull(): CalendarRecord? {
+    val parsedDate = runCatching { LocalDate.parse(date.trim()) }.getOrNull() ?: return null
+    val parsedType = runCatching { CalendarRecordType.valueOf(type.trim()) }.getOrNull() ?: return null
+
+    return CalendarRecord(
+        id = id,
+        date = parsedDate,
+        type = parsedType,
+        note = note,
+        weightKg = weightKg,
+        fetalMovementCount = fetalMovementCount,
+        fetalMovementPeriod = fetalMovementPeriod,
+        fetalMovementFeeling = fetalMovementFeeling,
+        symptomType = symptomType,
+        symptomSeverity = symptomSeverity,
+        exerciseType = exerciseType,
+        exerciseMinutes = exerciseMinutes,
+        exerciseIntensity = exerciseIntensity,
+        dietMeal = dietMeal,
+        dietContent = dietContent,
+        appointmentTime = appointmentTime,
+        appointmentLocation = appointmentLocation,
+        appointmentDoctor = appointmentDoctor,
+        appointmentItems = appointmentItems,
+        appointmentResult = appointmentResult,
+        createdAtEpochMillis = createdAtEpochMillis,
+    )
+}
 
 fun CalendarRecord.toEntity(): CalendarRecordEntity = CalendarRecordEntity(
     id = id,

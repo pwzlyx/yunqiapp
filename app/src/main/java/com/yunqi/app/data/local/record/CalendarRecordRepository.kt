@@ -15,7 +15,7 @@ class CalendarRecordRepository(context: Context) {
      */
     fun recordsForDate(date: LocalDate): Flow<List<CalendarRecord>> =
         dao.recordsForDate(date.toString()).map { records ->
-            records.map(CalendarRecordEntity::toDomain)
+            records.mapNotNull(CalendarRecordEntity::toDomainOrNull)
         }
 
     /**
@@ -23,25 +23,25 @@ class CalendarRecordRepository(context: Context) {
      */
     fun allRecords(): Flow<List<CalendarRecord>> =
         dao.allRecords().map { records ->
-            records.map(CalendarRecordEntity::toDomain)
+            records.mapNotNull(CalendarRecordEntity::toDomainOrNull)
         }
 
     suspend fun allRecordsSnapshot(): List<CalendarRecord> =
-        dao.allRecordsSnapshot().map(CalendarRecordEntity::toDomain)
+        dao.allRecordsSnapshot().mapNotNull(CalendarRecordEntity::toDomainOrNull)
 
     /**
      * Emits records within an inclusive local date range.
      */
     fun recordsBetween(startDate: LocalDate, endDate: LocalDate): Flow<List<CalendarRecord>> =
         dao.recordsBetween(startDate.toString(), endDate.toString()).map { records ->
-            records.map(CalendarRecordEntity::toDomain)
+            records.mapNotNull(CalendarRecordEntity::toDomainOrNull)
         }
 
     /**
      * Returns future appointment records so reminder settings can rebuild scheduled work.
      */
     suspend fun futureAppointmentRecords(fromDate: LocalDate): List<CalendarRecord> =
-        dao.futureAppointmentRecords(fromDate.toString()).map(CalendarRecordEntity::toDomain)
+        dao.futureAppointmentRecords(fromDate.toString()).mapNotNull(CalendarRecordEntity::toDomainOrNull)
 
     /**
      * Saves a calendar record to the private local Room database.
