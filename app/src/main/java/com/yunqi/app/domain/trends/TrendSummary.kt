@@ -44,13 +44,19 @@ object TrendSummaryCalculator {
         today: LocalDate? = null,
     ): TrendSummary {
         val weightRecords = records
-            .filter { it.type == CalendarRecordType.Weight && it.weightKg != null }
+            .filter { it.type == CalendarRecordType.Weight && it.weightKg.isSupportedTrendWeightKg() }
             .sortedWith(compareBy<CalendarRecord> { it.date }.thenBy { it.createdAtEpochMillis })
         val fetalMovementRecords = records
-            .filter { it.type == CalendarRecordType.FetalMovement && it.fetalMovementCount != null }
+            .filter {
+                it.type == CalendarRecordType.FetalMovement &&
+                    it.fetalMovementCount.isSupportedTrendFetalMovementCount()
+            }
             .sortedWith(compareBy<CalendarRecord> { it.date }.thenBy { it.createdAtEpochMillis })
         val exerciseRecords = records
-            .filter { it.type == CalendarRecordType.Exercise && it.exerciseMinutes != null }
+            .filter {
+                it.type == CalendarRecordType.Exercise &&
+                    it.exerciseMinutes.isSupportedTrendExerciseMinutes()
+            }
             .sortedWith(compareBy<CalendarRecord> { it.date }.thenBy { it.createdAtEpochMillis })
         val appointmentPlans = appointmentRecords
             .filter { it.type == CalendarRecordType.Appointment }
@@ -137,6 +143,19 @@ private const val LAST_APPOINTMENT_SORT_TIME = "99:99"
 
 private fun String?.toAppointmentSortTime(): String? =
     this?.trim()?.takeIf(String::isStrictHourMinute)
+
+private fun Double?.isSupportedTrendWeightKg(): Boolean =
+    this != null && this > 0.0 && this <= MAX_TREND_WEIGHT_KG
+
+private fun Int?.isSupportedTrendFetalMovementCount(): Boolean =
+    this != null && this in 0..MAX_TREND_FETAL_MOVEMENT_COUNT
+
+private fun Int?.isSupportedTrendExerciseMinutes(): Boolean =
+    this != null && this in 1..MAX_TREND_EXERCISE_MINUTES_PER_DAY
+
+private const val MAX_TREND_WEIGHT_KG = 300.0
+private const val MAX_TREND_FETAL_MOVEMENT_COUNT = 1_000
+private const val MAX_TREND_EXERCISE_MINUTES_PER_DAY = 24 * 60
 
 enum class TrendRange(val days: Long?) {
     Last7Days(days = 7),

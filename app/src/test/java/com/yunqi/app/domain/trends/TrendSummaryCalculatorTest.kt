@@ -268,6 +268,58 @@ class TrendSummaryCalculatorTest {
     }
 
     @Test
+    fun `ignores legacy metric records outside supported ranges`() {
+        val summary = TrendSummaryCalculator.calculate(
+            records = listOf(
+                record(
+                    id = "valid-weight",
+                    date = LocalDate.of(2026, 6, 20),
+                    type = CalendarRecordType.Weight,
+                    weightKg = 56.0,
+                ),
+                record(
+                    id = "invalid-weight",
+                    date = LocalDate.of(2026, 6, 21),
+                    type = CalendarRecordType.Weight,
+                    weightKg = 999.0,
+                ),
+                record(
+                    id = "valid-movement",
+                    date = LocalDate.of(2026, 6, 21),
+                    type = CalendarRecordType.FetalMovement,
+                    fetalMovementCount = 12,
+                ),
+                record(
+                    id = "invalid-movement",
+                    date = LocalDate.of(2026, 6, 21),
+                    type = CalendarRecordType.FetalMovement,
+                    fetalMovementCount = -1,
+                ),
+                record(
+                    id = "valid-exercise",
+                    date = LocalDate.of(2026, 6, 21),
+                    type = CalendarRecordType.Exercise,
+                    exerciseMinutes = 30,
+                ),
+                record(
+                    id = "invalid-exercise",
+                    date = LocalDate.of(2026, 6, 21),
+                    type = CalendarRecordType.Exercise,
+                    exerciseMinutes = 1_441,
+                ),
+            ),
+        )
+
+        assertEquals(1, summary.weightRecordCount)
+        assertEquals(listOf(TrendPoint(LocalDate.of(2026, 6, 20), 56.0)), summary.weightPoints)
+        assertEquals(1, summary.fetalMovementRecordCount)
+        assertEquals(listOf(TrendPoint(LocalDate.of(2026, 6, 21), 12.0)), summary.fetalMovementPoints)
+        assertEquals(1, summary.exerciseRecordCount)
+        assertEquals(listOf(TrendPoint(LocalDate.of(2026, 6, 21), 30.0)), summary.exercisePoints)
+        assertEquals(30, summary.totalExerciseMinutes)
+    }
+
+    @Test
     fun `trims appointment plan fields from stored records`() {
         val summary = TrendSummaryCalculator.calculate(
             records = listOf(
