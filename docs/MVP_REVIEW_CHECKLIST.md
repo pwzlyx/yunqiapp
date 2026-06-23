@@ -117,5 +117,8 @@ Use a physical Android device or emulator:
 
 - Physical-device notification delivery has not been observed inside this workspace.
 - `adb devices` currently reports no attached device.
-- Android Emulator and Android 35 x86_64/ARM64 system images are installed locally, but the x86_64 AVD cannot boot because Android Emulator Hypervisor Driver is not installed, and the ARM64 AVD is not supported on this x86_64 host.
+- Android Emulator and Android 35 x86_64/ARM64 system images are installed locally.
+- A `YunqiApi35` x86_64 AVD was created for runtime verification, but it cannot boot because Android Emulator Hypervisor Driver is not installed on this Windows machine.
+- `silent_install_safe.bat` for Android Emulator Hypervisor Driver was attempted and hung in the driver install step; the stuck `rundll32` and `cmd` installer processes were stopped, and `sc.exe query aehd` still reports service 1060 / not installed.
+- The ARM64 AVD remains unsupported on this x86_64 host.
 - Compose UI instrumentation tests are implemented and can be built with `:app:assembleDebugAndroidTest`, but have not been executed on a physical device inside this workspace.
