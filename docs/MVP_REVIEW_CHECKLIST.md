@@ -31,6 +31,7 @@ Current result: passing.
 - Home quick record entry points also cover diet and exercise so daily guidance can be recorded without first browsing Calendar record types.
 - Home shows the medical disclaimer and urgent medical-attention reminder even before a pregnancy profile is created.
 - Home shows today's reminder list from local daily reminder settings and today's appointment records.
+- Home caps reminder detail text before display so legacy long local records cannot overwhelm the dashboard.
 - Home keeps today's appointment records visible even when system appointment notifications are disabled.
 - Home shows the user-entered custom reminder message in today's reminder list.
 - Local content cards include traceable source URLs, review dates, risk levels, and locale metadata.

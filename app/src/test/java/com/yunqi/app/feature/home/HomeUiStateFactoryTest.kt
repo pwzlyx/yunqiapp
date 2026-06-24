@@ -276,6 +276,40 @@ class HomeUiStateFactoryTest {
         assertEquals("20:00 - Pack hospital bag", state.reminderItems.single().detail)
     }
 
+    @Test
+    fun `ready state caps long home reminder details`() {
+        val factory = HomeUiStateFactory(
+            todayProvider = { LocalDate.of(2026, 6, 21) },
+        )
+        val longText = "x".repeat(MAX_HOME_REMINDER_DETAIL_LENGTH + 50)
+
+        val state = factory.create(
+            profile = pregnancyProfile(),
+            reminderSettings = ReminderSettings(
+                appointmentRemindersEnabled = false,
+                dailyReminders = listOf(
+                    DailyReminderPreference(
+                        type = DailyReminderType.Custom,
+                        enabled = true,
+                        time = "20:00",
+                        customMessage = longText,
+                    ),
+                ),
+            ),
+            calendarRecords = listOf(
+                appointmentRecord(
+                    id = "today",
+                    date = LocalDate.of(2026, 6, 21),
+                    time = "10:30",
+                    location = longText,
+                ),
+            ),
+        ) as HomeUiState.Ready
+
+        assertEquals(MAX_HOME_REMINDER_DETAIL_LENGTH, state.reminderItems[0].detail?.length)
+        assertEquals(MAX_HOME_REMINDER_DETAIL_LENGTH, state.reminderItems[1].detail?.length)
+    }
+
     private fun pregnancyProfile(): PregnancyProfile = PregnancyProfile(
         calculationMethod = PregnancyCalculationMethod.LastMenstrualPeriod,
         lmpDate = LocalDate.of(2026, 3, 1),

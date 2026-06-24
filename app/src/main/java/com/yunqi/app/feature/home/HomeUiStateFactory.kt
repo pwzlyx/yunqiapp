@@ -67,7 +67,7 @@ class HomeUiStateFactory(
                             .map(String::trim)
                             .filter(String::isNotBlank)
                             .joinToString(" - ")
-                            .ifBlank { null },
+                            .toHomeReminderDetailOrNull(),
                         actionRecordType = CalendarRecordType.Appointment,
                     ),
                 )
@@ -98,6 +98,7 @@ class HomeUiStateFactory(
 }
 
 private const val LAST_REMINDER_SORT_TIME = "99:99"
+internal const val MAX_HOME_REMINDER_DETAIL_LENGTH = 180
 
 private data class TimedHomeReminderItem(
     val time: String?,
@@ -110,10 +111,13 @@ private fun String?.toReminderSortTime(): String? =
 
 private fun DailyReminderPreference.homeDetail(): String =
     if (type == DailyReminderType.Custom && customMessage.isNotBlank()) {
-        listOf(time, customMessage.trim()).joinToString(" - ")
+        listOf(time, customMessage.trim()).joinToString(" - ").toHomeReminderDetailOrNull().orEmpty()
     } else {
         time
     }
+
+private fun String.toHomeReminderDetailOrNull(): String? =
+    trim().take(MAX_HOME_REMINDER_DETAIL_LENGTH).takeIf(String::isNotBlank)
 
 private fun DailyReminderType.homeTitleResId(): Int = when (this) {
     DailyReminderType.Weight -> R.string.settings_daily_reminder_weight
