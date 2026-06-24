@@ -19,4 +19,14 @@ class CalendarRecordDisplayTextTest {
             CalendarRecordDisplayText.visibleOrNull("  City Hospital  "),
         )
     }
+
+    @Test
+    fun `caps visible calendar record text`() {
+        val longText = "x".repeat(MAX_CALENDAR_RECORD_DISPLAY_TEXT_LENGTH + 20)
+
+        assertEquals(
+            "x".repeat(MAX_CALENDAR_RECORD_DISPLAY_TEXT_LENGTH),
+            CalendarRecordDisplayText.visibleOrNull(longText),
+        )
+    }
 }

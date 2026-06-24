@@ -2,8 +2,13 @@ package com.yunqi.app.feature.calendar
 
 object CalendarRecordDisplayText {
     /**
-     * Keeps legacy blank or whitespace-only stored text out of calendar review cards.
+     * Keeps legacy blank or oversized stored text from overwhelming calendar review cards.
      */
     fun visibleOrNull(value: String?): String? =
-        value?.trim()?.takeIf(String::isNotBlank)
+        value
+            ?.trim()
+            ?.take(MAX_CALENDAR_RECORD_DISPLAY_TEXT_LENGTH)
+            ?.takeIf(String::isNotBlank)
 }
+
+internal const val MAX_CALENDAR_RECORD_DISPLAY_TEXT_LENGTH = 240

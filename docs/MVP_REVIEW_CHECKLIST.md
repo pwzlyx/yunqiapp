@@ -55,6 +55,7 @@ Current result: passing.
 - Calendar rejects empty symptom, diet, and note records before they can clutter local history or CSV exports.
 - Calendar trims numeric weight, fetal movement, and exercise inputs before validation.
 - Calendar trims and length-caps free-text record fields before local persistence and CSV export.
+- Calendar caps record detail text before display so legacy long local records cannot overwhelm day review cards.
 - Calendar date input uses an ISO-date keyboard that supports entering hyphens.
 - Fetal movement records include count, time period, feeling, and note, and can be saved with either a count or a feeling.
 - Symptom, exercise, and diet records include PRD-specific structured fields in addition to notes.
