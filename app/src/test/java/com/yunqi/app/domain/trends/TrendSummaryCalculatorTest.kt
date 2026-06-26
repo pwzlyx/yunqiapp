@@ -350,6 +350,30 @@ class TrendSummaryCalculatorTest {
     }
 
     @Test
+    fun `caps appointment plan display fields from stored records`() {
+        val longText = "x".repeat(MAX_APPOINTMENT_PLAN_DISPLAY_TEXT_LENGTH + 20)
+
+        val summary = TrendSummaryCalculator.calculate(
+            records = listOf(
+                record(
+                    id = "future",
+                    date = LocalDate.of(2026, 6, 30),
+                    type = CalendarRecordType.Appointment,
+                    appointmentTime = "10:00",
+                    appointmentLocation = longText,
+                    appointmentDoctor = longText,
+                    appointmentItems = longText,
+                ),
+            ),
+        )
+
+        val expected = "x".repeat(MAX_APPOINTMENT_PLAN_DISPLAY_TEXT_LENGTH)
+        assertEquals(expected, summary.appointmentPlans.single().location)
+        assertEquals(expected, summary.appointmentPlans.single().doctor)
+        assertEquals(expected, summary.appointmentPlans.single().items)
+    }
+
+    @Test
     fun `sorts appointment plan fields by trimmed time`() {
         val summary = TrendSummaryCalculator.calculate(
             records = listOf(

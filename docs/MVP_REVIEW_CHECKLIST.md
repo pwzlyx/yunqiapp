@@ -96,6 +96,7 @@ Current result: passing.
 - Trends keep upcoming appointment plans visible from all local records while metric charts follow the selected 7-day, 30-day, or all-time range.
 - Trends exclude future-dated metric records from weight, fetal movement, and exercise charts while still showing future appointment plans separately.
 - Trends show locally recorded appointment plans with date, time, location, doctor, and check items.
+- Trends cap appointment plan display fields so legacy long local records cannot overwhelm the plan card.
 - Trends support 7-day, 30-day, and all-time ranges.
 - Trends empty states provide direct entry points for recording weight, fetal movement, and exercise.
 - Settings can edit pregnancy profile, manage appointment reminders, and clear all local pregnancy data.

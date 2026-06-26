@@ -70,9 +70,9 @@ object TrendSummaryCalculator {
                 AppointmentPlan(
                     date = record.date,
                     time = record.appointmentTime.trimmedOrNull(),
-                    location = record.appointmentLocation.trimmedOrNull(),
-                    doctor = record.appointmentDoctor.trimmedOrNull(),
-                    items = record.appointmentItems.trimmedOrNull(),
+                    location = record.appointmentLocation.toAppointmentPlanDisplayTextOrNull(),
+                    doctor = record.appointmentDoctor.toAppointmentPlanDisplayTextOrNull(),
+                    items = record.appointmentItems.toAppointmentPlanDisplayTextOrNull(),
                 )
             }
         val weightPoints = weightRecords.toLatestDailyPoints { record -> record.weightKg }
@@ -139,6 +139,11 @@ private fun String?.trimmedOrNull(): String? = this
     ?.trim()
     ?.takeIf(String::isNotBlank)
 
+private fun String?.toAppointmentPlanDisplayTextOrNull(): String? = this
+    ?.trim()
+    ?.take(MAX_APPOINTMENT_PLAN_DISPLAY_TEXT_LENGTH)
+    ?.takeIf(String::isNotBlank)
+
 private const val LAST_APPOINTMENT_SORT_TIME = "99:99"
 
 private fun String?.toAppointmentSortTime(): String? =
@@ -156,6 +161,7 @@ private fun Int?.isSupportedTrendExerciseMinutes(): Boolean =
 private const val MAX_TREND_WEIGHT_KG = 300.0
 private const val MAX_TREND_FETAL_MOVEMENT_COUNT = 1_000
 private const val MAX_TREND_EXERCISE_MINUTES_PER_DAY = 24 * 60
+internal const val MAX_APPOINTMENT_PLAN_DISPLAY_TEXT_LENGTH = 180
 
 enum class TrendRange(val days: Long?) {
     Last7Days(days = 7),
