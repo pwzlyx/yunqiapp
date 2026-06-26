@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.input.KeyboardType
@@ -55,6 +56,15 @@ import com.yunqi.app.domain.calendar.CalendarRecordType
 import com.yunqi.app.feature.common.isoDateKeyboardOptions
 import kotlinx.coroutines.launch
 import java.time.LocalDate
+
+object CalendarTestTags {
+    const val WeightRecordType = "calendar-weight-record-type"
+    const val WeightField = "calendar-weight-field"
+    const val SaveRecordButton = "calendar-save-record-button"
+    const val EditRecordButton = "calendar-edit-record-button"
+    const val DeleteRecordButton = "calendar-delete-record-button"
+    const val ConfirmDeleteButton = "calendar-confirm-delete-button"
+}
 
 @Composable
 fun CalendarRoute(
@@ -566,7 +576,9 @@ private fun RecordForm(
                     label = { Text(stringResource(R.string.calendar_weight_label)) },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
                     singleLine = true,
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .testTag(CalendarTestTags.WeightField),
                 )
 
                 CalendarRecordType.FetalMovement -> {
@@ -673,7 +685,9 @@ private fun RecordForm(
             )
             Button(
                 onClick = onSave,
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .testTag(CalendarTestTags.SaveRecordButton),
             ) {
                 Text(
                     stringResource(
@@ -708,6 +722,11 @@ private fun RecordTypeSelector(
             FilterChip(
                 selected = recordType == type,
                 onClick = { onRecordTypeChange(type) },
+                modifier = if (type == CalendarRecordType.Weight) {
+                    Modifier.testTag(CalendarTestTags.WeightRecordType)
+                } else {
+                    Modifier
+                },
                 label = { Text(type.toDisplayText()) },
             )
         }
@@ -802,6 +821,7 @@ private fun RecordCard(
                         showDeleteConfirm = false
                         onDelete()
                     },
+                    modifier = Modifier.testTag(CalendarTestTags.ConfirmDeleteButton),
                 ) {
                     Text(stringResource(R.string.calendar_delete_confirm_action))
                 }
@@ -828,10 +848,16 @@ private fun RecordCard(
                     style = MaterialTheme.typography.titleMedium,
                 )
                 Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                    OutlinedButton(onClick = onEdit) {
+                    OutlinedButton(
+                        onClick = onEdit,
+                        modifier = Modifier.testTag(CalendarTestTags.EditRecordButton),
+                    ) {
                         Text(stringResource(R.string.calendar_edit_record))
                     }
-                    Button(onClick = { showDeleteConfirm = true }) {
+                    Button(
+                        onClick = { showDeleteConfirm = true },
+                        modifier = Modifier.testTag(CalendarTestTags.DeleteRecordButton),
+                    ) {
                         Text(stringResource(R.string.calendar_delete_record))
                     }
                 }

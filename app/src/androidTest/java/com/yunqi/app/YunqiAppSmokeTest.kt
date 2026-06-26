@@ -1,8 +1,10 @@
 package com.yunqi.app
 
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.onAllNodesWithTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onNodeWithTag
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performTextClearance
@@ -13,6 +15,7 @@ import com.yunqi.app.data.local.ContentStatusRepository
 import com.yunqi.app.data.local.PregnancyProfileRepository
 import com.yunqi.app.data.local.ReminderSettingsRepository
 import com.yunqi.app.data.local.record.CalendarRecordRepository
+import com.yunqi.app.feature.calendar.CalendarTestTags
 import com.yunqi.app.domain.pregnancy.PregnancyCalculationMethod
 import com.yunqi.app.domain.pregnancy.PregnancyProfile
 import kotlinx.coroutines.runBlocking
@@ -120,6 +123,61 @@ class YunqiAppSmokeTest {
 
         composeRule.onNodeWithText(activity.getString(R.string.calendar_title)).assertIsDisplayed()
         composeRule.onNodeWithText(activity.getString(R.string.calendar_diet_content_label))
+            .performScrollTo()
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun calendarCreatesEditsAndDeletesWeightRecord() {
+        val activity = composeRule.activity
+        val initialWeight = activity.getString(R.string.calendar_record_weight_value, 62.5)
+        val updatedWeight = activity.getString(R.string.calendar_record_weight_value, 63.1)
+
+        composeRule.onNodeWithText(activity.getString(R.string.nav_calendar)).performClick()
+        composeRule.onNodeWithTag(CalendarTestTags.WeightRecordType)
+            .performScrollTo()
+            .performClick()
+        composeRule.onNodeWithTag(CalendarTestTags.WeightField)
+            .performScrollTo()
+            .performTextInput("62.5")
+        composeRule.onNodeWithTag(CalendarTestTags.SaveRecordButton)
+            .performScrollTo()
+            .performClick()
+        waitUntilTextExists(initialWeight)
+
+        composeRule.onAllNodesWithTag(CalendarTestTags.EditRecordButton)[0]
+            .performScrollTo()
+            .performClick()
+        composeRule.onNodeWithTag(CalendarTestTags.WeightField)
+            .performScrollTo()
+            .performTextClearance()
+        composeRule.onNodeWithTag(CalendarTestTags.WeightField)
+            .performTextInput("63.1")
+        composeRule.onNodeWithTag(CalendarTestTags.SaveRecordButton)
+            .performScrollTo()
+            .performClick()
+        waitUntilTextExists(updatedWeight)
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            composeRule.onAllNodesWithText(initialWeight).fetchSemanticsNodes().isEmpty()
+        }
+
+        composeRule.onAllNodesWithTag(CalendarTestTags.DeleteRecordButton)[0]
+            .performScrollTo()
+            .performClick()
+        composeRule.onNodeWithTag(CalendarTestTags.ConfirmDeleteButton).performClick()
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            composeRule.onAllNodesWithText(updatedWeight).fetchSemanticsNodes().isEmpty()
+        }
+        composeRule.onNodeWithText(activity.getString(R.string.calendar_empty_records))
+            .performScrollTo()
+            .assertIsDisplayed()
+    }
+
+    private fun waitUntilTextExists(text: String) {
+        composeRule.waitUntil(timeoutMillis = 5_000) {
+            composeRule.onAllNodesWithText(text).fetchSemanticsNodes().isNotEmpty()
+        }
+        composeRule.onNodeWithText(text)
             .performScrollTo()
             .assertIsDisplayed()
     }
