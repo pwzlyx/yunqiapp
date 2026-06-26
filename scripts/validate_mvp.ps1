@@ -5,6 +5,35 @@ param(
 Set-StrictMode -Version Latest
 $ErrorActionPreference = "Stop"
 
+function Invoke-CheckedNativeCommand {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$FilePath,
+
+        [string[]]$Arguments = @()
+    )
+
+    & $FilePath @Arguments
+    if ($LASTEXITCODE -ne 0) {
+        throw "Command failed with exit code ${LASTEXITCODE}: $FilePath $($Arguments -join ' ')"
+    }
+}
+
+function Invoke-CheckedNativeCommandOutput {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$FilePath,
+
+        [string[]]$Arguments = @()
+    )
+
+    $Output = & $FilePath @Arguments
+    if ($LASTEXITCODE -ne 0) {
+        throw "Command failed with exit code ${LASTEXITCODE}: $FilePath $($Arguments -join ' ')"
+    }
+    return $Output
+}
+
 $ProjectRoot = Resolve-Path (Join-Path $PSScriptRoot "..")
 Set-Location $ProjectRoot
 
@@ -19,7 +48,13 @@ $env:Path = "$env:JAVA_HOME\bin;$env:ANDROID_HOME\platform-tools;$env:ANDROID_HO
 Write-Host "Using JAVA_HOME=$env:JAVA_HOME"
 Write-Host "Using ANDROID_HOME=$env:ANDROID_HOME"
 
-& ".\gradlew.bat" ":app:assembleDebug" ":app:assembleDebugAndroidTest" ":app:testDebugUnitTest" ":app:lintDebug" "--stacktrace"
+Invoke-CheckedNativeCommand ".\gradlew.bat" @(
+    ":app:assembleDebug",
+    ":app:assembleDebugAndroidTest",
+    ":app:testDebugUnitTest",
+    ":app:lintDebug",
+    "--stacktrace"
+)
 
 $DebugApk = Join-Path $ProjectRoot "app\build\outputs\apk\debug\app-debug.apk"
 $AndroidTestApk = Join-Path $ProjectRoot "app\build\outputs\apk\androidTest\debug\app-debug-androidTest.apk"
@@ -33,7 +68,7 @@ foreach ($Artifact in @($DebugApk, $AndroidTestApk)) {
     Write-Host ("Verified APK: {0} ({1} bytes)" -f $Item.FullName, $Item.Length)
 }
 
-$AdbDevicesOutput = & "adb" "devices"
+$AdbDevicesOutput = Invoke-CheckedNativeCommandOutput "adb" @("devices")
 Write-Host ($AdbDevicesOutput -join [Environment]::NewLine)
 
 $ConnectedDevices = @(
@@ -47,7 +82,7 @@ if ($RunConnectedTests) {
         throw "RunConnectedTests was requested, but adb did not report an attached device."
     }
 
-    & ".\gradlew.bat" ":app:connectedDebugAndroidTest" "--stacktrace"
+    Invoke-CheckedNativeCommand ".\gradlew.bat" @(":app:connectedDebugAndroidTest", "--stacktrace")
 } elseif ($ConnectedDevices.Count -eq 0) {
     Write-Host "No adb device detected. Skipping connectedDebugAndroidTest and manual notification verification."
 } else {

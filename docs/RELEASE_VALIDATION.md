@@ -10,7 +10,7 @@ Run from `android-app`:
 .\scripts\validate_mvp.ps1
 ```
 
-The validation script configures the local JDK and Android SDK paths, runs the debug build, androidTest APK build, JVM tests, and lint, verifies that both APK artifacts exist, and reports whether `adb` has a connected device.
+The validation script configures the local JDK and Android SDK paths, runs the debug build, androidTest APK build, JVM tests, and lint, verifies that both APK artifacts exist, checks native command exit codes, and reports whether `adb` has a connected device.
 
 The Gradle gate must pass before the APK is considered ready for manual smoke testing.
 
