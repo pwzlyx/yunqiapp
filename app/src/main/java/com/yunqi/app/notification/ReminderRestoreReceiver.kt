@@ -21,7 +21,7 @@ private const val REMINDER_RESTORE_TAG = "ReminderRestore"
  */
 class ReminderRestoreReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        if (intent.action !in RESTORE_ACTIONS) return
+        if (!shouldRestoreRemindersForAction(intent.action)) return
 
         val pendingResult = goAsync()
         CoroutineScope(Dispatchers.IO).launch {
@@ -36,14 +36,16 @@ class ReminderRestoreReceiver : BroadcastReceiver() {
             }
         }
     }
-
-    private companion object {
-        val RESTORE_ACTIONS = setOf(
-            Intent.ACTION_BOOT_COMPLETED,
-            Intent.ACTION_MY_PACKAGE_REPLACED,
-        )
-    }
 }
+
+internal fun shouldRestoreRemindersForAction(action: String?): Boolean = action in restoreReminderActions
+
+private val restoreReminderActions = setOf(
+    Intent.ACTION_BOOT_COMPLETED,
+    Intent.ACTION_MY_PACKAGE_REPLACED,
+    Intent.ACTION_TIMEZONE_CHANGED,
+    Intent.ACTION_TIME_CHANGED,
+)
 
 /**
  * Builds a privacy-safe restore failure message without exception text or stack traces.
